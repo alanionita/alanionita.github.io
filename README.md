@@ -1,38 +1,26 @@
-# create-svelte
+# Portfolio rewrite
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Background
 
-## Creating a project
+My old [portfolio](https://github.com/alanionita/alanionita.github.io) written is NextJS is getting on a bit. 
 
-If you're seeing this, you've probably already done this step. Congrats!
+I've always been happy with NextJS for production app and in particular very happy with their statically generated bundles. 
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+However the big issue with NextJS for me is React itself. For regular use it's been great, however since v16 React and their api has become clunky, insonsistent, and patchy. 
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+Look at useEffect documentation for clear example of poor judgment.
 
-## Developing
+Svelte and more so SvelteKit build onto of everything good that was introduced by React without any of the suspect API decissions. 
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Plus with SvelteKit I get a portfolio project that is closer to web api and vanilla Javascript. Much closer to my current views on web development.
 
-```bash
-npm run dev
+## Intentions
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+- Like for like replacement
+- Reproducing /blog features
+- Reproducing the same designs
+- Benchmarking the start, build, install, and runtime for both stacks
 
-## Building
+## Author
 
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Alan Ionita
