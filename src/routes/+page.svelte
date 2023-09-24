@@ -2,12 +2,12 @@
 	import Segment from '../components/Segment.svelte';
 </script>
 
-<Segment type="indigo" class="indigo">
+<Segment class="indigo">
 	<h2>I'm Alan Ionita</h2>
 	<h3>Software Developer from Manchester.</h3>
 	<p>Working at <a href="https://www.perceptual-robotics.com">Perceptual Robotics</a><br/>Building industry 4.0 products.<p>
 </Segment>
-<Segment>
+<Segment class="navy">
 	<h3> Experience with:</h3>
 	<ul>
 		<li>Web.</li>
@@ -16,7 +16,7 @@
 		<li>Strategy</li>
 	</ul>
 </Segment>
-<Segment>
+<Segment class="turquise">
 	<h3>Teaching</h3>
 	<ul>
 		<li>
@@ -33,25 +33,10 @@
 		</li>
 	</ul>
 </Segment>
-<Segment>
+<Segment class="navy">
 	<p>Discover more on: <a href="https://www.linkedin.com/in/alanionita/">LinkedIn</a>
 </Segment>
 
 <style>
-.indigo {
-	composes: main;
-	height: auto;
-	padding-top: 35vh;
-}
-  
-.indigo > p {
-	margin: 0;
-	padding: 0;
-	width: auto;
-	color: var(--color-light-blue);
-	text-align: left;
-	font-weight: bold;
-	font-size: var(--fluid-type);
-}
 
 </style>
