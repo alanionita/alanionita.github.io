@@ -1,30 +1,52 @@
 <script>
-  let className;
-  export let type = 'indigo';
-  export { className as class}
+  let class_name = '';
+  export { class_name as class };
+
+  console.log('class_name ::', class_name);
 </script>
 
-<section>
-	<slot></slot>
-</section>
+<!-- HTML Markup -->
+<div class="inner--{class_name}">
+  <div class="max-width">
+    <section class="segment {class_name}">
+        <slot></slot>
+    </section>
+  </div>
+</div>
 
+<!-- Styles  -->
 <style>
-
-.indigo {
-  composes: main;
-  height: auto;
-  padding-top: 35vh;
+.segment {
   background: 'pink';
+  border: 'none';
 }
 
-.indigo > p {
-  margin: 0;
-  padding: 0;
-  width: auto;
+/*.main {
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  background-color: var(--color-dark-blue);
+  padding-top: 15vh;
+  padding-bottom: 15vh;
+}*/
+
+.indigo {
+  display: flex;
+  flex-flow: column;
+  background-color: var(--color-dark-blue);
+  padding-top: 35vh;
+  padding-bottom: 15vh;
+  height: auto;
   color: var(--color-light-blue);
   text-align: left;
   font-weight: bold;
   font-size: var(--fluid-type);
+}
+
+.indigo > h2, h3, p {
+  margin: 0;
+  padding: 0;
+  width: auto;
 }
 
 .indigo > p:nth-child(2) {
@@ -32,7 +54,12 @@
 }
 
 .navy {
-  composes: main;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  background-color: var(--color-dark-blue);
+  padding-top: 15vh;
+  padding-bottom: 15vh;
   height: auto;
   flex-flow: column nowrap;
   align-items: flex-end;
@@ -230,14 +257,15 @@
   text-align: center;
 }
 
-.maxWidth {
+.max-width {
   max-width: var(--post-max-width);
   width: -webkit-fill-available;
   margin: 0 auto;
+  background-color: 'pink'
 }
 
 @media screen and (max-width: 850px) {
-  .maxWidth {
+  .max-width {
     padding-left: var(--padding);
     padding-right: var(--padding);
   }
