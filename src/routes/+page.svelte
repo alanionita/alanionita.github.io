@@ -36,7 +36,3 @@
 <Segment class="navy">
 	<p>Discover more on: <a href="https://www.linkedin.com/in/alanionita/">LinkedIn</a>
 </Segment>
-
-<style>
-
-</style>

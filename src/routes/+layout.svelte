@@ -1,11 +1,16 @@
-<nav>
-	<a href="/">Home</a>
-	<a href="/blog">Blog</a>
-</nav>
+<script>
+	import Nav from '../components/Nav.svelte';
+</script>
+
 <main>
-<slot></slot>
+	<Nav/>
+	<slot></slot>
 </main>
+
 <style>
+/* Styles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 :root {
 	/* Vars */
 	--padding: 10vw;
@@ -19,6 +24,12 @@
 	--color-light-blue: #00a8e8;
 	--color-grey: #cecece;
 	--color-off-white: #f1f1f1;
+
+	/* Fluid type */
+	--fluid-type: min(max(1rem, 4vw), 40px);
+	--fluid-type-h2: min(max(1rem, 4vw), 32px);
+	--fluid-type-post: min(max(1rem, 4vw), 24px);
+	--fluid-type-code: min(max(1rem, 4vw), 16px);
 }
 
 html,
@@ -32,6 +43,10 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+:global(body) {
+	margin: 0;
 }
 
 a {
