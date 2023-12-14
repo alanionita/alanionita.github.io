@@ -17,29 +17,32 @@
 }
 
 .navy {
+    align-items: flex-end;
+    background-color: var(--color-navy);
+    display: flex;
+    flex-flow: column nowrap;
+    height: auto;
+    justify-content: center;
+    padding: 15rem 0;
+}
+
+.navy-text {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    color: var(--color-off-white);
+    text-align: right;
+    font-size: var(--fluid-type);
+    line-height: 1.4;
+}
+
+/* main {
     height: 100vh;
     display: flex;
     flex-flow: column;
     background-color: var(--color-dark-blue);
-    padding-top: 15vh;
     padding-bottom: 15vh;
-    height: auto;
-    flex-flow: column nowrap;
-    align-items: flex-end;
-    justify-content: center;
-    background-color: var(--color-navy);
-    color: white;
-}
-
-.navy>p {
-    margin: 0;
-    padding: 0;
-    width: auto;
-    color: white;
-    text-align: right;
-    font-weight: bold;
-    font-size: var(--fluid-type);
-}
+} */
 
 .turquise {
     composes: main;

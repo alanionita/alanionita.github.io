@@ -3,22 +3,16 @@
 </script>
 
 <Segment class="indigo">
-	<h2 class="indigo-text">I'm Alan Ionita,</h2>
+	<h1 class="indigo-text">I'm Alan Ionita,</h1>
 	<p class="indigo-text">Software Developer from 53.483959, -2.244644</p>
 	<p class="indigo-text">
-		Working at <a class="link" href="https://www.perceptual-robotics.com">Perceptual Robotics</a>, <br />building
-		industry 4.0 products.
+		Working at <a class="link" href="https://www.perceptual-robotics.com">Perceptual Robotics</a>,
+		<br />building industry 4.0 products.
 	</p>
 </Segment>
 <Segment class="navy">
-	<h3>Production experience:</h3>
-	<ul>
-		<li>Web.</li>
-		<li>Cloud</li>
-		<li>Backend</li>
-		<li>Strategy</li>
-		<li>Embedded</li>
-	</ul>
+	<h2 class="navy-text">Production experience:</h2>
+	<p class="navy-text">Web + Cloud + Backend + Strategy + Embedded.</p>
 </Segment>
 <Segment class="turquise">
 	<h3>Teaching experience:</h3>
