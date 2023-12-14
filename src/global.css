@@ -5,7 +5,6 @@
     font-weight: normal;
     font-style: normal;
     src: url('/fonts/Input-Regular.ttf') format('truetype');
-    ;
 }
 
 @font-face {
@@ -13,7 +12,6 @@
     font-weight: bold;
     font-style: normal;
     src: url('/fonts/Input-Bold.ttf') format('truetype');
-    ;
 }
 
 :root {
@@ -101,4 +99,17 @@ main {
     flex-flow: column;
     background-color: var(--color-dark-blue);
     padding-bottom: 15vh;
+}
+
+.link {
+    margin: 0;
+    padding: 0;
+    width: 'auto';
+    font-size: var(--fluid-type);
+    font-weight: bold;
+    text-decoration: none;
+}
+.link:hover, .link[data-active='true'] {
+    text-decoration: underline;
+    color: var(--color-gold);
 }
