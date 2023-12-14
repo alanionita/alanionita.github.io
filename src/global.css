@@ -24,13 +24,11 @@
     --breakpoint-phone: 850px;
 
     /* Colours */
-    --color-dark-blue: #00171f;
-    --color-navy: #003459;
-    --color-turquise: #007ea7;
-    --color-light-blue: #00a8e8;
-    --color-grey: #cecece;
-    --color-off-white: #f1f1f1;
-    --color-gold: #A59132;
+    --color-primary: #30362F;
+    --color-secondary: #625834;
+    --color-tertiary: #DA7422;
+    --color-text: #FFFBDB;
+    --color-accent: #A59132;
 
     /* Fluid type */
     --fluid-type: min(max(1rem, 4vw), 40px);
@@ -94,7 +92,7 @@ main {
     height: 100vh;
     display: flex;
     flex-flow: column;
-    background-color: var(--color-dark-blue);
+    background-color: var(--color-primary);
     padding-bottom: 15vh;
 }
 
@@ -105,8 +103,26 @@ main {
     font-size: var(--fluid-type);
     font-weight: bold;
     text-decoration: none;
+    color: var(--color-accent)
 }
-.link:hover, .link[data-active='true'] {
+
+.link:hover,
+.link[data-active='true'] {
     text-decoration: underline;
-    color: var(--color-gold);
+    color: var(--color-tertiary);
+}
+
+.link--contrast {
+    margin: 0;
+    padding: 0;
+    width: 'auto';
+    font-size: var(--fluid-type);
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--color-text)
+}
+
+.link--contrast:hover {
+    text-decoration: underline;
+    color: var(--color-primary)
 }
