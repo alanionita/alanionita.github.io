@@ -33,11 +33,11 @@
 .indigo {
   display: flex;
   flex-flow: column;
-  background-color: var(--color-dark-blue);
+  background-color: white;
   padding-top: 35vh;
   padding-bottom: 15vh;
   height: auto;
-  color: var(--color-light-blue);
+  color: #800080;
   text-align: left;
   font-weight: bold;
   font-size: var(--fluid-type);
