@@ -1,0 +1,13 @@
+.max-width {
+    max-width: var(--post-max-width);
+    width: -webkit-fill-available;
+    margin: 0 auto;
+    background-color: 'pink';
+}
+
+@media screen and (max-width: var(--breakpoint-phone)) {
+    .max-width {
+        padding-left: var(--padding);
+        padding-right: var(--padding);
+    }
+}
