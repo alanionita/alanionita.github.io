@@ -1,7 +1,5 @@
 <script>
 	import { page } from '$app/stores';
-
-	console.log('pathname ::', $page.url.pathname);
 </script>
 
 <nav class="nav">
