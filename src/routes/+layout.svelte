@@ -14,6 +14,6 @@
 		padding: 0;
 		margin: 0;
 		font-family: 'Input', sans-serif;
-		line-height: 1.2;
+		line-height: 1.4;
 	}
 </style>
