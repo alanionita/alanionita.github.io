@@ -8,7 +8,7 @@
 			<a class="link" data-active={$page.url.pathname === '/'} href="/">./</a>
 		</li>
 		<li class="list-item">
-			<a class="link" data-active={$page.url.pathname === '/blog'} href="/blog">./blog</a>
+			<a class="link" data-active={$page.url.pathname === '/blog/'} href="/blog">./blog</a>
 		</li>
 	</ul>
 </nav>
