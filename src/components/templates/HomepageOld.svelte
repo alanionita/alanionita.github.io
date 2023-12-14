@@ -1,16 +1,15 @@
 <script>
-	import Segment from '../molecules/Segment.svelte';
+	import Segment from '../molecules/Segment/+index.svelte';
 </script>
 
 <Segment class="indigo">
-	<h2>I'm Alan Ionita</h2>
-	<h3>Software Developer from Manchester.</h3>
-	<p>
-		Working at <a href="https://www.perceptual-robotics.com">Perceptual Robotics</a><br />Building
+	<h2 class="indigo-text">I'm Alan Ionita,</h2>
+	<p class="indigo-text">Software Developer from 53.483959, -2.244644</p>
+	<p class="indigo-text">
+		Working at <a class="link" href="https://www.perceptual-robotics.com">Perceptual Robotics</a>, <br />building
 		industry 4.0 products.
 	</p>
-	<p /></Segment
->
+</Segment>
 <Segment class="navy">
 	<h3>Production experience:</h3>
 	<ul>
