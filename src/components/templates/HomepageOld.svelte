@@ -38,5 +38,5 @@
 	</ul>
 </Segment>
 <Segment class="secondary">
-	<p>Discover more on: <a href="https://www.linkedin.com/in/alanionita/">LinkedIn</a></p></Segment
+	<p class="secondary-text">Discover more on:<br><a class="link--contrast" href="https://www.linkedin.com/in/alanionita/">LinkedIn</a></p></Segment
 >
