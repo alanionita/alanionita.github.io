@@ -29,6 +29,7 @@
     --color-light-blue: #00a8e8;
     --color-grey: #cecece;
     --color-off-white: #f1f1f1;
+    --color-gold: #A59132;
 
     /* Fluid type */
     --fluid-type: min(max(1rem, 4vw), 40px);
@@ -99,6 +100,5 @@ main {
     display: flex;
     flex-flow: column;
     background-color: var(--color-dark-blue);
-    padding-top: 15vh;
     padding-bottom: 15vh;
 }
