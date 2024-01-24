@@ -96,22 +96,6 @@ main {
     padding-bottom: 15vh;
 }
 
-.link {
-    margin: 0;
-    padding: 0;
-    width: 'auto';
-    font-size: var(--fluid-type);
-    font-weight: bold;
-    text-decoration: none;
-    color: var(--color-accent)
-}
-
-.link:hover,
-.link[data-active='true'] {
-    text-decoration: underline;
-    color: var(--color-tertiary);
-}
-
 .link--contrast {
     margin: 0;
     padding: 0;
@@ -119,10 +103,10 @@ main {
     font-size: var(--fluid-type);
     font-weight: bold;
     text-decoration: none;
-    color: var(--color-text)
+    color: var(--color-text);
 }
 
 .link--contrast:hover {
     text-decoration: underline;
-    color: var(--color-primary)
+    color: var(--color-primary);
 }

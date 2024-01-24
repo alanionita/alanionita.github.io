@@ -1,14 +1,14 @@
 <script>
-	import { page } from '$app/stores';
+	import Link from './Link.svelte';
 </script>
 
 <nav class="nav">
 	<ul class="list">
 		<li class="list-item">
-			<a class="link" data-active={$page.url.pathname === '/'} href="/">./</a>
+			<Link to="/" text="./home" active_on="/"/>
 		</li>
 		<li class="list-item">
-			<a class="link" data-active={$page.url.pathname === '/blog/'} href="/blog">./blog</a>
+			<Link to="/blog" text="./blog" active_on="/blog"/>
 		</li>
 	</ul>
 </nav>
@@ -21,7 +21,7 @@
 		background-color: transparent;
 		padding-left: var(--padding);
 		padding-right: var(--padding);
-		margin-top: 5vh;
+		margin: 5vh 0;
 	}
 	.list {
 		list-style: none;
