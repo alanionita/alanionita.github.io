@@ -1,5 +1,5 @@
 <script>
-	import HomepageOld from '../components/templates/HomepageOld.svelte';
+	import Home from '../components/templates/Home.svelte';
 </script>
 
-<HomepageOld />
+<Home />

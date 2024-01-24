@@ -7,11 +7,28 @@
 </script>
 
 <a class={class_name} href={to} data-active={$page.url.pathname === active_on}>
-	<p>{text}</p>
+	{text}
 </a>
 
 <style>
 	.link {
+		display: inline;
+		margin: 0;
+		padding: 0;
+		width: '100%';
+		font-size: var(--fluid-type);
+		font-weight: bold;
+		text-decoration: none;
+		color: var(--color-text);
+	}
+	.link-text {
+		margin: 0;
+	}
+
+	.link:hover {
+		text-decoration: underline;
+	}
+	.link--nav {
 		margin: 0;
 		padding: 0;
 		width: 'auto';
@@ -20,9 +37,12 @@
 		text-decoration: none;
 		color: var(--color-accent);
 	}
+	.link--nav-text {
+		margin: 0;
+	}
 
-	.link:hover,
-	.link[data-active='true'] {
+	.link--nav:hover,
+	.link--nav[data-active='true'] {
 		text-decoration: underline;
 		color: var(--color-tertiary);
 	}

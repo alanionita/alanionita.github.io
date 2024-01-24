@@ -5,10 +5,10 @@
 <nav class="nav">
 	<ul class="list">
 		<li class="list-item">
-			<Link to="/" text="./home" active_on="/"/>
+			<Link class_name="link--nav" to="/" text="./home" active_on="/" />
 		</li>
 		<li class="list-item">
-			<Link to="/blog" text="./blog" active_on="/blog"/>
+			<Link class_name="link--nav" to="/blog" text="./blog" active_on="/blog" />
 		</li>
 	</ul>
 </nav>
