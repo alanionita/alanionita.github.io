@@ -1,9 +1,9 @@
-<script>
-	import Link from '../../atoms/Link.svelte';
-    export let to = '';
-	export let text = '';
-	export let datetime = '';
-	export let datestr = '';
+<script lang="ts">
+	import Link from '../Link.svelte';
+    export let to: string = '';
+	export let text: string = '';
+	export let datetime: string = '';
+	export let datestr: string = '';
 </script>
 
 <li>

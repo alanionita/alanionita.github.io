@@ -1,6 +1,6 @@
 <script>
 	import Segment from '../molecules/Segment/+index.svelte';
-	import BlogList from '../molecules/BlogList/BlogList.svelte';
+	import BlogList from '../atoms/BlogList/BlogList.svelte';
 </script>
 
 <Segment class="secondary">

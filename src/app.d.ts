@@ -6,6 +6,12 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface Platform {}
+		interface BlogListItem {
+			to: string
+			text: string
+			datetime: string
+			datestr: string
+		}
 	}
 }
 

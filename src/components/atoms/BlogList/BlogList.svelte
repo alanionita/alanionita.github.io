@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import BlogListItem from './BlogListItem.svelte';
 
-	let posts = [
+	let posts: Array<App.BlogListItem> = [
 		{
 			to: '/1',
 			text: 'Life OS',
@@ -25,7 +25,7 @@
 
 <ul>
 	{#each posts as post}
-		<BlogListItem to={post.to} text={post.text} datetime={post.datetime} datestr={post.datestr}/>
+		<BlogListItem to={post.to} text={post.text} datetime={post.datetime} datestr={post.datestr} />
 	{:else}
 		<li>No blog posts found</li>
 	{/each}
