@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 	import Segment from '../molecules/Segment/+index.svelte';
 	import BlogList from '../atoms/BlogList/BlogList.svelte';
+	export let posts: any;
 </script>
 
 <Segment class="secondary">
@@ -8,5 +9,5 @@
 	<p class="secondary-text">Back to <a class="link" href="/">./home</a></p>
 </Segment>
 <Segment class="tertiary less-padding">
-	<BlogList/>
+	<BlogList posts={posts}/>
 </Segment>
