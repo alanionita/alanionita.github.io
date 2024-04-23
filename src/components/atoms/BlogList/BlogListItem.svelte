@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Link from '../Link.svelte';
-    export let to: string = '';
+    export let slug: string = '';
 	export let text: string = '';
 	export let datetime: string = '';
 	export let datestr: string = '';
 </script>
 
 <li>
-    <Link to={to} text={text} />
+    <Link to={`blog/${slug}`} text={text} />
     <aside>
         <time datetime={datetime}>Posted on - {datestr}</time>
     </aside>

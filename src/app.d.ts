@@ -7,7 +7,7 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 		interface BlogListItem {
-			to: string
+			slug: string
 			text: string
 			datetime: string
 			datestr: string
