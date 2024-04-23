@@ -7,8 +7,7 @@
 	<h1 class="primary-text">I'm Alan Ionita,</h1>
 	<p class="primary-text">Software Developer from 53.483959, -2.244644.</p>
 	<p class="primary-text">
-		Working at <Link to="https://www.perceptual-robotics.com" text="Perceptual Robotics" />,
-		<br />building industry 4.0 products.
+		Independently working on open-source projects
 	</p>
 </Segment>
 <Segment class="secondary">
