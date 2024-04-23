@@ -20,8 +20,11 @@
     --text-padding: 24px;
     --text-width: 100%;
     --text-width-tablet: 90%;
-    --post-max-width: 1280px;
-    --breakpoint-phone: 850px;
+    --max-width: 1080px;
+    --max-width-sm: 800px;
+    --max-width-md: 1000px;
+    /* TODO: using a var inside a breakpoint doesn't load the breakpoint */
+    --breakpoint-phone: 720px;
 
     /* Colours */
     --color-primary: #30362F;
