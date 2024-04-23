@@ -59,6 +59,12 @@ a:hover {
     color: #f4fffdc7;
 }
 
+/* Reset list styles */
+ul {
+    list-style: 'none';
+    padding: 0;
+}
+
 img {
     max-width: 100%;
     display: block;
