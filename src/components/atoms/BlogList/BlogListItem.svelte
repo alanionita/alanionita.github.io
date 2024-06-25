@@ -7,7 +7,7 @@
 </script>
 
 <li>
-    <Link to={`blog/${slug}`} text={text} />
+    <Link to={`/blog/${slug}`} text={text} />
     <aside>
         <time datetime={datetime}>Posted on - {datestr}</time>
     </aside>
