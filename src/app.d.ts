@@ -19,8 +19,7 @@ declare global {
 			desc: string;
 			updated: number;
 			created: number;
-			content: string;
-			contentHtml?: string;
+			html?: string;
 		};
 	}
 }
