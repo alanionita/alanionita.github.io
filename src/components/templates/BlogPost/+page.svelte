@@ -15,14 +15,15 @@
 
 <style>
 	.content {
-		margin: 0;
+		margin: 6rem 0 0 0;
 		padding: 0;
 		width: auto;
 		color: var(--color-text);
 		font-size: var(--fluid-type-post);
 	}
 
-	:global(blockquote) {
+	/* Custom Svelte way to style these dynamically generated @html elements */
+	.content :global(blockquote) {
 		display: block;
 		border-width: 2px 0;
 		border-style: solid;
@@ -37,7 +38,8 @@
 		background-color: var(--color-accent);
 	}
 
-	:global(blockquote:before) {
+	/* Custom Svelte way to style these dynamically generated @html elements */
+	.content :global(blockquote:before) {
 		content: '\201C';
 		position: absolute;
 		top: 0em;
@@ -51,22 +53,10 @@
 		text-align: center;
 	}
 
-
-	.post {
-		height: auto;
-		display: flex;
-		flex-flow: column;
-		padding-bottom: var(--padding);
-		padding-top: calc(var(--padding) / 2);
-		justify-content: center;
-		align-items: flex-start;
-		max-width: var(--post-max-width);
-		/* background-color: transparent; */
-		/* color: var(--color-text); */
-	}
-	.post > h2,
-	.post > h3,
-	.post > h4 {
+	/* Custom Svelte way to style these dynamically generated @html elements */
+	.content :global(h2),
+	.content :global(h3),
+	.content :global(h4) {
 		width: 75%;
 		text-align: left;
 		font-weight: bold;
@@ -74,51 +64,17 @@
 		line-height: 1.2em;
 	}
 
-	.post > ul {
+	/* Custom Svelte way to style these dynamically generated @html elements */
+	.content :global(ul) {
 		margin: 0;
 		padding: 0;
 		padding-left: 5%;
 		width: 75%;
 		color: var(--color-text);
+		list-style-type: disc;
 		text-align: left;
 		font-weight: bold;
 		font-size: var(--fluid-type-post);
 		font-weight: 400;
-	}
-
-	.post > p + ul {
-		margin-top: -1em;
-		margin-bottom: 1em;
-	}
-
-	.post > p {
-		margin: 0;
-		padding: 0;
-		width: 100%;
-		color: var(--color-navy);
-		text-align: left;
-		font-weight: bold;
-		font-size: var(--fluid-type-post);
-		font-weight: 400;
-	}
-
-	.post > p {
-		margin-bottom: calc(var(--text-padding));
-	}
-
-	.post > p:last-child {
-		margin-bottom: 0;
-	}
-	.post > h2 > a,
-	.post > h3 > a,
-	.post > p > a {
-		color: rgb(0, 52, 89);
-		text-decoration: unset;
-		font-weight: 600;
-	}
-	.post > h2 > a:hover,
-	.post > h3 > a:hover,
-	.post > p > a:hover {
-		text-decoration: underline;
 	}
 </style>
