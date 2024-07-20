@@ -3,8 +3,8 @@ id: c29c5d4a-b241-460b-80d1-2f1fcecfa7ef
 url: mvp-fallacy
 title: The MVP fallacy
 desc: ""
-updated: 1610892080697
-created: 1610890082223
+updated: 17/01/2021
+created: 17/01/2021
 ---
 
 ## The MVP fallacy

@@ -1,0 +1,88 @@
+---
+id: 76b6d520-1af3-4484-b5fb-8068b43f1417
+url: life-os
+title: Life OS
+desc: ''
+updated: 28/03/2021
+created: 28/03/2021
+---
+
+## Life OS
+
+After recently listening to [Cal Newport's - Deep Questions podcast](https://www.calnewport.com/podcast/) I decided to think more about my system for managing life goals. 
+
+The system suggests the following docs:
+* core plan or root plan
+* value plans
+    * personal
+    * professional
+* maintenance plan
+* progress plan
+
+This docs is my personal interpretation of that system.
+
+### Why plan?
+
+The reality is that life is measured in years, yet lived by the day, hour, minute, second.
+
+Life expectancy is up so in my situation, if I'm lucky, I can expect a good 50 years of ... life!
+
+50 years is a looooooong time without a map of what you care about, what you want to do, where you want to go, and who you want to be.
+
+To some planning might remove some of the fun from the next few years. I've recently reread the [The tail end](https://waitbutwhy.com/2015/12/the-tail-end.html) article from WaitButWhy to make me realise that I plan not to decide what I want to happen, but to make sure that everything I want does happen.
+
+Professionally, software development is and ever evolving field and as an engineer I need to chart the best course into the future, whilst making sure I'm still relevant now.
+
+### The ever evolving plan
+
+I've used a few methods to carve out this plan in the past. I wanted to outline the resources and current plan I've used so far.
+
+The one method that I've abused a lot over the years was 'do more of what you like', which explain why I spent more time playing video games, that studying in high school.
+
+Should we do more of what we like or should we find areas where that selfish goal also has a an altruistic side-effect.
+
+This is where another great resource came in for me, [80000hours.org](https://80000hours.org). The site highlights the greatest issues facing humanity and informs the reader how to pursue the biggest impact jobs working on those issues.
+
+I use the guidance from 80000h as a moral compass that allows me to gauge if I'm making an impact.
+
+For planning I tend to run yearly goals, determined annually in June. I use the [YearCompass ](https://yearcompass.com) framework to help me reflect on the past year and chart the next.
+
+For day to day operation I use a Bullet Journal system. Every month I'll use my yearly goals to set monthly aims, and then I daily / weekly aim to spend time towards those goals.
+
+I usually timebox things in the calendar in order to make sure I do them or spend the time.
+
+Another important concept to mention are distractions. My aim is to constantly limit distraction to allow more time for working on the plan.
+
+### Root plan
+
+A document where core systems and strategies to organise life are stored. Instead of storing everything in your head - write it down, flesh it out.
+
+This plan must be generic and should not capture the specific rules.
+
+The `root` will point to other more specific documents:
+
+#### Value plan
+
+An outline of roles responsibilities and the core values I need to display in those.
+
+#### Personal plan
+
+A document on all personal goals and processes.
+
+#### Professional plan
+
+A document on all professional goals and processes.
+
+#### Maintenance procedure
+
+How do I maintain these systems - when, where, what.
+
+A good idea here is to think about how data enters the system and how it leaves it.
+
+#### Operational plan
+
+How do things get done and what are some of the habits and process you use to achieve the things on the plan.
+
+#### Metrics
+
+What are you going to track in order to measure the system.
