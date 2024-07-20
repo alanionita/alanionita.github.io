@@ -3,9 +3,13 @@ import path from "path";
 import frontmatter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
+import { parse } from 'date-fns'
 
 function dateSortDecending(a: App.Post, b: App.Post) {
-    if (a.created < b.created) {
+    const aCreated = parse(a.created, 'dd/MM/yyyy', new Date())
+    const bCreated = parse(b.created, 'dd/MM/yyyy', new Date())
+
+    if (aCreated < bCreated) {
         return 1;
     } else {
         return -1;
