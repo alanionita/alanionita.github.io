@@ -68,6 +68,10 @@
     padding: 4rem 0;
 }
 
+.no-padding {
+    padding: 0rem 0;
+}
+
 .blog {
     composes: main;
     height: auto;

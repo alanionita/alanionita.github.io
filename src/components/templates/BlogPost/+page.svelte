@@ -1,11 +1,9 @@
 <script lang="ts">
 	import Segment from '../../molecules/Segment/+index.svelte';
-	export let slug: string = '';
 	export let postHtml: string = '';
 </script>
 
-<Segment class="secondary">
-	<p class="secondary-text">Back to <a class="link" href="/blog">./blog</a></p>
+<Segment class="secondary no-padding">
 	<section class="content">
 		{@html postHtml}
 	</section>
