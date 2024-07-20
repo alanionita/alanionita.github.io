@@ -3,8 +3,8 @@ id: 42f98b52-28bb-4515-80af-406c1495e92b
 url: first-post
 title: First Post
 desc: ""
-updated: 13/01/2021
-created: 13/01/2021
+updated: "13/01/2021"
+created: "13/01/2021"
 ---
 
 ## Why write a blog?
