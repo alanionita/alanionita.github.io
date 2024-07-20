@@ -58,7 +58,7 @@
 		width: 75%;
 		text-align: left;
 		font-weight: bold;
-		font-size: var(--fluid-type-h2);
+		font-size: var(--fluid-type);
 		line-height: 1.2em;
 	}
 
