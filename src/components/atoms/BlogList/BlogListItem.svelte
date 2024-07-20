@@ -2,14 +2,16 @@
 	import Link from '../Link.svelte';
     export let slug: string = '';
 	export let text: string = '';
-	export let datetime: string = '';
-	export let datestr: string = '';
+	export let created: string = '';
+	import {parse, format} from 'date-fns';
+	let datetime = parse(created, 'dd/MM/yyyy', new Date());
+	let datestr = format(datetime, 'EEEE, dd MMMM yyyy')
 </script>
 
 <li>
     <Link to={`/blog/${slug}`} text={text} />
     <aside>
-        <time datetime={datetime}>Posted on - {datestr}</time>
+        <time datetime={datetime.toISOString()}>Created on - {datestr}</time>
     </aside>
 </li>
 
