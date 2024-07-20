@@ -17,8 +17,8 @@ declare global {
 			id: string;
 			title: string;
 			desc: string;
-			updated: number;
-			created: number;
+			updated: string;
+			created: string;
 			html?: string;
 		};
 	}
