@@ -1,5 +1,11 @@
 /* Styles */
-/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap'); */
+
+/* Imports */
+
+@import '../node_modules/highlight.js/styles/monokai.min.css';
+
+/* Fonts */
+
 @font-face {
     font-family: 'Input';
     font-weight: normal;
@@ -13,6 +19,8 @@
     font-style: normal;
     src: url('/fonts/Input-Bold.ttf') format('truetype');
 }
+
+/* Variables */
 
 :root {
     /* Spacing */
@@ -40,6 +48,7 @@
     --fluid-type-code: min(max(1rem, 4vw), 16px);
 }
 
+/* Defaults */
 
 * {
     box-sizing: border-box;
@@ -51,6 +60,14 @@ body {
     font-size: 8px;
 }
 
+main {
+    height: 100vh;
+    display: flex;
+    flex-flow: column;
+    background-color: var(--color-primary);
+    padding-bottom: 15vh;
+}
+
 a {
     color: #f4fffd;
 }
@@ -59,7 +76,6 @@ a:hover {
     color: #f4fffdc7;
 }
 
-/* Reset list styles */
 ul {
     list-style: 'none';
     padding: 0;
@@ -70,7 +86,6 @@ img {
     display: block;
 }
 
-/* Styling code blocks */
 pre code {
     font-size: var(--fluid-type-code);
     font-weight: 400;
@@ -80,6 +95,8 @@ pre code {
 pre {
     width: 100%;
 }
+
+/* Classes */
 
 .container {
     position: relative;
@@ -95,14 +112,6 @@ pre {
 .header {
     position: absolute;
     width: 100%;
-}
-
-main {
-    height: 100vh;
-    display: flex;
-    flex-flow: column;
-    background-color: var(--color-primary);
-    padding-bottom: 15vh;
 }
 
 .link--contrast {
