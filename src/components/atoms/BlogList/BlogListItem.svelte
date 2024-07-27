@@ -6,10 +6,11 @@
 	import {parse, format} from 'date-fns';
 	let datetime = parse(created, 'dd/MM/yyyy', new Date());
 	let datestr = format(datetime, 'EEEE, dd MMMM yyyy')
+	import { base } from '$app/paths';
 </script>
 
 <li>
-    <Link to={`/blog/${slug}`} text={text} />
+    <Link to="{base}/blog/${slug}" text={text} />
     <aside>
         <time datetime={datetime.toISOString()}>Created on - {datestr}</time>
     </aside>
