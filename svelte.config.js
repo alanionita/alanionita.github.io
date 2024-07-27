@@ -18,9 +18,8 @@ const config = {
 			strict: true
 		}),
 		paths: {
-			// base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
-			// base: 'https://github.com/alanionita/portfolio--svelte/'
-			base: 'https://alanionita.github.io/portfolio--svelte'
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+			// base: 'https://alanionita.github.io/portfolio--svelte'
 		}
 	},
 	preprocess: [vitePreprocess()]
