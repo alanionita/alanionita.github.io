@@ -6,3 +6,5 @@ export async function load({ params }) {
     if (!post) error(404, 'Post Not found');
     return post
 }
+
+export const prerender = true;
