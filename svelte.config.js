@@ -14,7 +14,7 @@ const config = {
 			// these options are set automatically — see below
 			pages: 'build',
 			assets: 'build',
-			fallback: '404.html',
+			// fallback: '404.html',
 			precompress: true, // TODO: toggle on/off and compare
 			strict: true
 		}),
