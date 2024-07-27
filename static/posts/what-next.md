@@ -25,8 +25,8 @@ This means that I can afford to explore a lot and not really care about conseque
 
 I actually don't see programming as a career, it more of a profession - it something I myself doing for the rest of my life. The fact that I get paid for it is a really nice bonus.
 
-```javascript
-const risk = timeInvestment * ultimateReward;
+```shell
+risk = time_investment / personal_gain;
 ```
 
 Risk has nothing to do with fun and it's mainly related to return - can I make a living or make money from it.
