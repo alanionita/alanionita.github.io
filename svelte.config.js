@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/kit/vite';
+import { relative } from '__sveltekit/paths';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -13,12 +14,13 @@ const config = {
 			// these options are set automatically — see below
 			pages: 'build',
 			assets: 'build',
-			// fallback: '/404.html',
+			fallback: '404.html',
 			precompress: true, // TODO: toggle on/off and compare
 			strict: true
 		}),
 		paths: {
-			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH,
+			relative: true
 			// base: 'https://alanionita.github.io/portfolio--svelte'
 		}
 	},
