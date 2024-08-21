@@ -10,7 +10,7 @@
 </script>
 
 <li>
-    <Link to="{base}/blog/${slug}" text={text} />
+    <Link to="{base}/blog/{slug}" text={text} />
     <aside>
         <time datetime={datetime.toISOString()}>Created on - {datestr}</time>
     </aside>
