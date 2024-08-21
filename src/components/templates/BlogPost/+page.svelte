@@ -5,6 +5,7 @@
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import yaml from 'highlight.js/lib/languages/yaml';
 	import shell from 'highlight.js/lib/languages/shell';
+	import 'highlight.js/styles/github.css';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
