@@ -13,8 +13,3 @@
 		</article>
 	</Container>
 </div>
-
-<!-- Styles  -->
-<style module="true">
-	@import './styles.css';
-</style>

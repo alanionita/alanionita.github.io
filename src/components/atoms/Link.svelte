@@ -10,7 +10,7 @@
 	{text}
 </a>
 
-<style>
+<style module="true">
 	.link {
 		display: inline;
 		margin: 0;
