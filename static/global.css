@@ -4,14 +4,14 @@
     font-family: 'Input';
     font-weight: normal;
     font-style: normal;
-    src: url('/fonts/Input-Regular.ttf') format('truetype');
+    src: url('./fonts/Input-Regular.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Input';
     font-weight: bold;
     font-style: normal;
-    src: url('/fonts/Input-Bold.ttf') format('truetype');
+    src: url('./fonts/Input-Bold.ttf') format('truetype');
 }
 
 /* Variables */
