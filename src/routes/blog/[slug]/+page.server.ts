@@ -1,10 +1,23 @@
-import { getPost } from '$lib/posts';
+import { getPost, getPosts } from '$lib/posts';
 import { error } from '@sveltejs/kit';
+import type { RouteParams } from './$types';
+
+export function entries() {
+    const posts = getPosts();
+
+    const postSlugs: RouteParams[] = posts.reduce((acc, post) => {
+        if (post.slug && post.slug.length > 0) {
+            acc.push({ slug: post.slug })
+            return acc;
+        }
+        return acc;
+    }, [] as RouteParams[])
+    
+    return postSlugs;
+}
 
 export async function load({ params }) {
     const post = await getPost(params.slug);
     if (!post) error(404, 'Post Not found');
     return post
 }
-
-export const prerender = true;

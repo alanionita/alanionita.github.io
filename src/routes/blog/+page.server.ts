@@ -6,5 +6,3 @@ export function load() {
     if (!posts) error(404, 'Posts Not found');
     return { posts }
 }
-
-export const prerender = true;

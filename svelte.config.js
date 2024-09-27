@@ -19,8 +19,8 @@ const config = {
 		},
 		prerender: {
 			crawl: true,
-			entries: ["*"]		
-		}		
+			entries: ["*"]
+		}
 	},
 	preprocess: [vitePreprocess()]
 };
