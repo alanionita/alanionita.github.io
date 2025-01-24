@@ -1,12 +1,16 @@
 <script lang="ts">
 	import Segment from '../../molecules/Segment/+index.svelte';
-	export let postHtml: string = '';
 	import hljs from 'highlight.js/lib/core';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import yaml from 'highlight.js/lib/languages/yaml';
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
 	import { onMount } from 'svelte';
+	interface Props {
+		postHtml?: string;
+	}
+
+	let { postHtml = '' }: Props = $props();
 
 	onMount(() => {
 		hljs.registerLanguage('javascript', javascript);

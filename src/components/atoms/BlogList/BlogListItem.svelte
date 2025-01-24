@@ -1,12 +1,17 @@
 <script lang="ts">
-	import Link from '../Link.svelte';
-    export let slug: string = '';
-	export let text: string = '';
-	export let created: string = '';
 	import {parse, format} from 'date-fns';
+	import { base } from '$app/paths';
+	import Link from '../Link.svelte';
+	interface Props {
+		slug?: string;
+		text?: string;
+		created?: string;
+	}
+	
+	let { slug = '', text = '', created = '' }: Props = $props();
+	
 	let datetime = parse(created, 'dd/MM/yyyy', new Date());
 	let datestr = format(datetime, 'EEEE, dd MMMM yyyy')
-	import { base } from '$app/paths';
 </script>
 
 <li>

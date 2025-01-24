@@ -1,9 +1,20 @@
 <script>
 	import { page } from '$app/stores';
-	export let to = '';
-	export let text = '';
-	export let class_name = 'link';
-	export let active_on = '/';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [to]
+	 * @property {string} [text]
+	 * @property {string} [class_name]
+	 * @property {string} [active_on]
+	 */
+
+	/** @type {Props} */
+	let {
+		to = '',
+		text = '',
+		class_name = 'link',
+		active_on = '/'
+	} = $props();
 </script>
 
 <a class={class_name} href={to} data-active={$page.url.pathname === active_on}>

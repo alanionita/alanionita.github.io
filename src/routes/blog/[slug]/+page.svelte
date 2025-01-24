@@ -1,7 +1,7 @@
 <script lang="ts">
 	import BlogPost from '../../../components/templates/BlogPost/+page.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <BlogPost postHtml={data.html} />
