@@ -105,6 +105,10 @@
     padding: 0rem 0;
 }
 
+.article-padding {
+    padding: 0rem 8rem;
+}
+
 .inner--primary {  
     background-color: var(--color-primary);
 }

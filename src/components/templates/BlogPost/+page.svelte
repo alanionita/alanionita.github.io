@@ -20,7 +20,7 @@
 	});
 </script>
 
-<Segment class="secondary no-padding">
+<Segment class="secondary article-padding">
 	<section class="content">
 		{@html postHtml}
 	</section>
