@@ -37,7 +37,11 @@ export function getPosts(): Array<App.Post> {
 }
 
 export async function getPost(id: string): Promise<App.Post> {
-    const postPath = path.join(POSTS_DIR, `${id}.md`);
+    const files = fs.readdirSync(POSTS_DIR);
+
+    const filename: string = files.filter(path => path.includes(id))[0]!;
+
+    const postPath = path.join(POSTS_DIR, `${filename}`);
 
     const { content, data } = frontmatter.read(postPath);
 
