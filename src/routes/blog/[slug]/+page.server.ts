@@ -17,6 +17,8 @@ export function entries() {
 }
 
 export async function load({ params }) {
+    const slug = params.slug!;
+    if (!slug) error(404, 'Slug Not found');
     const post = await getPost(params.slug);
     if (!post) error(404, 'Post Not found');
     return post
