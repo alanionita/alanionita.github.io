@@ -163,6 +163,15 @@
 }
 
 /* Custom Svelte way to style these dynamically generated @html elements */
+.content > h1 {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-weight: bold;
+    font-size: var(--fluid-type);
+    margin-bottom: calc(var(--padding) / 12);
+    max-width: var(--post-max-width);
+}
 .content > h2,
 .cont t > h3,
 .cont t > h4 {
@@ -255,6 +264,16 @@
     max-width: var(--post-max-width);
     background-color: var(--color-text);
     margin: 0;
+}
+
+.post>h1 {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-weight: bold;
+    font-size: var(--fluid-type);
+    margin-bottom: calc(var(--padding) / 12);
+    max-width: var(--post-max-width);
 }
 
 .post>h2,
