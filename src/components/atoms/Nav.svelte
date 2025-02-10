@@ -16,20 +16,12 @@
 
 <style module="true">
 	.nav {
-		width: 100%;
-		height: 10vh;
+		width: auto;
+		height: fit-content;
 		text-align: right;
 		background-color: transparent;
-		padding-left: var(--padding);
-		padding-right: var(--padding);
-		margin: 5vh 0;
-	}
-
-	@media screen and (max-width: 700px) {
-		.nav {
-			margin: 0;
-			padding: 5vh 2vh;
-		}
+		margin: 0;
+		padding: 2rem 2rem;
 	}
 
 	.list {
@@ -37,7 +29,7 @@
 		padding: 0;
 		display: flex;
 		justify-content: flex-end;
-		width: 100%;
+		width: auto;
 	}
 
 	.list-item {
