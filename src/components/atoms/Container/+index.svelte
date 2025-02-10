@@ -8,9 +8,9 @@
 	let { children } = $props();
 </script>
 
-<section class="max-width">
+<div class="max-width">
 	{@render children?.()}
-</section>
+</div>
 
 <style module="true">
 	.max-width {
