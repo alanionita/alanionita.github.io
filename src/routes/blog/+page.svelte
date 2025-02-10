@@ -4,6 +4,7 @@
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 	import Blog from '../../components/templates/Blog.svelte';
+	import PageTitle from '../../components/atoms/PageTitle.svelte';
 
 	
 	/**
@@ -24,4 +25,5 @@
 	setContext('posts', posts);
 </script>
 
+<PageTitle text="List of blog posts"/>
 <Blog/>
