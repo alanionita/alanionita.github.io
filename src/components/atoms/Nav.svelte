@@ -16,7 +16,7 @@
 
 <style module="true">
 	.nav {
-		width: 'auto';
+		width: 100%;
 		height: 10vh;
 		text-align: right;
 		background-color: transparent;
@@ -24,6 +24,14 @@
 		padding-right: var(--padding);
 		margin: 5vh 0;
 	}
+
+	@media screen and (max-width: 700px) {
+		.nav {
+			margin: 0;
+			padding: 5vh 2vh;
+		}
+	}
+
 	.list {
 		list-style: none;
 		padding: 0;
