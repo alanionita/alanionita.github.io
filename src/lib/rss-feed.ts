@@ -1,6 +1,6 @@
 import {parse, format} from 'date-fns'
 
-const SITE_LINK = "https://alanionita.github.io/portfolio--svelte/";
+const SITE_LINK = "https://alanionita.github.io/portfolio--svelte";
 
 export function makeXMLOutline(items: string): string {
     const xmlEncoding = "UTF-8";
