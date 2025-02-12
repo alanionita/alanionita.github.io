@@ -45,7 +45,7 @@ export async function getPost(id: string): Promise<App.Post> {
 
     const { content, data } = frontmatter.read(postPath);
 
-    const { title, desc, updated, created } = data;
+    const { title, desc, updated, created, url } = data;
 
     const postHtml = await remark()
         .use(html, { sanitize: true })
@@ -56,6 +56,7 @@ export async function getPost(id: string): Promise<App.Post> {
         title,
         desc,
         updated,
-        created
+        created,
+        url
     }
 }

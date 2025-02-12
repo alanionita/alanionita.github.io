@@ -16,9 +16,10 @@ declare global {
 			[index: string]: any | null;
 			id: string;
 			title: string;
-			desc: string;
 			updated: string;
 			created: string;
+			url: string;
+			desc?: string;
 			html?: string;
 		};
 	}
