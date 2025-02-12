@@ -8,8 +8,8 @@ export function makeXMLOutline(items: string): string {
     const title = "Alan Ionita - Fullstack developer porfolio, React, AWS, Typescript, bun";
     const description = "Latest blog posts";
 
-    return `<?xml version="2.0" encoding="${xmlEncoding}"?>
-        <rss version="2.0">
+    return `<?xml version="1.0" encoding="${xmlEncoding}"?>
+        <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
             <channel>
                 <title>${title}</title>
                 <link>${SITE_LINK}</link>
