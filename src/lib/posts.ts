@@ -18,20 +18,24 @@ function dateSortDecending(a: App.Post, b: App.Post) {
 
 const POSTS_DIR = path.join(process.cwd(), "static", "posts");
 
-export function getPosts(): Array<App.Post> {
+export async function getPosts(): Promise<App.Post[]> {
     const files = fs.readdirSync(POSTS_DIR);
 
-    function getFrontmatterData(file: string) {
+    async function getFrontmatterData(file: string) {
         const id = file.replace(/\.md$/, "");
         const fullPath = path.join(POSTS_DIR, file);
-        const { data } = frontmatter.read(fullPath);
+        const { data, content } = frontmatter.read(fullPath);
+        const postHtml = await remark()
+            .use(html, { sanitize: true })
+            .process(content);
         return {
             id,
+            html: postHtml.toString(),
             ...data,
         } as App.Post;
     }
 
-    const posts = files.map(getFrontmatterData);
+    const posts = await Promise.all(files.map(getFrontmatterData));
     // Sort posts by date
     return posts.sort(dateSortDecending);
 }

@@ -8,7 +8,7 @@ export function makeXMLOutline(items: string): string {
     const title = "Alan Ionita - Fullstack developer porfolio, React, AWS, Typescript, bun";
     const description = "Latest blog posts";
 
-    return `<?xml version="1.0" encoding="${xmlEncoding}"?>
+    return `<?xml version="2.0" encoding="${xmlEncoding}"?>
         <rss version="2.0">
             <channel>
                 <title>${title}</title>
@@ -30,12 +30,11 @@ export function makeXMLItems(data: App.Post[]): string {
             <link>${SITE_LINK}/blog/${post.url}</link>
             <pubDate>${rfc822DateStr}</pubDate>
             <author>Alan Ionita</author>
-            ${post.desc ? `<description>${post.desc}</description>` : ''}
-            <content:encoded>
+            <description>
                 <![CDATA[
-                    ${post.html || ""}
+                    ${post.html || ''}
                 ]]>
-            </content:encoded>
+            </description>
         </item>`
     }).join("")
 }

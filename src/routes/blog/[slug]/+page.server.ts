@@ -9,11 +9,12 @@ function makeXMLFeed(data: App.Post[]) {
     const itemsStr = makeXMLItems(data)!;
     const feedStr = makeXMLOutline(itemsStr);
 
-    fs.writeFileSync(`${process.cwd()}/static/rss-feed.xml`, feedStr);
+    const parsedFeed = feedStr.replaceAll('<hr>', '<hr></hr>')
+    fs.writeFileSync(`${process.cwd()}/static/rss-feed.xml`, parsedFeed);
 }
 
-export function entries() {
-    const posts = getPosts();
+export async function entries() {
+    const posts = await getPosts();
     const postSlugs: RouteParams[] = posts.reduce((acc, post) => {
         if (post.slug && post.slug.length > 0) {
             acc.push({ slug: post.slug })

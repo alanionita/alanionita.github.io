@@ -19,8 +19,8 @@ declare global {
 			updated: string;
 			created: string;
 			url: string;
+			html: string;
 			desc?: string;
-			html?: string;
 		};
 	}
 }
