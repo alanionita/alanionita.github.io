@@ -28,9 +28,14 @@ export function makeXMLItems(data: App.Post[]): string {
         return `<item>
             <title>${post.title}</title>
             <link>${SITE_LINK}/blog/${post.url}</link>
-            ${post.desc ? `<description>${post.desc}</description>` : ''}
             <pubDate>${rfc822DateStr}</pubDate>
             <author>Alan Ionita</author>
+            ${post.desc ? `<description>${post.desc}</description>` : ''}
+            <content:encoded>
+                <![CDATA[
+                    ${post.html || ""}
+                ]]>
+            </content:encoded>
         </item>`
     }).join("")
 }
