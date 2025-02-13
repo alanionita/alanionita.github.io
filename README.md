@@ -2,17 +2,11 @@
 
 ## Background
 
-My old [portfolio](https://github.com/alanionita/alanionita.github.io) written is NextJS is getting on a bit. 
+My old [portfolio](https://github.com/alanionita/alanionita.github.io) written is NextJS is getting old. 
 
-I've always been happy with NextJS for production app and in particular very happy with their statically generated bundles. 
+I'm happy in general with NextJS for production apps, and in particular very happy with their statically generated bundles. 
 
-However the big issue with NextJS for me is React itself. For regular use it's been great, however since v16 React and their api has become clunky, insonsistent, and patchy. 
-
-Look at useEffect documentation for clear example of poor judgment.
-
-Svelte and more so SvelteKit build onto of everything good that was introduced by React without any of the suspect API decissions. 
-
-Plus with SvelteKit I get a portfolio project that is closer to web api and vanilla Javascript. Much closer to my current views on web development.
+With SvelteKit I'm looking for a project that is closer to Web APIs and vanilla Javascript.
 
 ## Intentions
 
