@@ -1,0 +1,1407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+            <channel>
+                <title>Alan Ionita - Fullstack developer porfolio, React, AWS, Typescript, bun</title>
+                <link>https://alanionita.github.io/portfolio--svelte</link>
+                <description>Latest blog posts</description>
+                <language>en-GB</language>
+                <lastBuildDate>Thu, 13 Feb 2025 13:51:53 GMT</lastBuildDate>
+                <item>
+            <title>Svelte 5 Migration and Changes</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.13.svelte-5-migration</link>
+            <pubDate>Thu, 13 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Svelte 5 Migration and Changes</h1>
+<p>Big fan of SvelteJS as framework and in particular the Svelte monolith that is SvelteKit.</p>
+<p>I maintain a scaffolding repo which act as a base to most Svelte projects I create. You can see that scaffold <a href="https://github.com/alanionita/scaffold-sveltekit-tailwind-shadcn">here</a>.</p>
+<p>As of October 2024 Svelte released Svelte 5, their biggest release yet as covered <a href="https://svelte.dev/blog/svelte-5-is-alive">here</a>, but it brings some significant changes to day to day Svelte writing and patterns.</p>
+<p>This article aims to show:</p>
+<ul>
+<li>How to easily upgrade a SvelteKit 2.0 project using Svelte 4</li>
+<li>What the changes are and why they've come about</li>
+</ul>
+<h2>Upgrading</h2>
+<p>Upgrading in Svelte couldn't be easier, because of the <a href="https://svelte.dev/docs/cli/sv-migrate">sv migrate tooling</a>.</p>
+<h3>Usage</h3>
+<p>Within the repo run <code>npx sv migrate TARGET</code> where target here is svelte-5, so <code>npx sv migrate svelte-5</code>. Check the sv migrate docs for other available targets.</p>
+<p>sv migrate will then ask:</p>
+<ul>
+<li>Ask about current dir, since some of the change will impact a mono-repo</li>
+<li>Ask which folders to refactor</li>
+<li>Ask if you want to tooling to convert components to new syntax</li>
+</ul>
+<p>My repo is fairly simple so I went ahead and said yes and selected all the option on the above.</p>
+<h2>Changes - Packages</h2>
+<p>One thing of note here about <code>sv migrate</code> vs a manual package upgrade is that you don't need to trial a bunch of module versions before you reach the right mix.</p>
+<p>Having tried it before I will tell you now that: upgrading all packages to latest will break your build.</p>
+<p>sv migrate already contains the right module combinations and here are the changes.</p>
+<pre><code>Updated svelte to ^5.0.0
+Updated @sveltejs/kit to ^2.5.27
+Updated @sveltejs/vite-plugin-svelte to ^4.0.0
+Updated prettier-plugin-svelte to ^3.2.6
+Updated eslint-plugin-svelte to ^2.45.1
+Updated typescript to ^5.5.0
+Updated vite to ^5.4.4
+</code></pre>
+<p>Latest versions for reference</p>
+<pre><code>svelte                      5.20.0
+@sveltejs/kit               2.17.1
+@sveltejs/vite-plugin-svelte 5.0.3
+prettier-plugin-svelte       3.3.3
+eslint-plugin-svelte        2.46.1
+typescript                   5.7.3
+vite 	                     6.1.0
+</code></pre>
+<p>As you can see things move fast, and in the 3 months since release we've already had a fair bit of drift. This is mostly fine since Svelte is relatively stable.</p>
+<p>Of most concerns is the vite major release of v6, and the large number of minor versions on the svelte packages.</p>
+<h3>Vite v5 vs v6</h3>
+<p>In my context I'm ok with a lagging codebase and will upgrade whenever crutial.</p>
+<p>For anyone else who might be impacted I wanted to summarise what changed in vite v6, Read further in the migration guide, <a href="https://vite.dev/guide/migration.html">https://vite.dev/guide/migration.html</a>.</p>
+<p>v6 updates:</p>
+<ul>
+<li>Environement API refactors; experimental api included which changes to interface; opt-in only</li>
+<li>Runtime API: experimental Module Runner API, requires using the new API after updating</li>
+<li>resolve.conditions: impacts those with .conditions config; from v6 conditions need to be included manually as oposed to being defaulted, allows ssr and regular configs to be different (whilst before ssr would inherit from regular config), if you have previous config in v6 you need to add the defaults per resolution</li>
+<li>JSON.stringify: in v6 json.strigify: true no longer changes json.namedExports: disabled; json.namedExports is respected; strigify also has a new value of auto, which only stringifies large objects.</li>
+<li>Larger support for asset references in HTML element: v5 only  and  could reference assets. v6 has an extended list <a href="https://vite.dev/guide/features#html">https://vite.dev/guide/features#html</a></li>
+<li>CSS: postcss-load-config updated in v6, sass uses modern api by default, custom CSS output file in library mode</li>
+</ul>
+<h3>Svelte minor releases difference</h3>
+<p>Because of the volume of releases there's a possibility here that we might be missing key bug fixes.</p>
+<h3>Installing packages</h3>
+<p>Now lets install the migrated packages and see what happens.</p>
+<ol>
+<li>Remove previous installed packages</li>
+</ol>
+<p><code>rm -rf node_modules/ &#x26;&#x26; rm package-lock.json</code></p>
+<ol start="2">
+<li>Install with package of choice (npm)</li>
+</ol>
+<p><code>npm install</code></p>
+<p>Issues:</p>
+<ul>
+<li>
+<ol>
+<li><code>@sveltejs/vite-plugin-svelte@^4.0.0</code> not found (see logs below)</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li></li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>{@render children?.()} throwing error about unrecognised @ symbol</li>
+</ol>
+</li>
+</ul>
+<pre><code>npm error code ERESOLVE
+npm error ERESOLVE could not resolve
+npm error
+npm error While resolving: streak-tracker--svelte@0.0.1
+npm error Found: @sveltejs/vite-plugin-svelte@3.1.2
+npm error node_modules/@sveltejs/vite-plugin-svelte
+npm error   dev @sveltejs/vite-plugin-svelte@"^4.0.0" from the root project
+npm error   peer @sveltejs/vite-plugin-svelte@"^3.0.0 || ^4.0.0-next.1" from @sveltejs/kit@2.6.4
+npm error   node_modules/@sveltejs/kit
+npm error     dev @sveltejs/kit@"^2.5.27" from the root project
+npm error     peer @sveltejs/kit@"^2.0.0" from @sveltejs/adapter-auto@3.2.5
+npm error     node_modules/@sveltejs/adapter-auto
+npm error       dev @sveltejs/adapter-auto@"^3.0.0" from the root project
+npm error   1 more (@sveltejs/vite-plugin-svelte-inspector)
+npm error
+npm error Could not resolve dependency:
+npm error dev @sveltejs/vite-plugin-svelte@"^4.0.0" from the root project
+npm error
+npm error Conflicting peer dependency: svelte@5.20.0
+npm error node_modules/svelte
+npm error   peer svelte@"^5.0.0-next.96 || ^5.0.0" from @sveltejs/vite-plugin-svelte@4.0.4
+npm error   node_modules/@sveltejs/vite-plugin-svelte
+npm error     dev @sveltejs/vite-plugin-svelte@"^4.0.0" from the root project
+npm error
+npm error Fix the upstream dependency conflict, or retry
+npm error this command with --force or --legacy-peer-deps
+npm error to accept an incorrect (and potentially broken) dependency resolution.
+npm error
+npm error
+npm error For a full report see:
+
+</code></pre>
+<h3>Fixing errors</h3>
+<ul>
+<li>
+<ol>
+<li>@sveltejs/vite-plugin-svelte: not a real error, but I suspect an issue with timeout during the npm i process; making sure I have a clean install by removing node_modules and package-lock.json allowed me to get a successful install without the error</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>script tag issue with "@sveltejs/adapter-auto": fixed it by updating the version to ^4.0.0</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>noticed an issue with tsconfig.json, whereby "moduleResolution" required "module" to be present and set to preserve; after adding that value the IDE refreshed and the @render issue went away</li>
+</ol>
+</li>
+</ul>
+<h2>Changes - Components</h2>
+<h3>Runes</h3>
+<p>Multiple changes stem from the new Runes API: compiler instructions that tell Svelte about reactivity. Runes start with <code>$</code></p>
+<h3>let -> $props</h3>
+<p>In v4 props were achieve using <code>export let xyz = "xyz"</code> declarations. These declarations made content available from  into the main body of the component.</p>
+<p>In v5 all props come from the $props rune as seen below:</p>
+<pre><code class="language-javascript">&#x3C;script>
+	let { optional = 'unset', required } = $props();
+&#x3C;/script>
+</code></pre>
+<p>In my case, the app is also using Typescript so there are further changes on the type definitions, which will be covered later.</p>
+<p>v5</p>
+<pre><code class="language-javascript">&#x3C;script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/shadcn.js";
+
+	type $$Props = HTMLAttributes&#x3C;HTMLDivElement>;
+
+	let className: $$Props["class"] = undefined;
+	export { className as class };
+&#x3C;/script>
+
+&#x3C;div
+	class={cn("bg-card text-card-foreground rounded-lg border shadow-sm", className)}
+	{...$$restProps}
+>
+	&#x3C;slot />
+&#x3C;/div>
+
+</code></pre>
+<p>v6</p>
+<pre><code class="language-javascript">&#x3C;script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "$lib/shadcn.js";
+
+	type $$Props = HTMLAttributes&#x3C;HTMLDivElement>;
+
+	interface Props {
+		class?: $$Props["class"];
+		children?: import('svelte').Snippet;
+		[key: string]: any
+	}
+
+	let { class: className = undefined, children, ...rest }: Props = $props();
+	
+&#x3C;/script>
+
+&#x3C;div
+	class={cn("bg-card text-card-foreground rounded-lg border shadow-sm", className)}
+	{...rest}
+>
+	{@render children?.()}
+&#x3C;/div>
+</code></pre>
+<h3>render method no longer compiled for SSR</h3>
+<p>This is specifically related to SSR application, but worth mentioning.</p>
+<h3>children() and snippets</h3>
+<p>In v4 the main paradigm for creating higher order components was to use .</p>
+<p>In v5 they are deprecated in favour of  constructs which increase the flexibility. Also added in v6 a clearer construct for children.</p>
+<p>In my case I've only used  for HOCs and those instances have been refactored to use children instead</p>
+<p>v4</p>
+<pre><code class="language-javascript">&#x3C;script>
+	import '../app.css';
+&#x3C;/script>
+
+&#x3C;slot>&#x3C;/slot>
+</code></pre>
+<p>v5</p>
+<pre><code class="language-javascript">&#x3C;script lang="ts">
+	import '../app.css';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
+&#x3C;/script>
+
+{@render children?.()}
+</code></pre>
+<h3>Component typing changes</h3>
+<p>Most of the codebase saw change related to the new children component which is typed as Snippet from 'svelte' package.</p>
+<p>No other significant changes present, but be advised that there are further changes detailed in the release note <a href="https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes">https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes</a></p>
+<h3>let -> $state</h3>
+<p>Covered here last because I haven't implemented any states within this template.</p>
+<p>I can see this being an important change to keep in mind in production apps since the let definition is common.</p>
+<p>This essentially brings the biggest headaches, since prior to v5 developers built up this pattern of separation between prop definitions and state. This separation is still present in v5 but the change of let -> $props will confuse readers who will see more let -> $state.</p>
+<p>I actually agree with the pattern separation, but getting used to it will take some time, mostly because the old definitions were worse.</p>
+<p>v4</p>
+<pre><code class="language-javascript">&#x3C;script>
+	let count = 0;
+&#x3C;/script>
+
+</code></pre>
+<p>v5</p>
+<pre><code class="language-javascript">&#x3C;script>
+	let count = $state(0);
+&#x3C;/script>
+</code></pre>
+<h2>Summary</h2>
+<p>Big update, one of the biggest yet! Largely positive, but with significant gotchas and implementation details.</p>
+<p>Overall a move in the right direction, but shifting into the new paradigms will cause some headscratching.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Flutter - Development Environment Setup</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.12.flutter-dev-env-setup</link>
+            <pubDate>Wed, 12 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Flutter - Development Environment Setup</h1>
+<p>Initial dive into Flutter for Desktop Linux development.</p>
+<p>Starting from scratch, with the below guide, and although I have read about Flutter previously I've not build anything until now. I do have some experience with Android development, but I will actively try to avoid using that experience, probably forgot it anyway.</p>
+<p>Going through the install guide found <a href="https://docs.flutter.dev/get-started/install/linux/desktop">here</a></p>
+<h2>Flutter install</h2>
+<h3>Hardware requirements</h3>
+<p>Support for Linux is there and automatically detected by the site. Nice landing page too, but frankly I just skipped to installation - don't need to read the marketing, since I already want to use it.</p>
+<p>Hardware requirements are high. On Linux especially, we need to expect lesser performance since we expect folks to use older software.</p>
+<p>As an ethos too, Linux enables more usage out of older software so the requirements will end us (the developers) push for hardware updates. To me, hardware updates are fine for commercial software, but for personal software it's just enough friction for someone to stop using your app.</p>
+<p>| Requirement   | Minimum   | Recommended     |
+| ------------- | --------- | --------------- |
+| CPU cores     | 4         | 8               |
+| Memory        | 8         | 16              |
+| Display res   | 1366x768  | 1920x1080       |
+| HDD           | 4GB       | 52GB            |</p>
+<p>If you were a retro enthusiast and were working on a Core 2 Duo device you're out of luck. And to add to that, 16GB RAM recommended.</p>
+<h3>Software requirements</h3>
+<p>All in all 12 environment level dependencies for developing Linux apps.</p>
+<p>As always I created a Flutter Ansible playbook to make it easier to quickly setup a new machine.</p>
+<pre><code class="language-yaml">- name: Flutter Development Setup
+  hosts: my_local
+  vars:
+    # Useful in case you want to uninstall the whole playbook later
+    #    NB: doublecheck that you don't uninstall curl, git - stuff you need
+    state: present # or 'absent'
+  tasks:
+    - name: curl - install
+      apt:
+        name: curl
+        state: '{{state}}'
+    - name: git - install
+      apt:
+        name: git
+        state: '{{state}}'
+    - name: unzip - install
+      apt:
+        name: unzip
+        state: '{{state}}'
+    - name: xz-utils - install
+      apt:
+        name: xz-utils
+        state: '{{state}}'
+    - name: zip - install
+      apt:
+        name: zip
+        state: '{{state}}'
+    - name: libglu1-mesa - install
+      apt:
+        name: libglu1-mesa
+        state: '{{state}}'
+    - name: clang - install
+      become: true
+      apt:
+        name: clang
+        state: '{{state}}'
+    - name: cmake - install
+      become: true
+      apt:
+        name: cmake
+        state: '{{state}}'
+    - name: ninja-build - install
+      become: true
+      apt:
+        name: ninja-build
+        state: '{{state}}'
+    - name: pkg-config - install
+      apt:
+        name: pkg-config
+        state: '{{state}}'
+    - name: libglu1-mesa - install
+      apt:
+        name: libglu1-mesa
+        state: '{{state}}'
+    - name: libgtk-3-dev - install
+      become: true
+      apt:
+        name: libgtk-3-dev
+        state: '{{state}}'
+    - name: liblzma-dev - install
+      become: true
+      apt:
+        name: liblzma-dev
+        state: '{{state}}'
+    - name: libstdc++-12-dev - install
+      become: true
+      apt:
+        name: libstdc++-12-dev
+        state: '{{state}}'
+
+</code></pre>
+<h3>Configure a text editor or IDE</h3>
+<p>In VS Code install Flutter extension. Recomemnded that you install VS Code version > 1.86.</p>
+<p>The correct extension is published by Dart Code.</p>
+<h3>Install the Flutter SDK</h3>
+<p>There's a manual tar download option, but in this case I will use VS Code command pallete and follow the wizard.</p>
+<h3>Create the project</h3>
+<p>From command palette create a new Application and wait until it starts.</p>
+<p>Very slow on the T480, but ultimately created a functional app.</p>
+<p>Test the installation of Flutter using the <code>flutter doctor</code> command within VS Code terminal.</p>
+<h2>Start developing apps with Flutter</h2>
+<p>Use the following guides to continue learning about development with Flutter.</p>
+<ol>
+<li>
+<p><a href="https://docs.flutter.dev/get-started/codelab/">Learn how to write first Flutter app</a></p>
+</li>
+<li>
+<p><a href="https://docs.flutter.dev/get-started/fundamentals/">Flutter fundamentals docs</a></p>
+</li>
+<li>
+<p><a href="https://docs.flutter.dev/platform-integration/linux/building">Build Linux apps with Flutter</a></p>
+</li>
+<li>
+<p>Seems to be a lengthy video tutorial that is cross platform on Desktop and Web</p>
+</li>
+<li>
+<p>Seems like a better outline, but still not clear</p>
+</li>
+</ol>
+<p>One surprising thing to notice is that the Linux development side of Flutter is using C. A positive surprise, but unexpected. I thought I'd still be dealing with Dart.</p>
+<h2>Summary</h2>
+<p>Relatively straightforward install, but the development guide itself for Linux is lacking. Lots of piecing together, but seems interesting to learn about app development using C.</p>
+<p>Will push on with this further and aim to build an RSS app for Linux.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>W3C - easy checks for accessibility</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.10.easy-checks-for-accessibility</link>
+            <pubDate>Mon, 10 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>W3C - easy checks for accessibility</h1>
+<p>Accessibility is important and has been since working at <a href="https://www.em-code.com/">Code Computer Love</a>, a design and development agency from Manchester known for top notch Design and UX research.</p>
+<p>Here is a rundown of the <a href="https://www.w3.org/WAI/test-evaluate/preliminary/">W3C - preliminary check</a> as applied to my new portfolio redesign.</p>
+<h2>Title page</h2>
+<p>Test:</p>
+<ul>
+<li>[ ] each page contains a title that is visible in the browser</li>
+</ul>
+<p>Test notes:</p>
+<ul>
+<li>Missing</li>
+</ul>
+<p>Implement:</p>
+<ul>
+<li>Create a dynamic title component and load it into each page.</li>
+<li>This will allow for a dynamic title that always includes "Alan Ionita - " for search ranking purposes</li>
+</ul>
+<pre><code class="language-javascript">// PageTitle component
+
+&#x3C;script>
+    const siteName = "Alan Ionita"
+    let props = $props();
+&#x3C;/script>
+
+&#x3C;svelte:head>
+	&#x3C;title>{siteName + " - " + props.text}&#x3C;/title>
+&#x3C;/svelte:head>
+
+</code></pre>
+<pre><code class="language-javascript">// *Page component
+import PageTitle from '...'
+
+&#x3C;PageTitle text="Each page title" />
+
+</code></pre>
+<h2>Page headings</h2>
+<p>Test:</p>
+<ul>
+<li>[ ] The page has a heading. In almost all pages there should be at least one heading.</li>
+<li>[ ] All text that looks like a heading is marked up as a heading.</li>
+<li>[ ] All text that is marked up as a heading is really a conceptual section heading.</li>
+<li>[ ] The heading hierarchy is meaningful. Ideally the page starts with an "h1" — which is usually similar to the page title — and does not skip levels; however, these are not absolute requirements.</li>
+</ul>
+<p>Test notes:</p>
+<ul>
+<li>HomePage: hierarchy is a bit odd with only "Alan Ionita," being marked up as h1; the whole section should be an h1 really</li>
+<li>HomePage: rest of the hierarchy makes sense</li>
+<li>HomePage: html structure for each section seems a bit overkill; too many nested elements</li>
+<li>BlogPage: headings are good</li>
+<li>BlogPostPage: markdown to html headings converted correctly, but needed to correct the source markdown to make sure that each post had an h1</li>
+</ul>
+<h2>Contrast ratio</h2>
+<p>Test:</p>
+<ul>
+<li>[ ] minimum contrast: a contrast ratio of at least 4.5:1 for normal-size text.</li>
+<li>[ ] provide support for high contrast</li>
+</ul>
+<p>Test notes:</p>
+<ul>
+<li>BlogPostPage: starting here, because it's the page with most content; core font is rated as AAA compliant with a contrast of 6.77;</li>
+<li>BlogPage: h1 is compliant to AAA (6.77), blog list main text is AA (3.09) and sub-text AA (3.84)</li>
+<li>HomePage: orange section is AA, rest is AAA; same scores as above</li>
+<li>Nav: not-visited links are not compliant (2.9)</li>
+</ul>
+<p>Implement:</p>
+<ul>
+<li>Find colour variant for orange to get to AAA adherence</li>
+<li>Missing support for "prefers-contrast" option, high contrast solution for users that need it. Will require some research on best colours to use to achieve a high contrast whilst still preserving the theme, as a fallback will just default to black,yellow combination</li>
+<li><code>prefers-contrast</code> further reading <a href="https://hacks.mozilla.org/2020/07/adding-prefers-contrast-to-firefox/">here</a></li>
+</ul>
+<h3>Protocol: check contrast</h3>
+<p>My preference is to use Firefox for personal development and will not cover Chrome.</p>
+<ol>
+<li>
+<p>Inspect text element</p>
+</li>
+<li>
+<p>Inspector: verify the correct html element is selected</p>
+</li>
+<li>
+<p>Inspector: in the Styles side panel find the class that provides the color css</p>
+</li>
+<li>
+<p>Inspector / Styles: click on the color round icon</p>
+</li>
+<li>
+<p>Inspector / Styles: check the contrast in the pop-up</p>
+</li>
+</ol>
+<h2>Text resize</h2>
+<p>Test:</p>
+<ul>
+<li>[ ] make sure that resizing text doesn't cause page overflows, or stop interactive elements from being accessible</li>
+</ul>
+<p>Test notes:</p>
+<ul>
+<li>Overflowing was causing the Nav to no longer be accessible, so made a change to fix that.</li>
+<li>All other elements and pages are passing.</li>
+</ul>
+<h2>Keyboard access and visual focus</h2>
+<p>Test:</p>
+<ul>
+<li>[ ] test keyboard nav and visual focus</li>
+</ul>
+<p>Test notes:</p>
+<ul>
+<li>HomePage: keyboard navigation works correctly across links, but ideally the navigation should cover all the sections too; will require a refactor to improve the page</li>
+<li>BlogPage: works as expected since the list is correctly styled as a list</li>
+<li>BlogPostPage: correctly navigates through links, but this is correct behavior here</li>
+<li>Tab all, Tab away, Tab order is fine</li>
+<li>All functionality works by keyboard, although admittedly it's a very simple site with a low number of features</li>
+<li>Dropdown list navigation and image links considerations are not applicable here</li>
+</ul>
+<p>Implement:</p>
+<ul>
+<li>Visual focus styling is a visually weak, somewhat clashing with the theme; will require a refactor</li>
+</ul>
+<h2>Forms, labels, and errors</h2>
+<p>Not applicable here</p>
+<h2>Moving, Flashing, or Blinking Content</h2>
+<p>Test notes:</p>
+<ul>
+<li>Since the site is a static site, there's no perceivable load or layout shift.</li>
+<li>The only thing of note here is the transition from <code>/</code> to <code>/blog</code>, where <code>/</code> is a dark colour and <code>/blog</code> is a lighter colour. Here the design is such that on <code>/blog</code> there's colour degradation from top to bottom of page so the user is gradually moving from dark colours to lighter colours.</li>
+</ul>
+<h2>Multimedia (video, audio) alternatives</h2>
+<p>Not applicable</p>
+<h2>Basic structure check</h2>
+<p>Test:</p>
+<ul>
+<li>[ ] Turn off images and show the text alternatives.</li>
+<li>[ ] Turn off style sheets (CSS), which specifies how the page is displayed with layout, colors, etc.</li>
+<li>[ ] Linearize the page or the tables (depending on the toolbar).</li>
+</ul>
+<p>Test notes:</p>
+<ul>
+<li>HomePage: Images are not applicable, CSS off looks ok, already a fairly linear layout so working as expected; nav is off to right, should fix</li>
+<li>BlogPage: same nav issue, main text ok; post list is completely white and invisible, should fix- BlogPostPage: passing, same nav issue</li>
+<li>Both issues were down to poor testing, see the below script to correctly run the test</li>
+</ul>
+<h3>Protocol: Disabling CSS stylesheets</h3>
+<p>Run the following in the Developer Tools Console</p>
+<pre><code class="language-javascript">document.querySelectorAll('style, link[rel="stylesheet"]').forEach(e => e.remove());
+</code></pre>
+<h2>Summary</h2>
+<p>With the exception of the orange colour and the visual focus, we have a AAA compliant website.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Timeline apps - past, present, future</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.09.timeline-apps</link>
+            <pubDate>Sun, 09 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Timeline apps - past, present, future</h1>
+<p>Social Media is a disaster. Under the guise of connecting with friends and belonging to a community there's just one driver: profit.</p>
+<p>And in that chase for profit we have lost out on core hygiene elements that platforms should consider:</p>
+<ul>
+<li>moderation</li>
+<li>stability</li>
+<li>access</li>
+<li>user control</li>
+</ul>
+<p>The future however might not be so bleak because of the increasing popularity of "timeline apps". To understand them I'd like to set the scene for the trend and them explain the apps themselves.</p>
+<h2>Social Media advertising</h2>
+<p>Social Media advertising spend in 2024 was $164bil [*1] globally, but after digging into the data and predictions it seems to be designed by hockey stick hopefuls not real analysts.</p>
+<p>In the UK social media paid ads are classified under "Display" ads, and UK digital advertising industry body (IAB.UK) shows that in 2013, Display ads were worth 1.89 billion pounds [*2]. In 2024 the revenue [*3] from Display ads went up to 6.5 billion pounds.</p>
+<p>Nice growth you'd say? Sure, "+22% YoY" the IAB.UK quotes. The interesting thing however is how that money is split: video and non-video. Non-video is social media and other ads, which in 2024 amounted to 2.5 billion pounds.</p>
+<p>Anecdotally I remember social being up to 11% in 2013, so 0.207 billion pounds vs 2.5 billion pounds. 12x increase in 11 years. Again not bad!</p>
+<p>The driver for the ad industry is the not necessarily consistent return, they're not pension funds. The ad industry "rides the wave" and so they need to follow and the hottest trends and deploy capital accordingly. The driver is maximum return on investment, and maxROI is gained from deploying capital with a weight towards top performing segments.</p>
+<p>In 2024 that segment was not social, it was digital video. And by a long margin 2x. As an ad agent you cannot pass on that opportunity.</p>
+<p>Which leaves social advertising with a massive deficit in capital deployment: they will get at minimum 1/3 of ad spends.</p>
+<p>Social advertising is not making money where "making" is the exponential scale that most business crave for.</p>
+<h2>RSS and the past</h2>
+<p>Social media advertising is generally in decline today, mostly because of the financial view explained above and because of other smaller platform related issues.</p>
+<p>In 2013 social media ads were growing and performing well. In 2011 Google launched Google Plus+ and by 2013 the performance of Google Plus+, social advertising meant that Google decided to kill one of their most loved products, Google Reader.</p>
+<p>Google Reader was built on top of RSS, a protocol that stands for Really Simple Syndication. RSS allows a website to define what updates it has in the form of a feed. RSS Readers, like Google Reader would use these feeds to produce a custom feed for a user in a nice web interface.</p>
+<p>Google Reader was nice and was the first "timeline app".</p>
+<h2>Timeline apps today</h2>
+<p>Today the big social media platforms are in trouble. They can't make revenue and most are adopting dark patterns to force us to share more details with a platform, whilst implementing harder and harder journey for exporting data and deleting accounts. A Facebook was notoriously hard to delete in 2013-2014, which is why people moved to Twitter.</p>
+<p>Twitter, which started with a historical timeline, eventually moved to and "algorithm timeline" and pushed a lot of users and businesses to create solutions for this. <a href="https://en.wikipedia.org/wiki/TweetDeck">TweetDeck</a> was one such solutions and Twitter was relentless in making API changes that affected consumers like TweetDeck. Eventually Twitter bought TweetDeck and is not part of X Pro.</p>
+<p>There are endless of other stories regarding social media companies acting like cartels and protecting the data within their platform and making it as painful as possible for anyone to development improved UIs that accessed that data. The reason is advertising.</p>
+<p>RSS however bypasses that model and most websites on the web have one. RSS feeds are particularly popular on the IndieWeb, but also podcasts have RSS feeds, Youtube channels have RSS, even the new generation of federate social media has them Mastodon and it's famous cousin Bluesky.</p>
+<p>Timeline apps use RSS to pull all this information into one UI.</p>
+<p><a href="https://apps.apple.com/gb/app/feeeed-rss-reader-and-more/id1600187490">feeeed</a> for example is a fantastic app for a custom timeline. In addition to news, you can add any website or newsletter and you can even connect to Health  track your walking goals in the app. Happy to report that no ads are present yet.</p>
+<p><a href="https://apps.apple.com/us/app/tapestry-by-iconfactory/id6448078074">Tapestry</a> is another good timeline app, but they've launched with ads baked in.</p>
+<p>Whilst there are more examples out there, these above are the "latest" incarnation of the timeline app. Sure we still have tradition RSS readers which function similarly, but the slick UI and extra focus on the timeline is not there.</p>
+<p>Timeline apps will more of a focus in the future, with more people choosing them other a locked in platform. Facebook for example is already moving towards an open platform with Threads and Instagram, but it remains to be seen if they will continue or lock everything down.</p>
+<p>Should we have ads in timeline apps? In my honest opinion, no. The user space is more private and more self-aware, so ads should fade to subscriptions or donations.</p>
+<p>We must learn from the lessons of the 2013-2024 social web and keep our data. Media empires should not be built on top our data, but rather small apps should be supported because they give us value with being absolutely extractive.</p>
+<p>Give timeline apps a try and better still, go and make one!</p>
+<p>References:</p>
+<ul>
+<li>
+<ol>
+<li>Social media advertising spend in 2024, <a href="https://www.statista.com/statistics/271406/advertising-revenue-of-social-networks-worldwide/">link</a></li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>IAB.UK 2013 advertising budgets, <a href="https://www.iabuk.com/sites/default/files/research-docs/IAB_PWC_AdspendOnePager_2013.pdf">link</a></li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>IAB.UK 2024 advertising budgets, <a href="https://www.iabuk.com/sites/default/files/public_files/UK%20Digital%20Adspend%20H1%202024%20Update.pdf">link</a></li>
+</ol>
+</li>
+</ul>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Thinkpad T480 screen flicker fix</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.07.t480-screen-flicker</link>
+            <pubDate>Fri, 07 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Thinkpad T480 screen fix on X11</h1>
+<p>It's unclear to me why, but Linux Mint 22.1 on the T480 causes screen flickering.</p>
+<p>To experience the issue check the login screen once the laptop has come out of suspend, or open a dock applet and pause on a dropdown for a long time.</p>
+<p>Issue seems to be related to transparency and screen sleep.</p>
+<h2>How to Fix</h2>
+<ol>
+<li>Check that <code>mesa-utils</code> package is installed</li>
+</ol>
+<pre><code class="language-shell">apt list | grep "mesa-utils"
+</code></pre>
+<p>Install the package if not present</p>
+<ol start="2">
+<li>Add this file to X11 config</li>
+</ol>
+<p>Open the X11 config directory</p>
+<pre><code class="language-shell">cd /etc/X11/xorg.conf.d
+</code></pre>
+<p>Create the <code>20-intel.conf</code> within the above directory, with the following contents</p>
+<pre><code class="language-shell">Section "Device"
+ Identifier "Intel Graphics"
+ Driver "Intel"
+ Option "AccelMethod" "sna"
+ Option "TearFree" "true"
+EndSection
+</code></pre>
+<ol start="3">
+<li>Restart the computer</li>
+</ol>
+<hr></hr>
+<p>You can also fix it by installing KDE Plasma :P /s</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>A computer for life</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.07.computer-for-life</link>
+            <pubDate>Fri, 07 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>A computer for life</h1>
+<p>It's easy to think about computers today as always present on our person, the smartphone. They're useful for many things, but addictive in equal measures.</p>
+<p>Strangely alonside this new addiction side-effect computers today have another side-effect we don't notice: price.</p>
+<p>Price is a proxy for value and if we get more value I'm all for increased price. Sadly the trend today is to get less value, less use out of a computer that somehow asks for a higher price.</p>
+<p>AI has now made this worse. As an industry AI is vastly a service business, rent what compute you need vs a DIY gig, and so it follows that computers with AI cost more.</p>
+<p>But they don't just have a higher outlay, they also have a higher recurring expense via subscriptions - a topic I might write on later.</p>
+<p>For the sake of the argument I wanted to outline the marketing reasons for computers and why they are unnecesary.</p>
+<h2>Design</h2>
+<p>Design is valuable and design is important. I'm a huge fan of nice looking and functioning objects, but neither I not Deiter Rams would disagree that good design is a synonim to expensive design.</p>
+<p>Soviet design for example is somewhat brutal, stark, bold, yet cheap and easy to mass produce.</p>
+<p>Yet today in 2025, computer designs warrant a high price tag.</p>
+<p>Why? Because... we buy it and buying gives businesses the signal that this is what we want and that they can charge more.</p>
+<h2>Repairability</h2>
+<p>We've all had computers fail and require repairs. Repairs are not chear, the computer itself was not cheap and we're constantly worried about what happens with our device once it's at a service. What happens to our data?</p>
+<p>Sadly, the newer the computer and the "better" the less repairable it is.</p>
+<p>The cause for this is tied to design:</p>
+<p>Business wants nicer design -> They posit that "nice" = "small" -> Smaller devices means less space inside for accessible mounts, more use of tape and glue, less room for device saving features like (liquid draining)</p>
+<p>But therein lies the problem, a company design is subjective. Over time it can become a universal looks for the object, but initially it's a choice we're given.
+So I ask myself why would I want a device that is harder to repair?</p>
+<h2>UX</h2>
+<p>We all remember the Apple butterfly keyboard incident from a few years back? The summary is that Apple in their chase for smaller, redesign the keyboard switches, the new design felt weird and was prone to dust damage. Yes you read that right, the if tiniest bit of dust would get under the key you're done for.</p>
+<p>Yet millions of these buterfly keyboard computers sold at a minimum price of ~800 GBP.</p>
+<p>The public will bought them even though you were getting a laptop that was not as nice to use day to day.</p>
+<p>The removal of headphone jacks and ports is another UX faux pas, leaving the public stuck with dongles and somehow prices are going up.</p>
+<h2>Software</h2>
+<p>Windows is the classic culprit for the idea of bad software that sells well. But lately we see more and more companies "skin" the os or loading up new computer with pre-packaged software and in some cases pre-packaged malware.</p>
+<p>Apple for example has a trained skill in producing new versions of Mac OS that are locked in step with the newest hardware, leaving a customer with an older device with a noticeably slower device.</p>
+<p>They incentives with software is to make more money, whether from forcing more future purchases or from data collection.</p>
+<p>Android is no exception to this with Google services being know to send user data to Google in support of their ad delivery platform.</p>
+<h2>Today's computer</h2>
+<p>In other words today's computer is not a computer for life. We've grown acustomed to believing and buying into the idea that a computer is both a high-price item and an item that you should replace at regular intervals.</p>
+<p>A computer is not a stable platform for work, but a source of change because big manufacturers want to experiment, cut manufacturing costs, increase ad revenue.
+But to all this negativity there's a potential solution</p>
+<h2>Alternatives</h2>
+<p>Before I describe the alternatives I need to start with the software. Software is what allows us that stable platform, that universal common denominator across hardware. Although not perfect by any means Linux is the best option we have right now for a stable software base.</p>
+<p>Core features like browing the web, word processing, playing games is available across all flavours of Linux and the experience of using 1 flavour vs the other is relatively unchanged.</p>
+<p>On the mobile software side iOS is locked and Android is not, so the option is clear. But stock Android comes with Google services so we only have 2 options: either a De-Googled Android, or mobile Linux.</p>
+<p>Mobile Linux is sadly still being developed on and is only stable on a handful of phones. You also loose out on any Android apps and have to depend on the browser for banking etc.</p>
+<p>Of the De-Googled Android flavours, <a href="https://grapheneos.org/">GrapheneOS</a> is the best example of a simple os that mimicks Android whilst kicking out Google services and still maintaining security.</p>
+<hr></hr>
+<p>With the software in place we can now consider some hardware.</p>
+<p>To a degree the software will have an impact on the hardware. Linux is largely supported, but newer hardware is more likely to cause issues. Equally really old hardware can become unsupported by the kernels.</p>
+<p>Thinkpads are by far the best computer for the money.</p>
+<p>Thinkpads are cheap on the used market. They feature good hardware that is usually upgradeable. They feature easy to repair designs and detailed manuals on how to replace and troubleshoot any issue.</p>
+<p>Thinkpads also offer the best keyboards on the market. Keyboards that have largely remained unchanged and constant.</p>
+<p>You're computer will always be a stable unchanging tool with a Thinkpad.</p>
+<p>As for phones, the Pixel phones are the best option because most of security updates are made in the open and GrapheOS can use these to maintain the security of their OS.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Code syntax tester</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2024.07.27.code-highlight</link>
+            <pubDate>Sat, 27 Jul 2024 00:00:00 +0100</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Testing code syntax highlighting</h1>
+<p>Currently only supports: Javascript, Yaml, Shell</p>
+<p>Needs expanding for every new language.</p>
+<h2>Javascript</h2>
+<pre><code class="language-javascript">const x = 10
+const y = 5
+
+function add(a, b) {
+    return a + b
+}
+
+const result = add(x, y);
+</code></pre>
+<h2>Yml</h2>
+<pre><code class="language-yml">name: E2E Cypress testing
+on:
+  push:
+    branches:
+      - main
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+          env: host=https://alanionita.github.io
+          
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: fails
+          path: cypress/    
+</code></pre>
+<h2>Yaml</h2>
+<pre><code class="language-yaml">name: E2E Cypress testing
+on:
+  push:
+    branches:
+      - main
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+          env: host=https://alanionita.github.io
+          
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: fails
+          path: cypress/    
+</code></pre>
+<h2>Shell</h2>
+<blockquote>
+<p>Doesn't seem to be displaying correctly but works</p>
+</blockquote>
+<pre><code class="language-shell">
+cat ./test/test-file.txt
+
+wc -l en_US.twitter.txt
+
+foo@bar:~$ whoami
+
+foo
+
+</code></pre>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Life OS</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.28.life-os</link>
+            <pubDate>Sun, 28 Mar 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Life OS</h1>
+<p>After recently listening to <a href="https://www.calnewport.com/podcast/">Cal Newport's - Deep Questions podcast</a> I decided to think more about my system for managing life goals.</p>
+<p>The system suggests the following docs:</p>
+<ul>
+<li>core plan or root plan</li>
+<li>personal values plan</li>
+<li>professional values plan</li>
+<li>maintenance plan</li>
+<li>progress plan</li>
+</ul>
+<p>This docs is my personal interpretation of that system.</p>
+<h2>Why plan?</h2>
+<p>The reality is that life is measured in years, yet lived by the day, hour, minute, second.</p>
+<p>Life expectancy is up so in my situation, if I'm lucky, I can expect a good 50 years of ... life!</p>
+<p>50 years is a looooooong time without a map of what you care about, what you want to do, where you want to go, and who you want to be.</p>
+<p>To some planning might remove some of the fun from the next few years. I've recently reread the <a href="https://waitbutwhy.com/2015/12/the-tail-end.html">The tail end</a> article from WaitButWhy to make me realise that I plan not to decide what I want to happen, but to make sure that everything I want does happen.</p>
+<p>Professionally, software development is and ever evolving field and as an engineer I need to chart the best course into the future, whilst making sure I'm still relevant now.</p>
+<h2>The ever evolving plan</h2>
+<p>I've used a few methods to carve out this plan in the past. I wanted to outline the resources and current plan I've used so far.</p>
+<p>The one method that I've abused a lot over the years was 'do more of what you like', which explain why I spent more time playing video games, that studying in high school.</p>
+<p>Should we do more of what we like or should we find areas where that selfish goal also has a an altruistic side-effect.</p>
+<p>This is where another great resource came in for me, <a href="https://80000hours.org">80000hours.org</a>. The site highlights the greatest issues facing humanity and informs the reader how to pursue the biggest impact jobs working on those issues.</p>
+<p>I use the guidance from 80000h as a moral compass that allows me to gauge if I'm making an impact.</p>
+<p>For planning I tend to run yearly goals, determined annually in June. I use the <a href="https://yearcompass.com">YearCompass </a> framework to help me reflect on the past year and chart the next.</p>
+<p>For day to day operation I use a Bullet Journal system. Every month I'll use my yearly goals to set monthly aims, and then I daily / weekly aim to spend time towards those goals.</p>
+<p>I usually timebox things in the calendar in order to make sure I do them or spend the time.</p>
+<p>Another important concept to mention are distractions. My aim is to constantly limit distraction to allow more time for working on the plan.</p>
+<h2>Root plan</h2>
+<p>A document where core systems and strategies to organise life are stored. Instead of storing everything in your head - write it down, flesh it out.</p>
+<p>This plan must be generic and should not capture the specific rules.</p>
+<p>The <code>root</code> will point to other more specific documents:</p>
+<h2>Value plan</h2>
+<p>An outline of roles responsibilities and the core values I need to display in those.</p>
+<h2>Personal plan</h2>
+<p>A document on all personal goals and processes.</p>
+<h2>Professional plan</h2>
+<p>A document on all professional goals and processes.</p>
+<h2>Maintenance procedure</h2>
+<p>How do I maintain these systems - when, where, what.</p>
+<p>A good idea here is to think about how data enters the system and how it leaves it.</p>
+<h2>Operational plan</h2>
+<p>How do things get done and what are some of the habits and process you use to achieve the things on the plan.</p>
+<h2>Metrics</h2>
+<p>What are you going to track in order to measure the system.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Raspberry Pi OS Study</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.21.pi-os-study</link>
+            <pubDate>Sun, 21 Mar 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Raspberry Pi OS Study</h1>
+<p>I use the Raspberry Pi a lot, they are great little devices for prototyping ideas and building projects.</p>
+<p>Choosing an OS has been tricky because there are so many options out there.</p>
+<p>My needs are usually simple:</p>
+<ul>
+<li>[ ] easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>[ ] reliable OS</li>
+<li>[ ] flexible OS</li>
+<li>[ ] transferable skills</li>
+<li>[ ] ROS support*</li>
+<li>[ ] small footprint</li>
+<li>[ ] solid support</li>
+</ul>
+<p>*This is a new requirement that has limited my choices a lot.</p>
+<h2>What is my process</h2>
+<p>I've recently started using <a href="https://www.ansible.com">Ansible</a> to run a set of commands on the Pi that can harden the OS and improve the security.</p>
+<p>In general I just care about an OS that can take minutes to flash and is easy to SSH into via Ansible once connected to my network.</p>
+<p>I'm planning to write a post on Ansible soon.</p>
+<h2>What is the hardware?</h2>
+<p>I prefer the standard RPi unit usually the 4GB or 8GB version.</p>
+<p>Although I've tried the Pi Zero, I've not used it for projects recently. I would use it if I need the form factor, but using it will probably make me change the OS.</p>
+<h2>What was I using?</h2>
+<p><a href="https://blog.hypriot.com">HypriotOS</a>, which is an OS that comes with Docker pre-installed.</p>
+<p>Hypriot was also really easy to configure before mounting - it came with a clear documentation and the config files were easy to get to.</p>
+<p>Unfortunately the HypriotOS community and support is small at the minute and I've encountered a few issues with the OS.</p>
+<p>I wanted to move away from it before support became a problem.</p>
+<ul>
+<li>✅ easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>🟡 reliable OS</li>
+<li>✅ flexible OS</li>
+<li>🟡 transferable skills</li>
+<li>❌ ROS support*</li>
+<li>✅ small footprint</li>
+<li>❌ solid support</li>
+</ul>
+<h2>What's wrong with Raspberry Pi OS?</h2>
+<p>Raspberry Pi OS (Raspian) was harder to set up in headless mode a few months ago. In my case I remember there being a lot of steps in order to set everything up.</p>
+<p>I should test this again, but since my main requirement is not met (ROS support) I might not use it anyway.</p>
+<ul>
+<li>🟡 easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>✅ reliable OS</li>
+<li>✅ flexible OS</li>
+<li>🟡 transferable skills</li>
+<li>❌ ROS support*</li>
+<li>✅ small footprint</li>
+<li>✅ solid support</li>
+</ul>
+<h2>OS Study</h2>
+<h3><a href="https://ubuntu.com/download">Ubuntu Server LTS 20.04</a></h3>
+<p>Best option with a small footprint (until you update/upgrade). Support with ROS and Ubuntu itself is a popular OS in general which makes troubleshooting easy.</p>
+<p>LTS stands for Long Term Support so I can reliably reuse this image for projects for the next few years.</p>
+<p>This also means that it will be a popular option for enterprise clients too so all the skills learned are transferable, which I can't say the same about Raspberry Pi OS or HypriotOS.</p>
+<p>The setup is simple because Ubuntu Server is included in the <a href="https://www.raspberrypi.org/software/">Raspberry Pi Imager</a>.</p>
+<ul>
+<li>✅ easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>✅ reliable OS</li>
+<li>✅ flexible OS</li>
+<li>✅ transferable skills</li>
+<li>✅ ROS support*</li>
+<li>🟡 small footprint</li>
+<li>✅ solid support</li>
+</ul>
+<p>Not the smallest OS on the list, especially after updating and upgrading.</p>
+<p>Result: best pick for now</p>
+<h3><a href="https://alpinelinux.org/about/">Alpine Linux</a></h3>
+<p>Huge fan of Alpine from Docker and I really wanted to make this work as my server driver.</p>
+<p>Again the ROS requirement is a 'no-go', but for other project this could be an ideal OS.</p>
+<p>The size and performance is awesome!</p>
+<p>Skills learned through using the OS are not as transferable as Ubuntu, but you can reuse those skill if you ever deal with Docker instance - which is still a plus.</p>
+<p>The setup on the site is a lot more complex that what I came up with</p>
+<pre><code class="language-shell">// 1. Download the tar from the Alpine site
+
+// 2. Create a bootable SD card using PI imager
+
+// 3. Extract the tarball contents to the SD card.
+
+tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
+
+// 4. Pop the SD card into the Pi 
+</code></pre>
+<p>Annoyingly I need a desktop and peripherals in order to complete the setup.</p>
+<ul>
+<li>❌ easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>✅ reliable OS</li>
+<li>✅ flexible OS</li>
+<li>✅ transferable skills</li>
+<li>❌ ROS support*</li>
+<li>✅ small footprint</li>
+<li>✅ solid support</li>
+</ul>
+<p>Result: cannot complete the setup in headless mode</p>
+<h2><a href="https://ubuntu.com/core">Ubuntu Core</a></h2>
+<p>An OS specifically designed for embedded solutions.</p>
+<p>Core has a lot of interesting features for embedded: OTA updates, secure boot, full disk encryption, recovery mode, and Snaps.</p>
+<p>Everything apart from Snaps is awesome and as an ex-embedded developer I was drooling when I read about it.</p>
+<p><a href="https://ubuntu.com/core/docs/snaps-in-ubuntu-core">Snaps</a> are 🟡 for me. A lot of people are strongly against it, but I'm not one of them.</p>
+<p>I can live with the format, but it does introduce a new step in the workflow: compiling your app to a Snap.</p>
+<p>After a bit of reading I discovered the official Canonical advice re: Ubuntu Core:</p>
+<blockquote>
+<p>To be used as part of a set and forget system. For deployment please use Ubuntu Server</p>
+</blockquote>
+<p>That makes sense now and it's a serious contender for finished projects.</p>
+<p>The setup is simple because Ubuntu Core is included in the <a href="https://www.raspberrypi.org/software/">Raspberry Pi Imager</a>.</p>
+<p>Annoyingly though Ubuntu Core requires a desktop and peripherals in order to complete the setup.</p>
+<ul>
+<li>❌ easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>✅ reliable OS</li>
+<li>❌ flexible OS</li>
+<li>❌ transferable skills</li>
+<li>❌ ROS support*</li>
+<li>✅ small footprint</li>
+<li>✅ solid support</li>
+</ul>
+<p>I marked it down for flexibility because Ubuntu Core is not meant for development. Also marked it down for transferable skills since it seems like there's a lot of specific Ubuntu Core knowledge needed to make this work and those skills are not all transferable.</p>
+<p>Result: cannot complete the setup in headless mode</p>
+<h2><a href="https://github.com/skiffos/skiffos">SkiffOS</a></h2>
+<p>Skiff is a lightweight OS and is very similar to HypriotOS.</p>
+<p>It's built around Docker using Buildroot to produce a minimal 'single-file' host OS. 🤯</p>
+<p>Another benefit here was the fact that I can configure the build before compilation so I can probably reduce the amount of work done on the machine to complete the setup.</p>
+<p>The config files use <code>yaml</code> which is a super transferable skill in Docker and Cloud environments.</p>
+<ul>
+<li>🏁 easy headless setup (no monitor, keyboard, or mouse needed)</li>
+<li>🏁 reliable OS</li>
+<li>✅ flexible OS</li>
+<li>✅ transferable skills</li>
+<li>❌ ROS support*</li>
+<li>✅ small footprint</li>
+<li>🏁 solid support</li>
+</ul>
+<p>The setup seems easy enough but I had issues with the gcc and make so I couldn't actually try this out properly.</p>
+<p>The fact that it comes with Docker pre-installed makes this a really 🌶 option for flexibility. It's also got a really small footprint depending on which layers you need and how many.</p>
+<p>🏁 means that although I started testing, I couldn't make my mind just yet. SkiffOS is a new project so I won't be able to tell how they are with future support just yet.</p>
+<p>Result: needs more testing in order to get a clear view</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>What Next</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.19.what-next</link>
+            <pubDate>Fri, 19 Mar 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>What next?</h1>
+<p>In my <a href="https://www.amazon.co.uk/Pragmatic-Programmer-Andrew-Hunt/dp/020161622X">Pragmatic Programmer</a> the authors talk about your 'learning portfolio'. The assumption being that you should treat your learning like an investment portfolio and invest your time in topics depending on risk.</p>
+<p>2021 is my 4th year as a developer and I've been processing my learning portfolio a lot lately.</p>
+<h2>Summary</h2>
+<p>My current learning portfolio is made up from high risk areas (embedded, machine learning, robotics), medium risk (web security), and low risk (web frameworks, web native, AWS cloud).</p>
+<h2>What is my risk?</h2>
+<p>Risk tolerance is unique to everyone. For me I'm in a high risk stage at the minute.</p>
+<p>This means that I can afford to explore a lot and not really care about consequences to my career.</p>
+<p>I actually don't see programming as a career, it more of a profession - it something I myself doing for the rest of my life. The fact that I get paid for it is a really nice bonus.</p>
+<pre><code class="language-shell">risk = time_investment / personal_gain;
+</code></pre>
+<p>Risk has nothing to do with fun and it's mainly related to return - can I make a living or make money from it.</p>
+<p>Choosing a high risk learning area is unlikely to payoff now, but it might return a bigger reward in the future as technology progresses.</p>
+<p>High risk areas are more likely to be harder topics or use knowledge that you don't necessarily have right now.</p>
+<h2>My Portfolio</h2>
+<h3>Modern JS frameworks (low risk)</h3>
+<p>React is a preference for me and I've made a salary from React since the beginning.</p>
+<p>I know enough of React now that it doesn't take a lot of time for me to keep up with releases, new patterns, and features.</p>
+<p>The time I've spent in the ecosystem has allowed to encounter problems with React performance, and tooling.</p>
+<p>Right now my favourite way to write React is within NextJS, library that still uses React for the design whilst adding some nice features for Server-Side Rendered apps and static file generation. NextJS is flexible enough to allow a lot of config, but they provide conventions around common sticking points with React.</p>
+<p>Following that pattern I'm also really excited by NestJS, which looks to do the same for Node / Express apis.</p>
+<h4>Notable mentions</h4>
+<p>I care about the JAMstack because I like the performance benefits. I keep an eye on new releases and I read tutorials for Eleventy and RedwoodJS. Same goes for JAM platforms: Zeit, Netlify.</p>
+<p>I also like VueJS as a framework and I admire their performance focus and the fact that it's a community-driven project. I'm not interested in moving to VueJS just yet, so my interest is shallow - reading and tutorials.</p>
+<p>I found React to be 'good enough' from a performance perspective (only relative to European customer bases), but as I'm looking into embedded websites I'm starting to research lighter weight options. Preact is a clear option here since there's little rework required. Also considering and testing Svelte, but it comes with a bit of a refactor from React.</p>
+<h3>Web Native and DIY (low risk)</h3>
+<p>This is a preference and an area of learning.</p>
+<p>My preference is to DIY something over using a module - when I use a module it really has to be a flywheel.</p>
+<p>When it comes to frontends, I tend to lean towards building everything from scratch. My experience with accessibility has force me down this path and I find it more flexible than reusing components from a library and trying to edit them.</p>
+<p>This also means that I need to keep tabs on browser API releases, Javascript language releases, CSS releases and so on.</p>
+<h3>AWS Cloud (low risk)</h3>
+<p>Fullstack development requires knowledge on how to build architectures. My preference here is AWS and I'm currently working through certifications on AWS.</p>
+<p>This actually covers a lot of other topics: databases, AI services, hosting services, server management security and so much more. I categorise all of that together because it's easier to track.</p>
+<h3>Embedded Development (high risk)</h3>
+<p>Learning more about FPGA and micro-controller development. Currently learning about building drivers for sensors, algorithms for measuring uncertainty, and building multi sensor systems.</p>
+<h3>Machine Learning (high risk)</h3>
+<p>Having already spent a few years working with machine learning algorithms, it's still something I'm fascinated about.</p>
+<p>It took a while to realise what I enjoy within the machines learning area and right now I'm excited about planetary observation using AI.</p>
+<p>A recent example of this was using satellite imagery to detect economic well-being in rural India.</p>
+<p>Object detection is my main passion here, but also interested in autonomous vehicles.</p>
+<h3>Robotics (high risk)</h3>
+<p>Embedded development and machine learning folds into robotics.</p>
+<p>The main reason why I'm interested in robotics is to do with robotics aids or using robots to speed up a traditionally human based workflow.</p>
+<p>One of the earliest robotics projects I planned was a farming drone that can detect plant growth issues.</p>
+<h3>Web Security (medium risk)</h3>
+<p>During the pandemic I start getting interested in cyber-security.</p>
+<p>For my learning I'm currently learning everything about web security vulnerabilities, exploits, and tooling.</p>
+<p>The main reason for this learning areas is to apply it to bug bounties and vulnerability disclosures.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Why Teach</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.18.why-teach</link>
+            <pubDate>Thu, 18 Mar 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Why Teach</h1>
+<p>I've been asked this question a lot over the years, but never really dug into why.</p>
+<p>Whenever I've been asked about it I've just shrugged and confirmed that I just like it. And that answer works for most conversations, but really - why do I like it?</p>
+<h2>Lessons learned from teaching</h2>
+<ul>
+<li>teaching/mentoring others is hard because everyone is different - your role as a mentor is to quickly figure out the person and their learning style, and adjust your delivery</li>
+<li>through teaching you learn more - the more people you teach the more you have access to different angles of looking at a problem and if you pay attention you'll learn something from that</li>
+<li>teaching is humbling - you might not know the answer so it makes you realise how much more there is to learn</li>
+<li>mentoring / teaching is rewarding - you get to see aspiring developers grow to junior developers in real time</li>
+<li>teaching improves your memory of core basics, core basics improve your overall systems knowledge, and improved systems knowledge helps you with architecting systems and troubleshooting</li>
+<li>your communication improves through teaching because of repetition and explaining the same concepts in different ways</li>
+</ul>
+<h2>My Teaching Timeline</h2>
+<p>How long have I mentored or taught or advised on various topics?</p>
+<p>During university I had chance to do a work placement in corporate sales. Up to then, my big dream was to be a CEO and move to Japan. My role was to sell HR and legal insurance so a big part of the pitch was fact finding about the business and seeing if there could areas where my coverage packages could help.</p>
+<p>I very rarely oversold the package and was still the best in my hiring group. I cared about businesses and really wanted to learn about every single one and see where the product could actually help. A great job in hindsight for a business management student with a love of strategy.</p>
+<p>That placement changed me for the better. I realised soon after that I wanted to make a difference so I continued advising entrepreneurs on marketing strategy during my last year of uni. I did it pro-bono, because I cared about exposure and the experience.</p>
+<p>Some of these relationships turned out great and some didn't, but it was a great use of time.</p>
+<p>I stopped doing all this pro-bono consulting once I graduated from uni and got into my first job, as mixed product/project manager at a small digital agency.</p>
+<p>I managed the agencies retainer client so maintaining the client relationships was key. I achieved this by learning about their business, learning about their problem, and then figuring out what data I can find to plan out the solutions. It's unusual for a project manager to do this, which is why I talk about it as a mixed product/project role.</p>
+<p>I was mentoring the clients on tech, strategy, and marketing.</p>
+<p>I got back to my own strategy consulting a few years later whilst I was in my last season as a product manager. I started working with an incredible group of engineers developing aquaponics tech and sensors.</p>
+<p>I couldn't code then, but knew enough about tech systems to know where to start. I was advising them on marketing, funding, strategy, whilst wanting to implement AI into the system. I wish I knew then how difficult a task that would be, but it got me to work with the Raspberry Pi for the first time.</p>
+<p>My consulting was doing great: the group got selected as a contender for the Pitch@Palace event ran by a member of the Royal Family and I got to pitch the project to a room of investors and journalists.</p>
+<p>But whilst I was mentoring the engineers on marketing they would teach me how to solder, how to code, how sensors worked and soon after that project reached it's completion I started thinking that I could actually program for a living.</p>
+<p>I joined a coding bootcamp shortly after. I enjoyed the bootcamp environment so much that I jumped at the opportunity to teach a beginners class. I also applied for the instructor role, but wasn't as successful.</p>
+<p>After graduating the bootcamp I was determined to continue with the tech mentoring so when the opportunity to start a coding bootcamp for refugees came up I was the first to sign up. I was a co-organiser of that bootcamp for a year and oversaw recruitment, teaching, and wellbeing for the students in collaboration with a team of like-minded mentors.</p>
+<p>Some of the social problems facing refugees were getting to me and at that time I started to attend other mentoring groups that were casual and less frequent.</p>
+<p>I kept doing this free tech mentoring for two years and in the process I must've worked with 100+ people looking to learn how to code.</p>
+<p>Towards the end of that period I also got approached by a local university to help as a teaching instructor on their upcoming bootcamp.</p>
+<p>This lead to me becoming and instructor on a future cohort.</p>
+<h2>Conclusion</h2>
+<p>I like teaching / mentoring for selfish reasons: it makes me a better developer and it also allows me to help aspiring developers join the industry.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Serverless Advice</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.27.serverless-advice</link>
+            <pubDate>Wed, 27 Jan 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Serverless Advice</h1>
+<p>I work for an AWS Advanced Partner. All of my work is inside AWS and most of the code and services we build and use are serverless.</p>
+<p>My experience with serverless is a lengthy one, with the first time dipping my toe in the ecosystem in 2017 just as I graduated from a coding bootcamp.</p>
+<p>Since then serverless has matured a lot, but I still see and hear of developers and businesses who haven't tried it yet or don't see the point.</p>
+<p>With this post I'd hope to highlight why you should learn it, what you gain from it, and how to learn it (resources).</p>
+<h2>Why you should learn it</h2>
+<p>Serverless is popular because of the developer experience. It is so much easier to use a serverless service than a server-based deployment.</p>
+<p>All the cloud vendors have incredible support for serverless: AWS, GCP, Azure.</p>
+<p>New vendors are doing some really interesting work on serverless: Cloudflare, Netlify, Vercel.</p>
+<p>These companies are at that stage in their growth where most of the services are free or close to free.</p>
+<p>Tooling is incredible on all platforms. Even though no platform is awesome overall, each have their own gems - Azure is spending a lot of time on developer experience.</p>
+<p>Serverless is simple to write. Everything is a function so by nature developers start to write small flexible micro-services. Part of the complexity of serverless comes from the architecture part of how we orchestrate all of the services to work together, but a quick refresher in distributed systems will help you navigate that.</p>
+<p>Serverless is 'usually' cheaper that servers or virtual machines because of the on-demand nature and price per request.</p>
+<p>Serverless is heavily documented. I'll takes AWS as an example and there are guides upon guides available. Not to mention official video, code snippets, and tutorials. That's just the official stuff too!</p>
+<p>More and more companies require some knowledge. Due to the reasons above companies have adopted serverless and have either all their infrastructure as serverless solutions or run a hybrid mix of server and serverless solutions.</p>
+<h2>How to learn it</h2>
+<p>Serverless can be done through the platform consoles sure, but as soon as you start creating 2 or more resources the console becomes cumbersome, not to mention how hard it is to trace your steps.</p>
+<p>It’s worth picking an infrastructure as code framework before you start and the best templating in my opinion is Serverless Framework or Terraform (courses below). Serverless Framework is easy to get started with, but there are some services that are not covered by it.</p>
+<p>If you’re going serverless, go all in. If you have an existing architecture then port everything to serverless including DBs. It might need some refactoring, but moving slowly might not be as beneficial as you think. Event a mock fullstack sample will teach you more than gradually migrating the stack over time.</p>
+<p>DynamoDB is the most common serverless database, but there are new ones coming into the fold. DynamoDB follows a concept of ‘single-table’ design which can be kinda hard to understand at first if you're used to SQL. You can sinply use different tables for entities event thought it means you loose some benefits and performance - single table designs are optimised for performance and cost.</p>
+<p>Spend some time really digging into Lambda or Cloud Functions and how they function. Recent new features allow you to generate custom lambda containers using Docker - this really changes Lambda from a swiss-army knife to a chainsaw.</p>
+<p>Look into Lambda or Cloud Function power tuning to counteract cold start problems - <a href="https://github.com/alexcasalboni/aws-lambda-power-tuning">AWS Lambda Power Tuning Tools Github repo</a>. Some Cloud Functions will not have any cold start problems, like the Cloudflare Workers.</p>
+<p>Stick to single responsibility principle with serverless. Breaking architecture up into microservices should be always on your mind. You’ll reach a point where you need to use multiple lambda, streams (data streams) and data queues are useful for integrating micro-services and allowing for a share data flow.</p>
+<p>Consider data logging and tracing early. Use AWS CloudWatch, AWS X-Ray or a 3rd party tool. It might cost a bit more, but it will save time when debugging.</p>
+<p>Invest in a monitoring setup. You want to know when something gets hammered or gets throttled - a dashboard will do wonders to highlight this.</p>
+<p>Take a certification course even if you don’t want to officially take the exam. The courses usually cover a lot of ground. The AWS certifications have free videos on FreeCodeCamp.</p>
+<h2>Resources:</h2>
+<ul>
+<li>FooBar Serverless - loads of great tutorials <a href="https://www.youtube.com/channel/UCSLIvjWJwLRQze9Pn4cectQ">https://www.youtube.com/channel/UCSLIvjWJwLRQze9Pn4cectQ</a></li>
+<li>Complete Coding - Sam and I worked in the same company last year and he's a great instructor, he covers a lot of serverless topics on Youtube <a href="https://www.youtube.com/channel/UC8uBP0Un18DJAnWjm1CPqBg">https://www.youtube.com/channel/UC8uBP0Un18DJAnWjm1CPqBg</a></li>
+<li>Serverless Stack - the best tutorial for learning serverless, really elaborate, covers a lot of yml concepts and follows project structure best practices <a href="https://serverless-stack.com/">https://serverless-stack.com/</a></li>
+<li>AWS Lambda Terraform cookbook - using Terraform to orchestrate any example of Lambda services <a href="https://github.com/nsriram/lambda-the-terraform-way">https://github.com/nsriram/lambda-the-terraform-way</a></li>
+<li>FreeCodeCamp - AWS Associate Developer certification, covers a lot of serverless tools <a href="https://www.youtube.com/watch?v=RrKRN9zRBWs">https://www.youtube.com/watch?v=RrKRN9zRBWs</a></li>
+<li>FreeCodeCamp - AWS Solutions Architect certification - this covers less serverless specifics, more networking, servers, business practices, can teach you a lot if you are a beginner <a href="https://www.youtube.com/watch?v=Ia-UEYYR44s&#x26;t=2616s">https://www.youtube.com/watch?v=Ia-UEYYR44s&#x26;t=2616s</a></li>
+</ul>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Choose a Learning Path</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.23.learning-path</link>
+            <pubDate>Sat, 23 Jan 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Choose a Learning Path</h1>
+<p>My interests are wide-spanning and although they reside within the broad area of technology, they usually require different skills.</p>
+<p>Each interest also requires time, planning, and organisation.</p>
+<p>I've been considering recently how to best optimise my learning so that I can build up momentum. After watching a video from <a href="https://www.youtube.com/watch?v=sO1ctUNQ1k8">Devslopes</a> I realised that I'm having challenges with learning because my learning is not done towards a path, a singular goal.</p>
+<h2>Background</h2>
+<p>Like most people I hated school. It prescribed too much of what I had to learn and didn't do a great job of relating that with why I'm learning it and how it can benefit me.</p>
+<p>Most of the topics I loved were topics that had decent teachers. Those teachers were in equal parts educators and actors, they knew exactly how to spark curiosity and wonder whilst also allowing me the freedom to make my own mind on it.</p>
+<p>I was glad to finish school because finally, at university, I was pursuing something I liked. In hindsight university is where you first encounter the idea of learning for a path: you enrol in a course, you set your target on an industry and you slowly find a sub-category of work that you enjoy. This freedom meant that whilst following a business degree I could also pursue learning Japanese, sociology, service design, and advertising.</p>
+<p>In university I started joining different clubs and branching out my interests. This helped me avoid boredom, fight off the loneliness of being a foreign student, introduced me to new people, and helped learn some valuable life skills.</p>
+<p>It did have a negative impact: I started to identify myself as a polymath.</p>
+<h2>The challenge</h2>
+<p>A polymath or a person with multiple interests believe that they can be good at a few things. They are 'Jack of all trades'.</p>
+<p>I read once that a huge chunk of learners never become experts in a field because they become too addicted to being a beginner. As soon as they come close to mastery, they either start misjudge their experience or find new topics to learn.</p>
+<p>The main issue I have is that having multiple interests, although exciting, leaves me with too much planning. If I were to focus on electronics, I could focus on this until I reach mastery.</p>
+<p>Ultimately it comes down to choices and the more choices you have the higher the cost of making decision.</p>
+<h2>Inspiration</h2>
+<p><a href="https://www.youtube.com/watch?v=sO1ctUNQ1k8">Devslopes</a> was tackling the question 'Should I learn Python in 2021' and the conclusion was 'No' because learning Python isn't part of a path that can get a beginner into the industry.</p>
+<h2>Tools and process</h2>
+<p>Because of the multiple interests I've already developed some systems to manage my interests.</p>
+<p>The most useful tool for validating new skills has been the 'learning radar' inspired by the <a href="https://www.thoughtworks.com/radar">Thoughworks Tech Radar</a>.</p>
+<p>Every year I decide what skills, tech, tools, practices, languages &#x26; frameworks I want to hold, assess, trial, adopt.</p>
+<p>For each entry in the radar I plan quarterly goals, and from there I set a mastery target. Eg. By Q1 2021 I want to get an AWS certification.</p>
+<p>The quarterly goals then get slip to weekly time slots. I time-box a lot and I find it really useful when learning.</p>
+<h2>Assessing the process</h2>
+<p>The biggest issue with the process is that my 'learning radar' is huge, which has a knock-on effect on the amount of time I can allocate to each entry.</p>
+<p>This mean that it takes me longer to reach mastery for each entry.</p>
+<p>Some entries, like calculus require vastly more energy than something like web development because of the ratio of skill/complexity for that entry. I'm a lot more experienced at web development so it's easier to complete goals for that entry.</p>
+<h2>Refactoring the process</h2>
+<p>Started by zooming out from the 'learning radar' and considering the 'paths' of each entry.</p>
+<ul>
+<li>
+<p>'Learning Python' aligns with 'Machine Learning Engineer' and 'Web Security Engineer' and 'Automation Engineer (Network or DevOps)' paths.</p>
+</li>
+<li>
+<p>'Learning Rust' aligns with 'Embedded Engineer' and 'Robotics Engineer' paths.</p>
+</li>
+<li>
+<p>'Learning Calculus' aligns with 'Machine Learning Engineer' and 'Robotics Engineer' paths.</p>
+</li>
+</ul>
+<p>After mapping each entry to a path patterns start to develop.</p>
+<p>I realise that some entries are shared by multiple paths, so I settle on the rule of only adding something new to the 'learning radar' if it aligns to 2 or more paths.</p>
+<p>As hard as it is I decide to drop all other entries that don't match the above rule.</p>
+<p>A small sample of learning entries I dropped:</p>
+<ul>
+<li>WebGL</li>
+<li>Vue</li>
+<li>Electron</li>
+<li>Flask</li>
+<li>Swift</li>
+<li>Kotlin</li>
+<li>Flutter</li>
+</ul>
+<h2>What paths am I following</h2>
+<ul>
+<li>Software Engineer with focus on Web and Cloud</li>
+<li>Machine Learning Engineer with focus on economic models and satellite imagery</li>
+<li>SysOps Engineer with a focus DevOps and Networking</li>
+<li>Security Engineer with a focus on Web Security</li>
+<li>Embedded Engineer with a focus on human machine interfaces and sensors</li>
+<li>Robotics Engineer with a focus on autonomous systems for land / air vehicles and soft robots</li>
+</ul>
+<h2>Remaining work</h2>
+<p>The paths themselves also need some prioritisation based on success rates. For example there's not as many 'Machine Learning Engineer' roles in my area as 'Software Engineer' roles.</p>
+<p>I also need to factor in the difficulty of a particular field and how far do I want to get down that path.</p>
+<p>There seem to be a lot of paths so there's more work to do here to whittle these down.</p>
+<h2>Summary</h2>
+<p>Don't learn anything that doesn't align to a path. I might feel nice to play around with an obscure knowledge but your time is limited.</p>
+<p>Settling on a path / paths makes it easier to choose what you should learn next.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Stack Overflow Contributions</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.20.so-contributions</link>
+            <pubDate>Wed, 20 Jan 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Stack Overflow Contributions</h1>
+<p>Stack Overflow is a developers friend, but too many developers consume its content without adding to it.</p>
+<p>Here is the story of what drove me to change that habit, what I'm doing now, and what results I've seen from this effort.</p>
+<h2>Background</h2>
+<p>I started contributing to Stack Overflow in 2018. At the time I was in my first proper development job I was the only official web developer and I had to build a lot complicated apps.</p>
+<p>Stack Overflow was my oasis when I would get stuck. I also never posted questions, I was scared of looking silly, I was worried of the responses I might get, so I just consumed.</p>
+<p>A few years later I started doing a small amount of open source maintaining and it massively expanded both my knowledge and self-awareness.</p>
+<p>From open source I also learned how maintainers get paid nothing or poorly, even when their software is used by big businesses.</p>
+<p>Open source made reassess my approach with Stack Overflow and I wanted to start contributing again.</p>
+<p>To my surprise when I returned to Stack Overflow and signed in with an old account I realised that some of the questions from the start of my development journey were receiving thousands of views.</p>
+<p>My early Electron questions were collectively getting 10,000 views!</p>
+<h2>Epiphany</h2>
+<p>I didn't want to share my questions with the Stack Overflow because I thought they were basic. My Electron posts were proof that actually I was an early adopter and as others were coming over to Electron they were encountering similar problems.</p>
+<p>I was validating my ideas instead of allowing the community to choose.</p>
+<h2>Analysis</h2>
+<p>After the penny dropped I renamed by Stack Overflow account to match my name. I wanted to act as another element of my digital persona.</p>
+<p>Now I started analysing my Stack Overflow posts and uncovered some trends:</p>
+<ul>
+<li>most of my posts were targeted at beginners</li>
+<li>most of the posts were on new tech with growing market shares</li>
+<li>some of my posts covered obscure behavior from common tasks</li>
+<li>my best answers were long, simple to follow, and shared example code snippets</li>
+<li>most of my questions had a lot of comments</li>
+</ul>
+<h2>Process</h2>
+<p>From the analysis there's a clear process developing.</p>
+<h3>Niche</h3>
+<p>Having a niche on Stack Overflow is really important. The community mimics the tech landscape so there is a lot of topics to contribute to.</p>
+<p>Each topic comes with it's own caveats too. For example, the <code>javascript</code> topic is difficult to support since there are many followers and questions get answers instantly. This makes it unlikely to provide an answer that gets voted or accepted as an answer.</p>
+<p>On the other hand new technologies are barren, partly because the Venn diagram of new adopters and Stack Overflow posters is really small.</p>
+<p>It's in new technologies that you have a better chance at receiving votes and getting answers accepted.</p>
+<h3>Posts content and quality</h3>
+<p>Stack Overflow allows you to answer your own question and I've learned early on that this system can help with my problem solving: I would find a problem, post it on Stack Overflow, and keep working on the problem. Some times I would get an answer and other times I would uncover the solution myself.</p>
+<p>I found this pattern to be similar to rubber-ducking aka talking to yourself expect instead of talking to myself I'd be talking to the internet.</p>
+<p>Questions on Stack Overflow have to be specific. This in itself helped my problem solving because I would usually find a solution during the question submition screen from Stack Overflow.</p>
+<p>Poorly written questions get negative feedback from Stack Overflow. This can be to do with the question framing, lack of context, or a lack of difficulty. If you ask a stupid question you will know about it!</p>
+<p>I realised that 'performant' questions usually are procedural: if I do X, I get Y, but I expect Z. Code samples, short copy, and useful headings make it more likely for a question to be answered or interacted with in a positive way.</p>
+<p>Answers follow similar patterns: good formatting, clear headlines, and sample code. In addition to this, answers benefit from multiple scenario handling: if you want Z do this, if you use Y do this.</p>
+<p>Bigger answers are RARE on Stack Overflow because the community values brevity and chases the accepted answer metric. When you write long-form answers you essentially give more context and cover more scenarios, so overall your performance is better.</p>
+<p>Do notice however that this only works with niche threads, since that is where knowledge is missing. To someone learning a new technology a lengthy, in-depth explanation is just what they require.</p>
+<h3>Writing style</h3>
+<p>Stack Overflow has a lot of resources on <a href="https://stackoverflow.com/help/how-to-answer">how to write a good answer</a> and it is crucial guidance to follow.</p>
+<p>It helped me learn how to write with a neutral tone where no one is offended by the answer and the logic of the answers is enough to avoid personal preferences or fanboy behaviour.</p>
+<h3>Post frequency and lifecycle</h3>
+<p>Finding a fresh pool of new questions without answers and crafting thoughtful answers takes some time so I set myself the goal to post up to 5 answers per week.</p>
+<p>Both questions and answers are actually evergreen and I decided early on that there are no benefits to answering early. I wanted to produce quality content that over time would be more valuable.</p>
+<h2>Results</h2>
+<p>I ran the above process in August 2020 and kept up with it for two weeks.</p>
+<p>At the time I was reaching 22,000 people through my questions and answers.</p>
+<p>I focused mainly on the NextJS topic since it was a technology I knew and liked. The community on Stack Overflow was also lackluster even though every day there would be 10 new questions.</p>
+<p>I decided to check into my account again this month - January 2021.</p>
+<p>I have now reached 106,000 people!</p>
+<p>For January 2021 I ranked in the top 14% percentile, with a rank of #28778.</p>
+<p>I also gained +67800 change points - which outlines growth and an increase in ranking. This puts me in a group on only 5 other users.</p>
+<h2>Closing remarks</h2>
+<p>I'm astonished of what can be achieved with such a small amount of effort.</p>
+<p>I can't believe that my content has reached 100k people and the stream of positive comments and upvotes is heart warming.</p>
+<p>I wanted to expand my contribution to the platform I feel like I have achieved that goal. Little did I know that I would also improve how I write technical instructions, how to deal with online negativity, and how to problem solve.</p>
+<p>I also received a book offer request through Stack Overflow.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>The MVP fallacy</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.17.mvp-fallacy</link>
+            <pubDate>Sun, 17 Jan 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>The MVP fallacy</h1>
+<p>Inspired by this post <a href="https://danluu.com/sounds-easy/">Sounds Easy by Dan Luu</a></p>
+<blockquote>
+<p>Businesses that actually care about turning a profit will spend a lot of time (hence, a lot of engineers) working on optimizing systems, even if an MVP for the system could have been built in a weekend.</p>
+</blockquote>
+<p>Far too often companies and especially startups prioritise speed over careful engineering. 'Proof of concepts' (POCs) and 'Minimum Viable Products' (MVPs) often become the products without the necessary work needed to make them client-ready.</p>
+<p>As an R&#x26;D developer, I've seen it too often and there is no real solution to it apart from a frank discussion with those in charge.</p>
+<p>MVPs allow us to prove a point, solve a problem, and then get the funding for it. That feature should not be considered 'done' until we've received the tender and redesigned the solution.</p>
+<p>When it comes to R&#x26;D project I like to think of the build through the lens of <a href="https://martin.kleppmann.com/">Martin Kleppmann's </a> maintainbility principles: Evolvability, Simplicity, and Operability.</p>
+<h2>Can evolve</h2>
+<p>The ability of a project to be easily updated or features can easily be added. The most important build goal for R&#x26;D projects and often the one that gets neglected.</p>
+<p>But should we note prioritise speed at all cost?</p>
+<p>We can, but the cost of that is exponential - usually a 'act first, think later' MVP end up being rewritten. Yes it takes time to plan a solid foundation for an MVP, but the cost of that is too often discounted as wasteful. In reality a bit of planning negates a rewrite.</p>
+<h2>Simplicity</h2>
+<p>Keeping a project lean is actually different depending on who you ask.</p>
+<p>Firstly it's important to simplify the ask from a product perspective. As developers we must realise what a user will value and incite dialogue with the product teams. A simple product is not always a simple build, but it reduces some of the 'purpose' questions that we get during a difficult build.</p>
+<p>Secondly the source-code must be simple and to simplify the source-code we must abstract, organise, and make use of modules where possible.</p>
+<p>MVPs are vehicles for change, they spark change or progress. Usually they trigger new features and improvements, and most of time these changes and improvements are critical. If we can already predict this then it makes sense to prioritise abstraction at build time.</p>
+<h2>Can operate</h2>
+<p>Making sure that the MVP can operate under different conditions.</p>
+<p>It all starts with documentation and moves on to logging, monitoring, and error handling.</p>
+<p>An MVP that cannot be operated is a waste of resources.</p>
+<h2>Culture</h2>
+<p>Culture also has a huge part to play in this MVP fallacy. When we product an MVP developers prove that something is possible and to management that also translates as 'feature X is done'.</p>
+<p>The language we use contributes to this when in reality developers skirt around what we 'didn't do' to reach a deadline for the MVP.</p>
+<p>This is a simple problem to solve. Developers must have the tools to explain if required for the feature to be complete and managers should never equate an MVP to a completed feature.</p>
+<p>Consistently delivering MVPs that get mistaken for full features by management is a bad product scenario since the product over time starts to resemble a 'house of cards'.</p>
+<h2>Summary</h2>
+<p>A completed MVP should never equate a completed feature. It's important that both developers and managers agree on this.</p>
+<p>Equally important is that MVP maintainability is prioritised in parallel with speed.</p>
+<p>After all 'haste makes waste'.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Lead chats or 1-2-1s</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.17.lead-chats</link>
+            <pubDate>Sun, 17 Jan 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Lead chats or 1-2-1s</h1>
+<p>Having recently took on the role of tech lead for one of the squads, I wanted to document a bit about the process and system for running.</p>
+<h2>People vs. Performance</h2>
+<p>Manager-to-team-member chats are typically used in business for performance tracking and realignment. Most people who enter the industry have either worked in similar environments or never had the chance to experience such meetings.</p>
+<p>Let me say this, 1-2-1s are not for performance! Sure performance does come up, but it should never be the goal.</p>
+<p>The goals are related to personal growth and since everyone is different, every 1-2-1 is different.</p>
+<p>It's also a 'process meeting', not chit-chat. As a facilitator we need to have a range of tool to overcome road block and direct the meeting towards a positive outcome.</p>
+<h2>Intention and outcome</h2>
+<p>Before starting a 1-2-1 I set a goal for it. I walk into a meeting or click that Meet url knowing what I want to achieve from the meeting.</p>
+<p>Think hard about how the individual goals can help the team and vice versa.</p>
+<p>After you've run a few meetings you'll have a list of outcomes and because we deal with human beings these outcomes end up being seasonal.</p>
+<p>The ultimate goal is to help the individual reach clarity, set some short-term goals, and boots their motivation towards their new goals.</p>
+<h2>Prep</h2>
+<p>Review the persons past performance and make a note of feedback you want to share. This is an editing process and depends on the individual and their current 'season' - if someone is already unmotivated then withhold the difficult feedback.</p>
+<p>Review the individuals previous goals. Have they made progress? Have they completed the goal? Did they receive any feedback about the most recent goal?</p>
+<p>I also have a few canned questions to help drive the conversation:</p>
+<blockquote>
+<p>What have you enjoyed the most about the past sprint? Have you been having fun lately?</p>
+</blockquote>
+<p>Fun is crucial to fulfilling work and the question helps us focus on the positive parts of the sprint.</p>
+<blockquote>
+<p>What feedback do you have for me?</p>
+</blockquote>
+<p>This is a tricky question since everyone struggles to give feedback on the spot, but I repeat this each week. Usually I don't receive feedback, but when there's a bad week I always know about it.</p>
+<p>This question is also trust building. I ask it every week because I care about feedback and I want my team to know that. I also want them to know that we all make mistakes and that I really care about knowing when I've made mistakes.</p>
+<blockquote>
+<p>How are you feeling after last sprint?</p>
+</blockquote>
+<p>Simple question to put everyone at ease and have a bit of a laugh. This is a great question to warm people up to talking about home life or in general discuss current emotions.</p>
+<h2>During</h2>
+<p>Go where the conversation goes until you reach clarity. Once you have clarity state it, filter it together, and reach an agreement. Once you've agreed, choose another questions from above or continue.</p>
+<blockquote>
+<p>Here is some feedback... What do you think of it?</p>
+</blockquote>
+<p>Provide the feedback to the team member and ask for their opinion. I think of feedback as a tool for growth, so usually framed as such and always delivered positively.</p>
+<p>I tend to think of feedback of 'High five' and 'Watch out'.</p>
+<p>Link 'High five' feedback to the receivers skills or ways of working.</p>
+<p>When giving out 'Watch out' feedback make sure you also offer a clear path for adjustment and focus on habits and systems that can improve the situation.</p>
+<p>Adjust you delivery to the receiver: some people are open to chat whilst other requires some coaxing.</p>
+<p>Remember to have fun. There's a lot to think about, but were not robots - enjoy the conversation and company more than aiming to tick all the boxes.</p>
+<h2>Habits</h2>
+<p>Plan your meetings in advance and book the time in your calendar.</p>
+<p>Dedicate a specific time for the meetings, I find that 25 minutes is enough to get through most of the above. If a wider discussion is needed I'll book a follow-up.</p>
+<p>Try to batch your meetings together, it stops you from switching context. These meetings use up a lot of energy so its better to focus on them before you jump on the next tech task.</p>
+<h2>Other tools</h2>
+<p>Since we're talking about individual growth, it's important to try and build other tools that can help you maintain individual growth.</p>
+<p>One easy tool is a share scoring system. The system is only used for self-reflection is particularly useful for developers who can benchmark their technical and soft skills.</p>
+<p>Have the company policy on hand for those times when you get company policy questions.</p>
+<p>Build up a collection of useful resources and work through that as a team. This helps with clarity and lets everyone self-serve when they want to level up.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>First Post</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.13.first-post</link>
+            <pubDate>Wed, 13 Jan 2021 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Why write a blog?</h1>
+<p>Selfish reasons - I often use writing for work and often repeat why and how I approach things.</p>
+<p>This blog post is for me and other who want to understand the same things I care about: tech, social justice, learning, and more.</p>
+<h2>Writing and I</h2>
+<p>In school, some 12 years ago, I had to pick between maths and literature. It was a mandatory choice and considering my poor maths performance I picked literature.</p>
+<p>I was fortunate to be taught by an amazing teacher and what started as trepidation ended up developing into a passion.</p>
+<p>Literature and software development is not that different - they both involve a lot of writing, editing, and conceptualising ideas. The both require analysis and creativity and the both feel like introspective pursuits even though each profession has become more and more social since I first encountered them.</p>
+<p>Why didn't I do programming instead of literature? I never had the option, nor the equipment. Before my first PC I used computers in school for learning Pascal and Word or in internet-caffes to shoot my friends in Counter Strike or race against them in Need For Speed.</p>
+<h2>Purpose and content</h2>
+<p>This is intended to be a raw collection of thoughts and ideas. Like my interests, this blog with snake and weave through a lot of topics.</p>
+
+                ]]>
+            </description>
+        </item>
+            </channel>
+        </rss>
