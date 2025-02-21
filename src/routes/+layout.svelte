@@ -1,12 +1,11 @@
-<script>
+<script lang="ts">
+	import type { Snippet } from 'svelte';
 	import Nav from '../components/atoms/Nav.svelte';
-	/**
-	 * @typedef {Object} Props
-	 * @property {import('svelte').Snippet} [children]
-	 */
-
-	/** @type {Props} */
-	let { children } = $props();
+	
+	interface Props {
+		children: Snippet;
+	}
+	let { children } : Props = $props();
 </script>
 
 <main>

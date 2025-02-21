@@ -1,11 +1,12 @@
 <script lang="ts">
 	import {parse, format} from 'date-fns';
 	import { base } from '$app/paths';
-	import Link from '../Link.svelte';
+	import Link from './Link.svelte';
 	interface Props {
 		slug?: string;
 		text?: string;
 		created?: string;
+		tags?: string[]
 	}
 	
 	let { slug = '', text = '', created = '' }: Props = $props();

@@ -1,6 +1,6 @@
 <script>
 	import Link from '../atoms/Link.svelte';
-	import Segment from '../molecules/Segment/+index.svelte';
+	import Segment from '../molecules/Segment.svelte';
 </script>
 
 <Segment class="primary">

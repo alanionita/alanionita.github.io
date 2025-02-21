@@ -1,16 +1,17 @@
 <script lang="ts">
-	import Segment from '../../molecules/Segment/+index.svelte';
+	import Segment from '../molecules/Segment.svelte';
 	import hljs from 'highlight.js/lib/core';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import yaml from 'highlight.js/lib/languages/yaml';
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
 	import { onMount } from 'svelte';
+	
 	interface Props {
-		postHtml?: string;
+		pHtml?: string;
 	}
 
-	let { postHtml = '' }: Props = $props();
+	let { pHtml = '' }: Props = $props();
 
 	onMount(() => {
 		hljs.registerLanguage('javascript', javascript);
@@ -22,6 +23,6 @@
 
 <Segment class="secondary article-padding">
 	<section class="content">
-		{@html postHtml}
+		{@html pHtml}
 	</section>
 </Segment>

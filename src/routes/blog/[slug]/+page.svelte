@@ -1,10 +1,17 @@
 <script lang="ts">
 	import PageTitle from '../../../components/atoms/PageTitle.svelte';
-	import BlogPost from '../../../components/templates/BlogPost/+page.svelte';
-	import { page } from "$app/stores";
+	import BlogPost from '../../../components/templates/BlogPost.svelte';
 
-	let { data } = $props();
+	interface Props {
+		data: {
+			title: string;
+			html: string;
+		};
+	}
+
+	let { data }: Props = $props();
+	
 </script>
 
-<PageTitle text={data.title}/>
-<BlogPost postHtml={data.html} />
+<PageTitle text={data.title} />
+<BlogPost pHtml={data.html} />

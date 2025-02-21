@@ -1,5 +1,5 @@
 <script>
-	import Container from '../../atoms/Container/+index.svelte';
+	import Container from '../atoms/Container.svelte';
 
 	/**
 	 * @typedef {Object} Props
