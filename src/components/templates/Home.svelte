@@ -3,40 +3,61 @@
 	import Segment from '../molecules/Segment.svelte';
 </script>
 
-<Segment class="primary">
-	<h1 class="primary-text">I'm Alan Ionita,</h1>
-	<p class="primary-text">Software Developer from 53.483959, -2.244644.</p>
-	<p class="primary-text">
-		Independently working on open-source projects
-	</p>
+<Segment type="primary">
+	<h1 class="txt-1">I'm Alan Ionita,</h1>
+	<p class="txt-1">Software Developer from 53.483959, -2.244644.</p>
+	<p class="txt-1">Independently working on open-source projects</p>
 </Segment>
-<Segment class="secondary">
-	<h2 class="secondary-text">Production experience:</h2>
-	<p class="secondary-text">Web + Cloud + Backend + Strategy + Embedded.</p>
+<Segment type="secondary">
+	<h2 class="txt-2">Production experience:</h2>
+	<p class="txt-2">Web, Cloud, Backend, Strategy, Embedded,</p>
+	<p class="txt-2">React, NextJS, Typescript, AWS, Python.</p>
 </Segment>
-<Segment class="tertiary">
-	<h2 class="tertiary-text">Teaching experience:</h2>
-	<ul class="tertiary-list">
+<Segment type="tertiary">
+	<h2 class="txt-3">Teaching experience:</h2>
+	<ul class="list--exp">
 		<li>
-			<p class="tertiary-text">
-				Instructor at <Link to="https://www.manchester.ac.uk/study/cpd/coding-bootcamp/" text="The University of Manchester" class_name="link--highlight"/>
+			<p class="txt-3">
+				Instructor at <Link
+					to="https://www.manchester.ac.uk/study/cpd/coding-bootcamp/"
+					text="The University of Manchester"
+					class_name="link--highlight"
+				/>
 			</p>
-			<p class="tertiary-text">Teaching Fullstack Web Development</p>
+			<p class="txt-3">Teaching Fullstack Web Development</p>
 		</li>
 		<li>
-			<p class="tertiary-text">Mentor at <Link to="https://codebar.io" text="Codebar" class_name="link--highlight"/></p>
-			<p class="tertiary-text">Free monthly programming workshops for diverse communities</p>
+			<p class="txt-3">
+				Mentor at <Link to="https://codebar.io" text="Codebar" class_name="link--highlight" />
+			</p>
+			<p class="txt-3">Free monthly programming workshops for diverse communities</p>
 		</li>
 		<li>
-			<p class="tertiary-text">
-				Co-organiser of <Link to="https://codeyourfuture.io" text="CodeYourFuture" class_name="link--highlight" />
+			<p class="txt-3">
+				Co-organiser of <Link
+					to="https://codeyourfuture.io"
+					text="CodeYourFuture"
+					class_name="link--highlight"
+				/>
 			</p>
-			<p class="tertiary-text">Non-profit coding school for refugees</p>
+			<p class="txt-3">Non-profit coding school for refugees</p>
 		</li>
 	</ul>
 </Segment>
-<Segment class="secondary">
-	<p class="secondary-text">
+<Segment type="secondary">
+	<p class="txt-2">
 		Discover more on:<br /><Link to="https://www.linkedin.com/in/alanionita/" text="LinkedIn" />
 	</p>
 </Segment>
+
+<style>
+	.list--exp {
+		list-style: none;
+		padding: 0;
+	}
+
+	.list--exp > li {
+		list-style-type: none;
+		margin: 2rem 0;
+	}
+</style>

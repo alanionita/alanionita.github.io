@@ -36,7 +36,6 @@
 	}
 
 	.sgm-secondary {
-		align-items: flex-end;
 		background-color: var(--color-secondary);
 		display: flex;
 		flex-flow: column nowrap;

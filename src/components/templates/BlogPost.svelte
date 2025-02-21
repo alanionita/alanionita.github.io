@@ -6,7 +6,7 @@
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
 	import { onMount } from 'svelte';
-	
+
 	interface Props {
 		pHtml?: string;
 	}
@@ -21,7 +21,7 @@
 	});
 </script>
 
-<Segment class="secondary article-padding">
+<Segment type="secondary" className="p-article">
 	<section class="content">
 		{@html pHtml}
 	</section>
