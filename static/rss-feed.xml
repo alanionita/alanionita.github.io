@@ -5,15 +5,191 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Thu, 13 Feb 2025 13:51:53 GMT</lastBuildDate>
+                <lastBuildDate>Fri, 21 Feb 2025 16:40:03 GMT</lastBuildDate>
                 <item>
-            <title>Svelte 5 Migration and Changes</title>
+            <title>FOSS tools complex?</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.21.foss-tools-complex</link>
+            <pubDate>Fri, 21 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>FOSS tools complex in 2025?</h1>
+<p>Apache Kafka for example has an air of complexity and flamboyance around it.</p>
+<p>A vast majority of Hacker News comments rag on Kafka, the latest comments making it sound like a "CV-padding technology, needlesly complex, overtly unnecessary".</p>
+<p>Similar myths around Elastic Search: complex, hard to maintain, expensive.</p>
+<p>If I were too include languages here, Haskell would be the top contender: considered too academic, impractical, obtuse, and a full stop questionable choice.</p>
+<p>What is the real damage of these myths?</p>
+<p>Because of the grapevine new people don't use Kafka, new people avoid Elastic Search.</p>
+<p>This perpetraits a scenario where the hard tools remain hard because new people can't shape their structure and usage. Without new users the tooling teams can't understand the new UX problems they need to solve.</p>
+<p>More importantly where are these people to going for replacements?</p>
+<p>For Kafka replacements, people go to the cloud. They end up using AWS Kinesis streams, or AWS EventBridge - both expensive and complex services. Argueably as complex as Kafka and closed source.</p>
+<p>For Elastic Search replacements, people go to the cloud again, to database provider services like MongoDB Atlas, or to AWS OpenSearch. Both of these options are costly and just as complex.</p>
+<p>Cost in itself should be a criteria for businesses, if a managed service costs but is more easy to manage then we need to asses the trade-off. Sometimes however the costs act as feature gates and the managed services are just as hard to maintain or grok.</p>
+<p>For individuals, cost is a barier, no doubt about it. Yet, despite this barrier, the industry wants developers who can build real-time systems or complex text-search.</p>
+<p>Where and how do we get these new developers? Where and how do they gain this experience?</p>
+<p>Cloud services, costs, and cost-gating features limits the market from gaining new developers, and limits developers from learning these tools.</p>
+<h2>Kafka and the Apache stack</h2>
+<p>Apache Kafka for the most part is FOSS. It has for-cost closed source components and services, but the basic streaming is there. Kafka can also run in a homelab and is not resource hungry.</p>
+<p>For the next few days I plan to post further updates on this: Kafka for a timeseries data injestion pipeline.</p>
+<p>In other words a "soft real-time" problem.</p>
+<h2>Elastic Search</h2>
+<p>In 2020 I used a cloud managed Elastic Search service through AWS. This was before their business bust up.</p>
+<p>At the time, it wasn't considered a good architecture option internally, because of costs. Maintenance was also a factor.</p>
+<p>Our challenge was to build real-time VOIP telecom systems, transcribe the call, and make it available within a UI. This is a "hard real-time problem", since all data goals must be met.</p>
+<p>Elastic Search allowed us to achieve transcription, indexing, and retrieval, in less than 200ms. With networking done over WebSockets, in a event-driven system.</p>
+<p>Despite the results, Elastic Search wasn't recommended because of costs and maintenance.</p>
+<p>On management, our index required used 3 shards, and a fairly high spec set of machines. No where near as complex as it could get; a baby Elastic Search setup.</p>
+<p>Fast forward to 2025 and using Elastic Search a vastly improved experience, having managed to run a node with 1G memory, bulk index in &#x3C; 30s, and make text search calls with &#x3C;200ms retrival. Not the largest index in the world, but I can tell that even with 1G limitation it can take more documents and I don't expect the retrieval to be impacted.</p>
+<p>Elastic Search is FOSS, configuration was straighforward, and the query experience is modern and straightforward - GraphQL-like in a way.</p>
+<h2>Summary</h2>
+<p>Without Elastic Search, how else can you build text search systems at home on a Raspberry Pi?!</p>
+<p>Without Kafka how else can you ingest timeseries data from MCUs or replicate AWS Kinesis and AWS EventBridge services?</p>
+<p>Both are important tools for modern software development, and should be on everyone's radar who wants design data-intensive apps.</p>
+<p>Most importantly, they are FOSS and local, and grant you full control.</p>
+<p>Just add a pinch of energy and time investment.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>SveleteKit - reactivity quirk</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.14.2025.02.14.sveltekit-reactivity</link>
+            <pubDate>Fri, 14 Feb 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>SveleteKit - reactivity quirk</h1>
+<p>Svelte is great for heavy web scenarios: maps, visualizations, animations etc. And it's common that most of these scenarios depend on Web API.</p>
+<p>Most of the times we use the <code>$app/environment</code> browser designation to allow for server process to fully complete, and then execute the Web API components, as gate by <code>browser</code> designation.</p>
+<p>eg. Map example</p>
+<pre><code class="language-javascript">&#x3C;script lang="ts">
+	import { browser } from '$app/environment';
+	import Map from '$lib/components/map.svelte';
+&#x3C;/script>
+
+
+{#if !browser}
+	&#x3C;h2>Loading map...&#x3C;/h2>
+{:else}
+	&#x3C;Map bind:lat bind:lng />
+{/if}
+</code></pre>
+<p>In Svelte this behavior works correctly to bypass any server process required. Ultimately this is a premature optimization in Svelte because it is largely browser-dependent.</p>
+<p>From here on you may notice that Svelte and SvelteKit are used interchangeably. Svelte mentions above are the only place where they can ONLY mean the Svelte frontend library.</p>
+<h2>Sveltekit</h2>
+<p>To expand on the Map example, it's common that Map libraries include <code>IntersectionObservers</code>, or <code>ResizeObservers</code>, or other Web APIs required for complex interaction.</p>
+<p>The above example of browser gating will fail when implemented within a SvelteKit application, usually with the error that <code>X API cannot be found</code>, causing confusion.</p>
+<p>Why is a browser gated piece of code still running on the server? Who is running? These are questions I've yet to answer.</p>
+<p>However there is a way to avoid this behavior and bypass the errors.</p>
+<h2>Svelte / Page options</h2>
+<p>Official documentation on page options -> https://svelte.dev/docs/kit/page-options</p>
+<blockquote>
+<p>You can control each of these on a page-by-page basis by exporting options from +page.js or +page.server.js, or for groups of pages using a shared +layout.js or +layout.server.js.</p>
+</blockquote>
+<p>Within that +layout.ts file we need to focus on 2 page options specifically:</p>
+<ul>
+<li>ssr</li>
+<li>csr</li>
+</ul>
+<ul>
+<li></li>
+</ul>
+<h2>Svelte / Page options / ssr</h2>
+<blockquote>
+<p>Normally, SvelteKit renders your page on the server first and sends that HTML to the client where it’s hydrated. If you set ssr to false, it renders an empty ‘shell’ page instead. This is useful if your page is unable to be rendered on the server (because you use browser-only globals like document for example), but in most situations it’s not recommended (see appendix).</p>
+</blockquote>
+<p>Turning this option off does indeed fix the problem of browser-dependencies being run outside of a browser gate.</p>
+<pre><code class="language-javascript">// +layout.ts
+export const ssr = false;
+
+</code></pre>
+<p>But the following notice in the docs sounds concerning and mysterious.</p>
+<blockquote>
+<p>Even with ssr set to false, code that relies on browser APIs should be imported in your +page.svelte or +layout.svelte file instead. This is because page options can be overridden and need to be evaluated by importing your +page.js or +layout.js file on the server (if you have a runtime) or at build time (in case of prerendering).</p>
+</blockquote>
+<p>What does importing mean here? In the majority of cases where this becomes a problem, we experience the problem when importing from an external module, which depends on Web APIs within.</p>
+<p>Map example again: lib/components/map.svelte</p>
+<pre><code class="language-javascript">// Map.svelte
+&#x3C;script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
+	import WebMap from '@arcgis/core/WebMap';
+	import MapView from '@arcgis/core/views/MapView';
+
+	let mapView: MapView | undefined = $state();
+	let mapContainer: HTMLDivElement | undefined = $state();
+    	let { lng = $bindable(), lat = $bindable() } = $props();
+
+	onMount(() => {
+		// Initialize the map only in the browser
+		mapView = new MapView({
+			container: mapContainer
+			center: [lng, lat]
+		})
+		
+	});
+
+	onDestroy(() => {
+		if (mapView) {
+			mapView.destroy();
+		}
+	});
+&#x3C;/script>
+
+{#if !browser}
+    &#x3C;p>Loading map...&#x3C;/p>
+{:else}
+    &#x3C;div bind:this={mapContainer} class="arcgic-map">&#x3C;/div>
+{/if}
+
+</code></pre>
+<p>This example will trigger a <code>ResizeObserver</code> error, even though we have gated the code within the browser.</p>
+<p>The errors is triggered within an ARCGIS SDK library.</p>
+<p>Again what does importing mean here? We have technically imported the code and gated it correctly. And since the Map component is imported by the <code>+page.svelte</code> that should pass the criteria outlined.</p>
+<p>What else is needed?</p>
+<p>Do we have to import the offending API itself? Surely not, since that would also require up to shadow the existing Web API (when available) with an manually imported one.</p>
+<h2>Svelte / Page options / csr</h2>
+<blockquote>
+<p>Ordinarily, SvelteKit hydrates your server-rendered HTML into an interactive client-side-rendered (CSR) page. Some pages don’t require JavaScript at all — many blog posts and ‘about’ pages fall into this category. In these cases you can disable CSR:</p>
+</blockquote>
+<p>This setting is not technically a requirement, but is a bit of configuration that translates what we want to expect: we want the Map page to always run Javascript because it contains an external module that has it's own features and requirements.</p>
+<pre><code class="language-javascript">// +layout.ts
+export const ssr = false;
+export const csr = true; 
+</code></pre>
+<h2>Svelte / Page options / prerender</h2>
+<p>This is a counter intuitive naming. Although it does configure prerendering, the purpose for using it is nuanced.</p>
+<p>In our case we can't prerender a Map page, since they usually involved regular requests for: loading, zooming, fetching tiles etc. All managed by external libraries.</p>
+<p>But we do want to prerender the page itself.</p>
+<p>Map pages are usually a code injection scenario: we inject our dynamic element into a static HTML. This is a one-way binding, in other words we inject the map and only interact with it there on.</p>
+<p>Sometimes we may have a dynamic element that is external to the map and is tied to it in some way: a filter that changes as the map changes, a banner that updates as we move the map, a sector select that moves the map as we change sectors. All of which are still code injection scenarios, with 2-way bind.</p>
+<p>Both scenarios are compatible with prerendering: since we only want to route to be prerendered, and the html by proxy.</p>
+<p>Routes with prerender true are excluded from manifests, so our server is tiny.</p>
+<p>In my use case I want dynamic Maps within static files, no servers involved.</p>
+<p>All routes are default <code>prerendered = true</code> and the Svelte <code>adapter-static</code> is used.</p>
+<pre><code class="language-javascript">// +layout.ts
+export const ssr = false;
+export const csr = true;
+export const prerender = true;
+</code></pre>
+<p>Of note prerender can also be 'auto', where you want popular routes to be pre-rendered and historic content to be server-rendered.</p>
+<p>Unclear at what scale this is required, because a server rendering content is probably more maintenance and resource-heavy than fully static build.</p>
+<p>The fully static build takes longer to compile, but once deployed it's essentially free. With CI/CD and strong hardware this long compile time is a minor negative point.</p>
+<p>Either way, the "auto" option is there.</p>
+<p>For larger prerendered builds it's important to also consider <code>entries</code>. These need to pre-build to ensure the best prerendering performance. I will cover them in a future post.</p>
+<h2>Summary</h2>
+<p>Strange behavior and even stranger docs, however the configuration above does produce the expected results.</p>
+<p>In hindsight I'd expect the handling of CSR and SSR to be more consistent, but with most frameworks preferring 'server' options it's to be expected that CSR behavior is not quite there by default.</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Svelte - v5 Migration</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.13.svelte-5-migration</link>
             <pubDate>Thu, 13 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Svelte 5 Migration and Changes</h1>
+                    <h1>Svelte - v5 Migration</h1>
 <p>Big fan of SvelteJS as framework and in particular the Svelte monolith that is SvelteKit.</p>
 <p>I maintain a scaffolding repo which act as a base to most Svelte projects I create. You can see that scaffold <a href="https://github.com/alanionita/scaffold-sveltekit-tailwind-shadcn">here</a>.</p>
 <p>As of October 2024 Svelte released Svelte 5, their biggest release yet as covered <a href="https://svelte.dev/blog/svelte-5-is-alive">here</a>, but it brings some significant changes to day to day Svelte writing and patterns.</p>
@@ -253,13 +429,13 @@ npm error For a full report see:
                 ]]>
             </description>
         </item><item>
-            <title>Flutter - Development Environment Setup</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.12.flutter-dev-env-setup</link>
+            <title>Flutter - Development Setup</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.12.flutter-setup</link>
             <pubDate>Wed, 12 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Flutter - Development Environment Setup</h1>
+                    <h1>Flutter - Development Setup</h1>
 <p>Initial dive into Flutter for Desktop Linux development.</p>
 <p>Starting from scratch, with the below guide, and although I have read about Flutter previously I've not build anything until now. I do have some experience with Android development, but I will actively try to avoid using that experience, probably forgot it anyway.</p>
 <p>Going through the install guide found <a href="https://docs.flutter.dev/get-started/install/linux/desktop">here</a></p>
@@ -386,7 +562,7 @@ npm error For a full report see:
             </description>
         </item><item>
             <title>W3C - easy checks for accessibility</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.10.easy-checks-for-accessibility</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.10.checks-for-accessibility</link>
             <pubDate>Mon, 10 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -703,13 +879,13 @@ But to all this negativity there's a potential solution</p>
                 ]]>
             </description>
         </item><item>
-            <title>Code syntax tester</title>
+            <title>Testing - Code syntax highlighting</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2024.07.27.code-highlight</link>
             <pubDate>Sat, 27 Jul 2024 00:00:00 +0100</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Testing code syntax highlighting</h1>
+                    <h1>Testing - Code syntax highlighting</h1>
 <p>Currently only supports: Javascript, Yaml, Shell</p>
 <p>Needs expanding for every new language.</p>
 <h2>Javascript</h2>
@@ -1090,13 +1266,13 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
                 ]]>
             </description>
         </item><item>
-            <title>Serverless Advice</title>
+            <title>AWS - Serverless Advice</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.27.serverless-advice</link>
             <pubDate>Wed, 27 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Serverless Advice</h1>
+                    <h1>AWS - Serverless Advice</h1>
 <p>I work for an AWS Advanced Partner. All of my work is inside AWS and most of the code and services we build and use are serverless.</p>
 <p>My experience with serverless is a lengthy one, with the first time dipping my toe in the ecosystem in 2017 just as I graduated from a coding bootcamp.</p>
 <p>Since then serverless has matured a lot, but I still see and hear of developers and businesses who haven't tried it yet or don't see the point.</p>
@@ -1383,8 +1559,8 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
                 ]]>
             </description>
         </item><item>
-            <title>First Post</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.13.first-post</link>
+            <title>Why write a blog?</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.13.why-write</link>
             <pubDate>Wed, 13 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
