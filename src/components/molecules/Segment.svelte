@@ -1,22 +1,67 @@
-<script>
+<script lang="ts">
+	import type { Snippet } from 'svelte';
 	import Container from '../atoms/Container.svelte';
 
-	/**
-	 * @typedef {Object} Props
-	 * @property {string} [class]
-	 * @property {import('svelte').Snippet} [children]
-	 */
-
-	/** @type {Props} */
-	let { class: class_name = '', children } = $props();
-	
+	interface Props {
+		children: Snippet;
+		type: 'primary' | 'secondary' | 'tertiary';
+		className?: string;
+	}
+	let { type, children, className }: Props = $props();
 </script>
 
 <!-- HTML Markup -->
-<div class="inner--{class_name}">
+<div class="bg-{type}">
 	<Container>
-		<article class="segment {class_name}">
+		<article class="sgm-{type} {className}">
 			{@render children?.()}
 		</article>
 	</Container>
 </div>
+
+<style module="true">
+	/* Segment styles */
+
+	.sgm-primary {
+		display: flex;
+		flex-flow: column;
+		background-color: var(--color-primary);
+		padding-top: 35vh;
+		padding-bottom: 15vh;
+		height: auto;
+		color: var(--color-text);
+		text-align: left;
+		font-size: var(--fluid-type);
+		margin-bottom: 1.5em;
+	}
+
+	.sgm-secondary {
+		align-items: flex-end;
+		background-color: var(--color-secondary);
+		display: flex;
+		flex-flow: column nowrap;
+		height: auto;
+		justify-content: center;
+		padding: 12rem 0;
+	}
+
+	.sgm-tertiary {
+		background-color: var(--color-primary);
+		display: flex;
+		flex-flow: column;
+		height: auto;
+		justify-content: flex-start;
+		padding: 10rem 0;
+		text-align: right;
+	}
+
+	.p-article {
+		padding: 4rem 0rem;
+	}
+
+	@media screen and (min-width: 1025px) and (max-width: 2200px) {
+		.p-article {
+			padding: 0rem 8rem;
+		}
+	}
+</style>
