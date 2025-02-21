@@ -59,7 +59,7 @@
 
 
 .tertiary {
-    background-color: var(--color-tertiary);
+    background-color: var(--color-primary);
     display: flex;
     flex-flow: column;
     height: auto;
@@ -82,7 +82,7 @@
     margin: 0;
     padding: 0;
     width: auto;
-    color: var(--color-primary);
+    color: var(--color-text);
     text-align: left;
     font-size: var(--fluid-type);
 }
@@ -130,7 +130,7 @@
 }
 
 .inner--tertiary {
-     background-color: var(--color-tertiary);
+     background-color: var(--color-primary);
 }
 
 /* Dynamic Post content */

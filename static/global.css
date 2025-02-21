@@ -34,7 +34,7 @@
     --color-tertiary: #DA7422;
     --color-text: #FFFBDB;
     --color-accent: #A59132;
-
+    --color-yellow-aaa: #DCC249;
     /* Fluid type */
     --fluid-type: min(max(1rem, 4vw), 40px);
     --fluid-type-h2: min(max(1rem, 4vw), 32px);

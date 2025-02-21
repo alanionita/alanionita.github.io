@@ -1,23 +1,17 @@
-<script>
-	import { page } from '$app/stores';
-	/**
-	 * @typedef {Object} Props
-	 * @property {string} [to]
-	 * @property {string} [text]
-	 * @property {string} [class_name]
-	 * @property {string} [active_on]
-	 */
+<script lang="ts">
+	import { page } from '$app/state';
 
-	/** @type {Props} */
-	let {
-		to = '',
-		text = '',
-		class_name = 'link',
-		active_on = '/'
-	} = $props();
+	interface Props {
+		to: string;
+		text: string;
+		class_name?: string;
+		active_on?: string;
+	}
+
+	let { to, text, class_name = 'link', active_on = '/' }: Props = $props();
 </script>
 
-<a class={class_name} href={to} data-active={$page.url.pathname === active_on}>
+<a class={class_name} href={to} data-active={page.url.pathname === active_on}>
 	{text}
 </a>
 
@@ -46,7 +40,7 @@
 		font-size: var(--fluid-type);
 		font-weight: bold;
 		text-decoration: none;
-		color: var(--color-accent);
+		color: var(--color-yellow-aaa);
 	}
 	.link--nav-text {
 		margin: 0;
@@ -55,6 +49,19 @@
 	.link--nav:hover,
 	.link--nav[data-active='true'] {
 		text-decoration: underline;
-		color: var(--color-tertiary);
+		color: var(--color-yellow-aaa);
+	}
+	.link--highlight {
+		margin: 0;
+		padding: 0;
+		width: 'auto';
+		font-size: var(--fluid-type);
+		font-weight: bold;
+		text-decoration: none;
+		color: var(--color-yellow-aaa);
+	}
+	.link--highlight:hover {
+		text-decoration: underline;
+		color: var(--color-yellow-aaa);
 	}
 </style>

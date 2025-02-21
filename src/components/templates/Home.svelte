@@ -19,17 +19,17 @@
 	<ul class="tertiary-list">
 		<li>
 			<p class="tertiary-text">
-				Instructor at <Link to="https://www.manchester.ac.uk/study/cpd/coding-bootcamp/" text="The University of Manchester" />
+				Instructor at <Link to="https://www.manchester.ac.uk/study/cpd/coding-bootcamp/" text="The University of Manchester" class_name="link--highlight"/>
 			</p>
 			<p class="tertiary-text">Teaching Fullstack Web Development</p>
 		</li>
 		<li>
-			<p class="tertiary-text">Mentor at <Link to="https://codebar.io" text="Codebar" /></p>
+			<p class="tertiary-text">Mentor at <Link to="https://codebar.io" text="Codebar" class_name="link--highlight"/></p>
 			<p class="tertiary-text">Free monthly programming workshops for diverse communities</p>
 		</li>
 		<li>
 			<p class="tertiary-text">
-				Co-organiser of <Link to="https://codeyourfuture.io" text="CodeYourFuture" />
+				Co-organiser of <Link to="https://codeyourfuture.io" text="CodeYourFuture" class_name="link--highlight" />
 			</p>
 			<p class="tertiary-text">Non-profit coding school for refugees</p>
 		</li>
