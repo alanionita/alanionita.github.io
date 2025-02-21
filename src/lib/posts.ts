@@ -28,6 +28,7 @@ export async function getPosts(): Promise<App.Post[]> {
         const postHtml = await remark()
             .use(html, { sanitize: true })
             .process(content);
+        
         return {
             id,
             html: postHtml.toString(),
@@ -49,7 +50,7 @@ export async function getPost(id: string): Promise<App.Post> {
 
     const { content, data } = frontmatter.read(postPath);
 
-    const { title, desc, updated, created, url } = data;
+    const { title, desc, updated, created, url, tags } = data;
 
     const postHtml = await remark()
         .use(html, { sanitize: true })
@@ -61,6 +62,7 @@ export async function getPost(id: string): Promise<App.Post> {
         desc,
         updated,
         created,
-        url
+        url,
+        tags
     }
 }

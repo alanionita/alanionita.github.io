@@ -21,6 +21,7 @@ declare global {
 			url: string;
 			html: string;
 			desc?: string;
+			tags: string[]
 		};
 	}
 }
