@@ -4,7 +4,7 @@
 
 	interface Props {
 		children: Snippet;
-		type: 'primary' | 'secondary' | 'tertiary';
+		type: 'primary' | 'secondary' | 'tertiary' | 'post';
 		className?: string;
 	}
 	let { type, children, className }: Props = $props();
@@ -52,6 +52,15 @@
 		justify-content: flex-start;
 		padding: 10rem 0;
 		text-align: right;
+	}
+
+	.sgm-post {
+		background-color: var(--color-primary);
+		display: flex;
+		flex-flow: column nowrap;
+		height: fit-content;
+		justify-content: center;
+		padding: 12rem 0;
 	}
 
 	.p-article {

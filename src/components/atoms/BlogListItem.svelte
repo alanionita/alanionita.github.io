@@ -17,7 +17,7 @@
 </script>
 
 <li>
-	<Link to="{base}/blog/{slug}" {text} />
+	<Link to="{base}/blog/{slug}" {text} class_name="highlight" />
 	<aside>
 		<time datetime={datetime.toISOString()}>{datestr}</time>
 		<span>
@@ -31,28 +31,35 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		color: white;
+		color: var(--color-secondary);
 		font-size: var(--fluid-type-h2);
 		padding-bottom: 2rem;
 	}
 	li:last-child {
 		padding-bottom: 0rem;
 	}
-	time {
-		color: var(--color-primary);
-		font-weight: 700;
-	}
+	
 	aside {
 		display: flex;
+		width: 100%;
 		flex-direction: column;
+		text-align: left;
+		/* align-items: flex-end; */
+		/* justify-content: flex-end; */
 	}
 	aside > * {
-		width: 100%;
+			
+	}
+	aside > time {
+		/* color: var(--color-primary); */
+		/* text-align: right; */
+		font-weight: 300;
+		color: var(--color-text);
 	}
 	aside > span {
 		text-align: left;
 		font-size: var(--fluid-type-post);
-		font-weight: 700;
-		color: var(--color-primary)
+		font-weight: 300;
+		color: var(--color-text);
 	}
 </style>

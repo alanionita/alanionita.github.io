@@ -11,7 +11,7 @@
 	let { to, text, class_name = 'link', active_on = '/' }: Props = $props();
 </script>
 
-<a class={class_name} href={to} data-active={page.url.pathname === active_on}>
+<a class={`link--${class_name}`} href={to} data-active={page.url.pathname === active_on}>
 	{text}
 </a>
 
@@ -58,10 +58,10 @@
 		font-size: var(--fluid-type);
 		font-weight: bold;
 		text-decoration: none;
-		color: var(--color-yellow-aaa);
+		color: var(--color-text);
 	}
 	.link--highlight:hover {
 		text-decoration: underline;
-		color: var(--color-yellow-aaa);
+		color: var(--color-text);
 	}
 </style>

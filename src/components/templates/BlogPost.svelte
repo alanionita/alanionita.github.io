@@ -21,7 +21,7 @@
 	});
 </script>
 
-<Segment type="secondary" className="p-article">
+<Segment type="post" className="p-article">
 	<section class="content">
 		{@html pHtml}
 	</section>

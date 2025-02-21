@@ -12,6 +12,14 @@
      background-color: var(--color-primary);
 }
 
+.bg-light {
+    background-color: var(--color-text);
+}
+
+.bg-post {
+    background-color: var(--color-primary);
+}
+
 /* Typography */
 
 .txt-1 {
@@ -44,8 +52,8 @@
 /* Dynamic Post content */
 
 .content {
-    margin: 6rem 0 0 0;
-    padding: 0;
+    /* margin: 6rem 0; */
+    padding: 6rem 0;
     width: 100%;    
     color: var(--color-text);
     font-size: var(--fluid-type-post);
