@@ -5,8 +5,52 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Fri, 21 Feb 2025 16:40:03 GMT</lastBuildDate>
+                <lastBuildDate>Mon, 03 Mar 2025 21:25:58 GMT</lastBuildDate>
                 <item>
+            <title>One Big Text File (obtf)</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.03.03.obtf</link>
+            <pubDate>Mon, 03 Mar 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>One Big Text File (obtf)</h1>
+<p>Learning from <a href="https://ellanew.com/tagged/obtf">Ellane W</a>, I started journalling inside a "one big text file".</p>
+<h2>Context</h2>
+<p>My note-taking system is text based, predominantly Markdown files, structure using the PARA system:</p>
+<ul>
+<li>Projects  -> <code>./project.*.md</code></li>
+<li>Area      -> <code>./area.*.md</code></li>
+<li>Reference -> <code>./reference.*.md</code></li>
+<li>Archive   -> <code>./arch.*.md</code></li>
+<li>Journal   -> <code>./journal.*.md</code></li>
+</ul>
+<p>Project - Most large chunks of work go into a project, if it's not big enough for a project, it usually goes in the other bins. Recently I added yearly sub-scoping <code>project.2025.*.md</code>. eg project.2025.portfolio-svelte.md, project.2025.kafka-pipeline.md, etc. This helps with yearly reviews, when I can easily <code>ls project.2025*</code> to get all the in progress / complete projects in a year.</p>
+<p>Archive - When I no longer need a note, it goes into archives. Over time the aim is to summarise the archives and discard the notes. Holding onto notes seems redundant. They should be distilled into "thoughts" or "timelines" for each topic, reflecting your current take on each topic.</p>
+<p>Area - Meant to keep track of various parts of life. eg area.personal.md, area.work.md, area.sport.md etc. Vastly under-used at the minute within my system.</p>
+<p>References - Used to store links and useful ideas on specific topics. In my case it's full of reference scoped by tech eg. reference.docker.md, reference.sql.md, reference.nextjs.md. Again vastly under-used at the minute.</p>
+<p>Journal - Stores daily, quarterly, yearly notes, and this is where most of the note-taking happens. The ideal workflow is: jot down notes within a <code>journal.*.md</code> note and at the end of day, review, summarise, and update <code>area.*.md</code> or <code>resource.*.md</code>. In reality it's just a dumping ground.</p>
+<p>All the notes are stored within a cloud-hosted git repo.</p>
+<h2>The problem</h2>
+<p>In 2025 I wrote X notes, most of which are scoped under <code>journal.daily.*.md</code> leaves. My lax approach to reviewing the notes, means that whenever I'm ready to review the journal entries, I end up with dozens of files to perruse and summarise into a weekly / quarterly superset.</p>
+<p>Moving files into <code>archive.*</code> is not easy unless you automate it with the script below.</p>
+<h2>Solution</h2>
+<p>Instead of X leaves of <code>journal.daily.*.md</code> files have one yearly-scoped journal file <code>journal.2025.md</code></p>
+<p>Within the file in order to add some keywords and ease search retrieval I implemented a key - very heavily inspired by Ellane W. suggestions.</p>
+<pre><code class="language-markdown">T. Task
+X. Task done
+N. Note
+P. Project
+R. Reference
+</code></pre>
+<p>The entries in the file are all collected under a day heading <code># 03-03-2025, Monday</code>, and new calendar entries are placed at the top of the file.</p>
+<h2>Observations</h2>
+<p>The obtf is handy for reviews already, making it dead-easy to see past days note with a simple scoll vs opening various files.</p>
+<p>Search and retrieval is great with grep too, and using one big text file means that I use less <code>fzf</code> scripts or <code>grep -nr "term" .</code>.</p>
+<p>The new journal opens in vim via terminal alias <code>,journal</code>, and this allows me wicked fast scribbles.</p>
+
+                ]]>
+            </description>
+        </item><item>
             <title>FOSS tools complex?</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.21.foss-tools-complex</link>
             <pubDate>Fri, 21 Feb 2025 00:00:00 Z</pubDate>
@@ -52,7 +96,7 @@
             </description>
         </item><item>
             <title>SveleteKit - reactivity quirk</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.14.2025.02.14.sveltekit-reactivity</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.14.sveltekit-reactivity</link>
             <pubDate>Fri, 14 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
