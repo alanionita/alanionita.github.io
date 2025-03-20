@@ -3,6 +3,7 @@ import path from "path";
 import frontmatter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
+import remarkImages from 'remark-images'
 import { parse } from 'date-fns'
 
 function dateSortDecending(a: App.Post, b: App.Post) {
@@ -50,11 +51,14 @@ export async function getPost(id: string): Promise<App.Post> {
 
     const { content, data } = frontmatter.read(postPath);
 
+    const fixesImageLinks = content.replace("/%sveltekit.assets%25", 'static')
+
     const { title, desc, updated, created, url, tags } = data;
 
     const postHtml = await remark()
+        .use(remarkImages)
         .use(html, { sanitize: true })
-        .process(content);
+        .process(fixesImageLinks);
     return {
         id,
         html: postHtml.toString(),

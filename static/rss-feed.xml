@@ -5,8 +5,145 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Mon, 03 Mar 2025 21:25:58 GMT</lastBuildDate>
+                <lastBuildDate>Thu, 20 Mar 2025 00:59:15 GMT</lastBuildDate>
                 <item>
+            <title>Strava to FOSS analysis and visualisation</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.03.19.strava-to-foss</link>
+            <pubDate>Wed, 19 Mar 2025 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Strava to FOSS analysis and visualisation</h1>
+<p>https://alanionita.github.io/images/posts/strava-to-foss/lead.png</p>
+<p>Having used Strava for years I've always been surprised that no one else has made a better alternative.</p>
+<p>The UI has been frozen in time, and most of the <em>good</em> features are pay-walled.</p>
+<p>I for one refuse to pay for Strava to analyze my data. A better way to sell the subscription would be to make a service so good, so rich, so useful, that I'm begging Strava to take my money.</p>
+<p>That being said, Strava is good at activity tracking. Whilst I haven't done any thorough testing, Strava has worked well for me in terms of tracking accuracy.</p>
+<p>I also enjoy the interval voice notifications and the multi-sport tracking, cycling especially.</p>
+<p>The challenges also, get me outside in mechanical way that I appreciate, whilst cringing that I'm encouraged to go outside by the prospect of money of very expensive kit.</p>
+<p>Anyway, where do we go from here...</p>
+<p>Until I roll my sleeves and warm up my LLMs to build my own tracking app, I will continue to use Strava.</p>
+<p>But I'm planning to own more of my data, and interrogate it locally. And this was the inception moment for the 'Strava to FOSS' project.</p>
+<h2>The Project</h2>
+<p>Core features:</p>
+<ul>
+<li>Download activity data from Strava</li>
+<li>Convert data to geospatial data</li>
+<li>Use GeoPandas to explore data</li>
+<li>Use OSMnx to enrich the data with OpenStreetMap nodes</li>
+<li>Use OSMnx and Leaflet to generate custom maps</li>
+</ul>
+<p>The project is currently just a series of notebooks on Github, but overtime will be a proper service.</p>
+<p><a href="https://github.com/alanionita/strava-to-foss-notebooks-python">Link to repository</a></p>
+<h2>Talking to Strava</h2>
+<p>The <code>strava_data.ipynb</code> notebook show an example of dealing with the Strava OAuth flow.</p>
+<p>I won't go into detail, since the notebook is easy to follow. Do note that the example just gets the first 10 activities.</p>
+<p>Once you reached the end of that process you will have an <code>activities.json</code>.</p>
+<h2>The data</h2>
+<p>For the sake of our task we need to get the route of the activity, and one way to do this is to use the <code>.map.summary_polyline</code></p>
+<pre><code class="language-json">[
+    {
+        "map": {
+       	    "id": "a13798432720",
+            "summary_polyline": "",
+            "resource_state": 2
+	},
+    }
+]
+</code></pre>
+<p>Unclear why, but some activities don't have this entry, whilst other valid entries contain a string.</p>
+<p>Also unclear is whether this value will contain elevation data, we have <code>_high</code> and <code>_low</code> elev values within the actitvity. A good mystery to uncover in a future post and feature.</p>
+<blockquote>
+<p>Note that most of the supporting code from this point forward is about the <code>osm.ipynb</code> notebook.</p>
+</blockquote>
+<h2>Geospatial primer</h2>
+<h3>Geometry</h3>
+<p>Quick intro to geospatial data is that most things relate to Lines, Polylines, and Polygons.</p>
+<p>We normally work with these basic geometric shapes using a low level lib called Shapely.</p>
+<p>Whenever we use a geospatial framework, like GeoPanda, they in turn will use Shapely under the hood.</p>
+<p>Normally you just get the data in a nice format, but when you're unlocking existing data you will need to implement Shapely for data conversions.</p>
+<h3>Coordinates</h3>
+<p>Another important concept with geospatial data is the use of coordinates: latitude, longitude.</p>
+<p>You'll see below that in order to make our lives easier we convert original PolyLine data to a geospatial list of coordinates.</p>
+<p>I can't stress to you how useful this can be for future analysis.</p>
+<p>Take a regular 20km run as geospatial lists: we end up with ~300 coordinate points, we can then compare distances between these, track time across each coordinate point and more.</p>
+<h3>Formats and GeoInfra</h3>
+<p>Geospacial data use a JSON flavour called <code>.geojson</code>. You'll see below that there's a big fuss about saving our converted data to <code>.geojson</code> so that we do the format conversion in one step and end up with a portable reusable geospatial file for later geospatial focused tasks.</p>
+<p>We can go further and instead of saving to a file, we can save the data to a database like PostGIS. That's not covered here, but stay tuned.</p>
+<h2>Geospatial data</h2>
+<p>Back to our Strava data.</p>
+<ol>
+<li>Get the coordinate points</li>
+</ol>
+<p>This <code>summary_polyline</code> string is a Google Maps encoded Polyline, a proprietary format.</p>
+<p>We will need to decode this using Shapely, because we want the coordinate points.</p>
+<ol start="2">
+<li>Convert them to the right coordinate reference system</li>
+</ol>
+<p>We need to understand what cartographic system did they originally use in their encoding. I'll spare you the head scratching, Google Maps uses Mercator system or EPSG:3857.</p>
+<p>Best way to imagine the CRS is to imagine yourself in space, floating about. Now imagine that your friend is also there with you, floating around like a maniac. Great! Now I ask that both you and your friend look down at the Eifel tower, manifique!</p>
+<p>You and your friend will be looking at the same coordinate (lat,lng), but you each have a different angle to that coordinate. As such you each have your or CRS.</p>
+<p>We do this crs conversion via GeoPandas.</p>
+<ol start="3">
+<li>Working with GeoPandas</li>
+</ol>
+<p>When we use GeoPandas we need to also deal with how it expects coordinates. By default GeoPandas expects a crs called WGS84 or EPSG:4326.</p>
+<p>When we load the data from the original Polyline conversion we need to load it as WGS84 and then change the crs to Mercator.</p>
+<p>But we're not done quite yet. You see that WGS84 crs is very important for geographic operations inside GeoPandas. Mapping, distance, comparisons are all done in the WGS84 crs.</p>
+<p>Before we start doing these geographic operations we need to make sure that we convert back from Mercator to WGS84.</p>
+<p>What happens if we load the data as WSG84?</p>
+<p>Try it and see (once you set up the mapping of the data).</p>
+<p>If you want to take my word for it, the positions are inaccurate. If you have a clear start and end point they will be shifted by a few meters.</p>
+<ol start="4">
+<li>Correct format for lat,lng</li>
+</ol>
+<p>Each mapping technology will have their own system, Folium for example requires (lat, lng). The normal format.</p>
+<p>Others require the 'goofy' format (lng, lat), looking at you GeoPandas and Google Maps. There may be a valid reason, but that is smaller that my ignorance atm.</p>
+<p>For the record when geospatial data is inside GeoPandas it's usually (lng, lat), so remember to do a switch before you try to map the data.</p>
+<p>What happens if you don't?</p>
+<p>Northwest England coordinates, get mapped in the Bay of Mogadishu, Somalia. I guess you'd call it the other side of the world somehow.</p>
+<ol start="5">
+<li>Polygons</li>
+</ol>
+<p>This is where we leverage some of these coordinates to draw a shape around them.</p>
+<p>Using these Polygons we can then make filters for calls to other geospatial services like OpenStreetMaps</p>
+<h2>OpenStreetMaps</h2>
+<p>Still very much a black hole for me, but at the core we want to map our coordinates line to an OpenStreetMap map.</p>
+<p>We could be naive and just get the whole map, but that's a huge amount of data.</p>
+<p>Instead we use our coordinates to create a polygon, and we filter the OSM data with that polygon. This is where depending on the situation you might have to add borders to your polygon.</p>
+<p>Worth noting that this step is incredible fiddly because all OSMnx requests are made via a limited open-source api. Even if it weren't limit, hammering the api would be akin to kicking puppies. Don't do it!</p>
+<p>The adjustment of the polygon thus makes sure that we only query what is necessary.</p>
+<p>What we get from these queries is the <code>graph</code>.</p>
+<p>In order to tell OSM what to put in the graph we can specify the network types: road, walk, cycling etc. As well as other filters.</p>
+<h2>Mapping with Folium</h2>
+<p>Just a remind we're aiming to map the Strava activity onto an OpenStreetMap graph of nodes.</p>
+<p>Folium will:</p>
+<ul>
+<li>take the route DataFrame, and the OSM graph</li>
+<li>use the route to define the center of the map</li>
+<li>use the graph to define the edges of the map</li>
+<li>then plot the route as a <code>folium.PolyLine()</code></li>
+<li>then plot the route start and end as <code>folium.Marker()</code></li>
+</ul>
+<h2>Pulling it together</h2>
+<p>In conclusion, to free our Strava data we need to:</p>
+<ul>
+<li>Read the Google Maps polyline data and convert to (lat,lng)</li>
+<li>Remap that coordinate line to the correct CRS and regular or goofy (lat, lng) pairs</li>
+<li>Create a polygon from the coordinates</li>
+<li>Use the polygon to extract data from OpenStreetMap into a graph</li>
+<li>Generate a map from the coordinates and the graph</li>
+</ul>
+<p>As a final touch we output the map to an html file, which you can see <a href="https://alanionita.github.io/strava-to-foss-notebooks-python/">here</a></p>
+<h2>Conclusion</h2>
+<p>This is just scratching the surface of what is possible, and I strongly recommend you give it a try.</p>
+<p>For the next iteration, I'll be fetching all my Strava data, converting it to geospatial, and save it inside a database.</p>
+<p>Final result</p>
+<p>https://alanionita.github.io/images/posts/strava-to-foss/output.png</p>
+
+                ]]>
+            </description>
+        </item><item>
             <title>One Big Text File (obtf)</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025.03.03.obtf</link>
             <pubDate>Mon, 03 Mar 2025 00:00:00 Z</pubDate>
@@ -14,7 +151,7 @@
             <description>
                 <![CDATA[
                     <h1>One Big Text File (obtf)</h1>
-<p>Learning from <a href="https://ellanew.com/tagged/obtf">Ellane W</a>, I started journalling inside a "one big text file".</p>
+<p>Learning from <a href="https://ellanew.com/tagged/obtf">Ellane W</a>, I started journaling inside a "one big text file".</p>
 <h2>Context</h2>
 <p>My note-taking system is text based, predominantly Markdown files, structure using the PARA system:</p>
 <ul>
@@ -31,10 +168,10 @@
 <p>Journal - Stores daily, quarterly, yearly notes, and this is where most of the note-taking happens. The ideal workflow is: jot down notes within a <code>journal.*.md</code> note and at the end of day, review, summarise, and update <code>area.*.md</code> or <code>resource.*.md</code>. In reality it's just a dumping ground.</p>
 <p>All the notes are stored within a cloud-hosted git repo.</p>
 <h2>The problem</h2>
-<p>In 2025 I wrote X notes, most of which are scoped under <code>journal.daily.*.md</code> leaves. My lax approach to reviewing the notes, means that whenever I'm ready to review the journal entries, I end up with dozens of files to perruse and summarise into a weekly / quarterly superset.</p>
+<p>In 2025 I wrote ~200 notes, most of which are scoped under <code>journal.daily.*.md</code> leaves. My lax approach to reviewing the notes, means that whenever I'm ready to review the journal entries, I end up with dozens of files to peruse and summarise into a weekly / quarterly superset.</p>
 <p>Moving files into <code>archive.*</code> is not easy unless you automate it with the script below.</p>
 <h2>Solution</h2>
-<p>Instead of X leaves of <code>journal.daily.*.md</code> files have one yearly-scoped journal file <code>journal.2025.md</code></p>
+<p>Instead of ~200 leaves of <code>journal.daily.*.md</code> files have one yearly-scoped journal file <code>journal.2025.md</code></p>
 <p>Within the file in order to add some keywords and ease search retrieval I implemented a key - very heavily inspired by Ellane W. suggestions.</p>
 <pre><code class="language-markdown">T. Task
 X. Task done
@@ -44,8 +181,8 @@ R. Reference
 </code></pre>
 <p>The entries in the file are all collected under a day heading <code># 03-03-2025, Monday</code>, and new calendar entries are placed at the top of the file.</p>
 <h2>Observations</h2>
-<p>The obtf is handy for reviews already, making it dead-easy to see past days note with a simple scoll vs opening various files.</p>
-<p>Search and retrieval is great with grep too, and using one big text file means that I use less <code>fzf</code> scripts or <code>grep -nr "term" .</code>.</p>
+<p>The "obtf" is handy for reviews already, making it dead-easy to see past days note with a simple scroll vs opening various files.</p>
+<p>Search and retrieval is great with <code>grep</code> too, and using one big text file means that I use less <code>fzf</code> scripts or <code>grep -nr "term" .</code>.</p>
 <p>The new journal opens in vim via terminal alias <code>,journal</code>, and this allows me wicked fast scribbles.</p>
 
                 ]]>

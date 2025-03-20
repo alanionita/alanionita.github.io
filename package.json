@@ -33,6 +33,7 @@
 		"gray-matter": "^4.0.3",
 		"highlight.js": "^11.10.0",
 		"remark": "^15.0.1",
-		"remark-html": "^16.0.1"
+		"remark-html": "^16.0.1",
+		"remark-images": "^4.1.0"
 	}
 }
