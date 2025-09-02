@@ -11,8 +11,15 @@
 
 	let { slug, text, created, tags }: Props = $props();
 
+	let reqProps: {[key: string]: string | string[]} = {slug, text, created, tags};
+
+	for (const prop in reqProps) {
+		if (!reqProps[prop]) throw Error(`Err [BlogListItem]: Missing Prop: ${prop}`)
+	}
+
 	let datetime = parse(created, 'dd/MM/yyyy', new Date());
 	let datestr = format(datetime, 'EEEE, dd MMMM yyyy');
+	
 	let allTags = tags.join(', ')
 </script>
 

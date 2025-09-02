@@ -5,8 +5,549 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Thu, 20 Mar 2025 00:59:15 GMT</lastBuildDate>
+                <lastBuildDate>Tue, 02 Sep 2025 14:20:41 GMT</lastBuildDate>
                 <item>
+            <title>Complex Amplify VTL resolver</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.09.02.complex-amplify-vtl-writing-testing</link>
+            <pubDate>Tue, 02 Sep 2025 00:00:00 +0100</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Complex Amplify VTL resolver writing and testing</h1>
+<p>Let's start with a problem: you want to implement a profile editing feature, your app is a VueJS frontend and an Node AppSync GraphQL backend, and you database layer is a set of DynamoDB tables.
+As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas and Apache VTL resolvers.</p>
+<p>The profile editing requires dynamic data inputs: when editing a profile you can edit one feature, none of them, or all of them.</p>
+<p>Here's a simple DynamoDB.UpdateItem command example.</p>
+<pre><code class="language-vtl">{
+    "version" : "2018-05-29",
+    "operation" : "UpdateItem",
+    "key": {
+        "id" : $util.dynamodb.toDynamoDBJson($context.identity.username)
+    },
+
+    "update" : {
+        "expression" : "set #name = :name, imgUrl = :imgUrl, bgImgUrl = :bgImgUrl, bio = :bio, #location = :location, website = :website, birthdate = :birthdate",
+        "expressionNames" : {
+           "#name" : "name",
+           "#location": "location",
+       },
+
+       "expressionValues" : {
+            ":name" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.name),
+            ":imgUrl" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.imgUrl),
+            ":bgImgUrl" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.bgImgUrl),
+            ":bio" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.bio),
+            ":location" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.location),
+            ":website" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.website),
+            ":birthdate" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.birthdate),
+        }
+
+    },
+
+    "condition" : {
+        "expression" : "attribute_exists(id)"
+    },
+}
+
+</code></pre>
+<p>The AppSync GraphQL query looks a bit like this.</p>
+<pre><code class="language-javascript">const query = `mutation editMyProfile($input: ProfileInput!) {
+        editMyProfile(newProfile: $input) {
+          ... myProfileFields
+
+          tweets {
+            nextToken
+            tweets {
+                ... on Tweet {
+                    ... tweetFields
+                }
+            }
+          }
+        }
+    }`
+</code></pre>
+<p>And the ProfileInput type has this shape.</p>
+<pre><code class="language-gql">input ProfileInput {
+    name: String!
+    imgUrl: AWSURL
+    bgImgUrl: AWSURL
+    bio: String
+    location: String
+    website: String
+    birthdate: AWSDate
+}
+</code></pre>
+<p>Within ProfileInput, only <code>name</code> is required, with the remaining values being optional.</p>
+<p>In the VTL template we wrote the command as if that all the attributes exist at execution time. When they are missing DynamoDB will override those values with <code>'null'</code>, a significant issue that leads to data loss.</p>
+<h2>Best practice for DynamoDB updates</h2>
+<p>Updates is DynamoDB tend to require complex queries because they have a large amount of requirements, and come with the added risk of data loss.</p>
+<p>Officially AWS recommends that an Update query handles these situations:</p>
+<ul>
+<li>handles each argument to produce a list of required updates</li>
+<li>skips over any guaranteed arguments</li>
+<li>if an argument is <code>null</code> or empty (<code>""</code>), that argument is removed from the item</li>
+<li>if an argument is missing from the item, that argument is added</li>
+<li>if an argument exists on the item, that argument is set to the new value</li>
+</ul>
+<p>Even though this is true for most DynamoDB update commands, the example below is an AppSync specific one.</p>
+<p>These scenarios produce 3 sets of instruction lists around the directive verbs: remove, set, add.</p>
+<p>The expression itself is empty and we then use the lists to populate the expression, expressionNames, and expressionValues accordingly.</p>
+<p><a href="https://docs.aws.amazon.com/appsync/latest/devguide/aws-appsync-resolver-mapping-template-reference-dynamodb-updateitem.html">AWS AppSync, Mapping Template Resource / DynamoDB.UpdateItem example</a></p>
+<pre><code class="language-vtl">{
+    "version" : "2017-02-28",
+
+    "operation" : "UpdateItem",
+
+    "key" : {
+        "id" : $util.dynamodb.toDynamoDBJson($ctx.args.id)
+    },
+
+    ## Set up some space to keep track of things we're updating **
+    #set( $expNames  = {} )
+    #set( $expValues = {} )
+    #set( $expSet = {} )
+    #set( $expAdd = {} )
+    #set( $expRemove = [] )
+
+    #foreach( $entry in $context.arguments.entrySet() )
+        #if( $entry.key != "name" )
+            #if( (!$entry.value) &#x26;&#x26; ("$!{entry.value}" == "") )
+                ## If the argument is set to "null", then remove that attribute from the item in DynamoDB **
+
+                #set( $discard = ${expRemove.add("#${entry.key}")} )
+                $!{expNames.put("#${entry.key}", "$entry.key")}
+            #else
+                ## Otherwise set (or update) the attribute on the item in DynamoDB **
+
+                $!{expSet.put("#${entry.key}", ":${entry.key}")}
+                $!{expNames.put("#${entry.key}", "$entry.key")}
+
+                #if( $entry.key == "ups" || $entry.key == "downs" )
+                    $!{expValues.put(":${entry.key}", { "N" : $entry.value })}
+                #else
+                    $!{expValues.put(":${entry.key}", { "S" : "${entry.value}" })}
+                #end
+            #end
+        #end
+    #end
+
+    ## Start building the update expression, starting with attributes we're going to SET **
+    #set( $expression = "" )
+    #if( !${expSet.isEmpty()} )
+        #set( $expression = "SET" )
+        #foreach( $entry in $expSet.entrySet() )
+            #set( $expression = "${expression} ${entry.key} = ${entry.value}" )
+            #if ( $foreach.hasNext )
+                #set( $expression = "${expression}," )
+            #end
+        #end
+    #end
+
+    ## Continue building the update expression, adding attributes we're going to ADD **
+    #if( !${expAdd.isEmpty()} )
+        #set( $expression = "${expression} ADD" )
+        #foreach( $entry in $expAdd.entrySet() )
+            #set( $expression = "${expression} ${entry.key} ${entry.value}" )
+            #if ( $foreach.hasNext )
+                #set( $expression = "${expression}," )
+            #end
+        #end
+    #end
+
+    ## Continue building the update expression, adding attributes we're going to REMOVE **
+    #if( !${expRemove.isEmpty()} )
+        #set( $expression = "${expression} REMOVE" )
+
+        #foreach( $entry in $expRemove )
+            #set( $expression = "${expression} ${entry}" )
+            #if ( $foreach.hasNext )
+                #set( $expression = "${expression}," )
+            #end
+        #end
+    #end
+
+    ## Finally, write the update expression into the document, along with any expressionNames and expressionValues **
+    "update" : {
+        "expression" : "${expression}"
+        #if( !${expNames.isEmpty()} )
+            ,"expressionNames" : $utils.toJson($expNames)
+        #end
+        #if( !${expValues.isEmpty()} )
+            ,"expressionValues" : $utils.toJson($expValues)
+        #end
+    },
+
+    "condition" : {
+        "expression"       : "version = :expectedVersion",
+        "expressionValues" : {
+            ":expectedVersion" : $util.dynamodb.toDynamoDBJson($ctx.args.expectedVersion)
+        }
+    }
+}
+
+</code></pre>
+<h2>Solution</h2>
+<p>For our app this means that whenever we pass a profile with an <code>undefined</code> value we will remove the existing values from the item.</p>
+<p>Again we hit the data loss problem, however we can stop building the 'remove' instructions lists for undefined values.</p>
+<pre><code class="language-vtl">#set( $expNames  = {} )
+#set( $expValues = {} )
+#set( $expSet = {} )
+#set( $expRemove = [] )
+
+#foreach( $entry in $context.arguments.newProfile.entrySet() )
+    #if( $entry.key != "name" )
+        #if( (!$entry.value) &#x26;&#x26; ("$!{entry.value}" == "") )
+            ## If the argument is set to null, then remove that attribute from the item in DynamoDB **
+
+            #set( $discard = ${expRemove.add("#${entry.key}")} )
+            $!{expNames.put("#${entry.key}", "$entry.key")}
+        #else
+            ## Otherwise set (or update) the attribute on the item in DynamoDB **
+
+            $!{expSet.put("#${entry.key}", ":${entry.key}")}
+            $!{expNames.put("#${entry.key}", "$entry.key")}
+            $!{expValues.put(":${entry.key}", { 
+                "S": "${entry.value}"
+            })}
+            
+        #end
+    #else
+        $!{expSet.put("#${entry.key}", ":${entry.key}")}
+        $!{expNames.put("#${entry.key}", "$entry.key")}
+        $!{expValues.put(":${entry.key}", { 
+            "S": "${entry.value}"
+        })}
+    #end
+#end
+
+## Start building the update expression, starting with attributes we are going to SET **
+
+#set( $expression = "" )
+#if( !${expSet.isEmpty()} )
+    #set( $expression = "SET" )
+    #foreach( $entry in $expSet.entrySet() )
+        #set( $expression = "${expression} ${entry.key} = ${entry.value}" )
+        #if ( $foreach.hasNext )
+            #set( $expression = "${expression}," )
+        #end
+    #end
+#end
+
+## Continue building the update expression, adding attributes we are going to REMOVE **
+#if( !${expRemove.isEmpty()} )
+    #set( $expression = "${expression} REMOVE" )
+
+    #foreach( $entry in $expRemove )
+        #set( $expression = "${expression} ${entry}" )
+        #if ( $foreach.hasNext )
+            #set( $expression = "${expression}," )
+        #end
+    #end
+#end
+
+{
+    "version": "2018-05-29",
+    "operation": "UpdateItem",
+    "key": {
+        "id" : $util.dynamodb.toDynamoDBJson($context.identity.username)
+    },
+    "update": {
+        "expression" : "${expression}"
+        #if( !${expNames.isEmpty()} )
+            ,"expressionNames" : $utils.toJson($expNames)
+        #end
+        #if( !${expValues.isEmpty()} )
+            ,"expressionValues" : $utils.toJson($expValues)
+        #end
+    },
+    "condition" : {
+        "expression" : "attribute_exists(id)"
+    }
+}
+
+
+</code></pre>
+<p>We continue to use the 'remove' lists for incoming values set to <code>null</code> or <code>""</code> eg. user wants to change their website to an empty string.</p>
+<p>We no longer handle any 'add' instructions because can handle new properties with 'set'.</p>
+<p>With these changes we can now support the dynamic ProfileInput object and correctly make the database changes.</p>
+<h2>Testing</h2>
+<p>The testing of AWS AppSync VTL templates generically involves:</p>
+<ul>
+<li>creating a mock context object with relevant identity and arguments (payload)</li>
+<li>loading the VTL template given the mock context</li>
+<li>verifying the VTL template expansion</li>
+</ul>
+<p>When it comes to the data verification we are looking to check:</p>
+<ul>
+<li>expression shape</li>
+<li>expressionNames presence and values</li>
+<li>expressionValues shape, presence, and values</li>
+</ul>
+<p>If payload newProfile contains name, bio, website</p>
+<ul>
+<li>Then the template expression should feature name, bio, website</li>
+<li>Where all params in the expression are under the SET verb</li>
+<li>The expressionNames should contain #name, #bio, #website</li>
+<li>The expressionNames should have corresponding values</li>
+<li>The expressionValues should contain :name, :bio, :website</li>
+<li>The expressionValues should have the corresponding values</li>
+<li>The expressionValues are correctly mapped as DynamoDB string ("S")</li>
+</ul>
+<p>If payload newProfile contains name, bio, and bio is <code>null</code> or <code>""</code></p>
+<ul>
+<li>Then  the template expression should feature name, bio</li>
+<li>Where *name is under the SET verb</li>
+<li>Where *bio is under the REMOVE verb</li>
+</ul>
+<h2>Notes</h2>
+<ol>
+<li>ExpressionValues are strings</li>
+</ol>
+<p>One crucial thing to note is the discrepancy between the ProfileInput types and the DynamoDB expressionValues.</p>
+<p>Even though some values are of type AWSUrl or AWSDate, when given to the expressionValue they must be of type string ("S"), otherwise the query will fail.</p>
+<p>Please note that this issue will trigger a false positive in testing because template itself is still value regardless of the correct value of expressionValues</p>
+<ol start="2">
+<li>Template evaluation with the AppSync API</li>
+</ol>
+<p>AppSync testing can be done by combining the "@aws-amplify/amplify-appsync-simulator" and "amplify-velocity-template" packages.</p>
+<p>This method is prone to errors, and requires some output parsing of the templates after they've been loaded by the simulator eg. trimming training commas from the output.</p>
+<p>A more reliable option is the <code>EvaluateMappingTemplateCommand</code> from "@aws-sdk/client-appsync". This uses an AppSync Client to evaluate any template string for validity, and it's a locally executing command.</p>
+<p><a href="https://docs.aws.amazon.com/appsync/latest/APIReference/API_EvaluateMappingTemplate.html">AWS Amplify EvaluateMappingTemplateCommand documentation</a></p>
+<ol start="3">
+<li>VTL variations</li>
+</ol>
+<p>You can also try a simpler loop for building the expression.</p>
+<pre><code class="language-vtl">#set($exp = "SET #name = :name")
+#set($expNames = {"#name":"name"})
+#set($expValues = {":name": {"S": $ctx.args.newProfile.name}})
+
+#set($fields = ["imgUrl", "bgImgUrl", "bio", "location", "website", "birthdate"])
+
+#foreach($field in $fields)
+  #if($ctx.args.newProfile[$field] &#x26;&#x26; "$!ctx.args.newProfile[$field]" != "")
+    #set($exp = "$exp, #${field} = :${field}")
+    $util.qr($expNames.put("#${field}", "$field"))
+    $util.qr($expValues.put(":${field}", {"S": "$ctx.args.newProfile[$field]"}))
+  #end
+#end
+
+{
+    "version": "2018-05-29",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.identity.username)
+    },
+    "update": {
+        "expression": "$exp",
+        "expressionNames": $util.toJson($expNames),
+        "expressionValues": $util.toJson($expValues)
+    },
+    "condition": {
+        "expression": "attribute_exists(id)"
+    }
+}
+
+</code></pre>
+<p>This is shorter, but will not handle scenarios where users require the removal of values eg. when a user wants to set the their existing profile website to <code>""</code>.</p>
+<h2>Documentation</h2>
+<p>Besides the AWS resources and the VTL project docs, I found the JEdit plugin writing guide to be excellent. The JEdit plugins are written in Java, but make use of VTL and the explanations of the various VTL directives are very useful and concise.</p>
+<p>On testing the <code>amplify-velocity-template</code> module test suite is a great resource for ideas on how to test more complex VTL templates.</p>
+<p><a href="https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference-dynamodb.html">AWS AppSync resolver mapping template reference for DynamoDB</a></p>
+<p><a href="https://velocity.apache.org/engine/devel/vtl-reference.html#vtl-reference-contents">The Apache Velocity Project - Developer reference</a></p>
+<p><a href="https://plugins.jedit.org/plugindoc/Templates/ch04.html">JEdit - Plug-in writing developer guide, VTL Directives</a></p>
+<p><a href="https://github.com/aws-amplify/amplify-cli/tree/dev/packages/amplify-velocity-template/tests">Amplify Velocity Template - test suite</a></p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Amplify Vite config correction</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.06.11.amplify-vite-config</link>
+            <pubDate>Wed, 11 Jun 2025 00:00:00 +0100</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Amplify Vite config correction</h1>
+<p>Under the Vue docs for Amplify UI, we see a the following config specification.</p>
+<p>https://ui.docs.amplify.aws/vue/connected-components/authenticator</p>
+<pre><code class="language-javascript">// vite.config.js
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+      alias: [
+      {
+        find: './runtimeConfig',
+        replacement: './runtimeConfig.browser', // ensures browser compatible version of AWS JS SDK is used
+      },
+    ]
+  }
+})
+</code></pre>
+<p>The config is required to ensure a browser compatible version of <code>AWS JS SDK</code>.</p>
+<p>Sidenotes:</p>
+<ul>
+<li>Why do we need the AWS JS SDK if we're using Amplify?</li>
+<li>None of the docs for Amplify mention the <code>aws-sdk</code> as a dependency.</li>
+</ul>
+<h2>Problem</h2>
+<p>Yhe logic above assumes that projects will configure Vite aliases with find / replacement pattern.</p>
+<p>However the default config recommends a much simple object structure with key / value definitions.</p>
+<p>For instance the Vue3 wizard produces this Vite configuration</p>
+<pre><code class="language-javascript">// vite.config.js
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueDevTools(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+})
+</code></pre>
+<h2>Solution</h2>
+<p>Although we could introduce the find / replacement pattern into the original config, it's far more sensible to replace the documentation recommendation to match the key/value format</p>
+<pre><code class="language-javascript">// vite.config.js
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueDevTools(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      './runtimeConfig': path.resolve(__dirname, './runtimeConfig.browser')
+    },
+  },
+})
+</code></pre>
+<h2>Why does it matter?</h2>
+<p>Meets users where ever they are, by matching closely the default starter config.</p>
+<p>You could end up with a lot of convoluted issues with Vite because of this configuration.</p>
+<p>For example a mis-configured alias would trigger errors stemming from <code>EnvironmentPluginContainer.resolveId</code> and <code>EnvironmentModuleGraph._resolveUrl</code>. This would be a false negative pointing to mis-configured environement variables as opposed to the Vite alias resolution.</p>
+<p>Be careful with it!</p>
+
+                ]]>
+            </description>
+        </item><item>
+            <title>Amplify Documentation Safari</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.06.11.amplify-docs-safari.md</link>
+            <pubDate>Wed, 11 Jun 2025 00:00:00 +0100</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Amplify Documentation Safari</h1>
+<p>Join me for a thrilling ride through the Amplify docs, where you have to bob and weave in order to reach your goal of connecting an AppSync backend to a Vue frontend via the Amplify service and modules.</p>
+<h2>Background</h2>
+<p>Amplify is an amazingly promising service for integrating frontends with GraphQL backends.</p>
+<p>Common recipe for these recipes are:</p>
+<ul>
+<li>Backend: Cognito, AppSync with data sources as Lambda, DynamoDB, etc</li>
+<li>Frontend: Vue, React etc</li>
+</ul>
+<p>I'd like to use Amplify for 3 purposes:</p>
+<ul>
+<li>Connecting to my AppSync API</li>
+<li>Authenticating via Cogntio, managing tokens behind the scenes</li>
+<li>Running GraphQL queries and getting data back in the UI</li>
+</ul>
+<h2>Resoning</h2>
+<p>Amplify is an ecosystem that contains cli, scaffolding, and UI tools.</p>
+<p>The combination of these tools means that we can:</p>
+<ul>
+<li>configure a client API to hit our AppSync backend</li>
+<li>configure the authentication flow as Cognito</li>
+<li>use pre-build UI components to handle the authentication stories via Cognito: sign in, sign up, login, forgot password</li>
+<li>manage tokens from Cognito</li>
+<li>send queries down to this API</li>
+</ul>
+<p>The goal of this article is to sign-post and add commentary about documentation.</p>
+<p>I will however cover 2 big bonuses to using Amplify before talking about docs.</p>
+<h2>Bonus - Code generation [@amplify-cli/]</h2>
+<p>A big nuisance for GraphQL processes is the mirroring of queries across backend and frontend.</p>
+<p>With Amplify you can with one command generate code for all Queries and Mutations from your AppSync API:</p>
+<pre><code>npx @aws-amplify/cli codegen add --apiId YOUR_APPSYNC_API_ID --region YOUR_REGION
+
+</code></pre>
+<p>This generates files inside <code>graphql/</code> for <code>queries.js</code> and <code>mutations.js</code> with following examples</p>
+<pre><code class="language-javascript">export const getProfile = /* GraphQL */ `
+  query GetProfile($screenName: String!) {
+    getProfile(screenName: $screenName) {
+      id
+      name
+      screenName
+      imgUrl
+      bgImgUrl
+      bio
+      location
+      website
+      birthdate
+      createdAt
+      tweets {
+        nextToken
+        __typename
+      }
+      followersCount
+      followingCount
+      tweetsCount
+      likesCount
+      following
+      followedBy
+      __typename
+    }
+  }
+`;
+
+</code></pre>
+<h2>Bonus - Cognito</h2>
+<p>Cognito is an OAuth flow implementation and as such would require some legwork (boilerplate code) to manage keys and orchestrate the flows correctly.</p>
+<p>With Amplify we get UI components, and API configurations that means we manage no tokens, vastly simplifying the app configuration.</p>
+<h2>Documentation safari</h2>
+<p>Let's meander through the Amplify documentation valley.</p>
+<ol>
+<li>Amplify Docs</li>
+</ol>
+<p>You would think that the best docs location is the official Amplify Docs, scoped by framework of choice. Below referencing Vue.</p>
+<p>https://docs.amplify.aws/vue/</p>
+<p>Most sensible place to go from here is to "Set up Amplify Data" (https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/), but once on the page you realise that most the setup here involves from scratch development of both backend and frontend in parallel using Amplify.</p>
+<p>The audience for Amplify seems to be folks that use it for both.</p>
+<p>I'd wager a bet that most developers build AppSync with Serverless Framework, CDK, or Terraform, bypassing Amplify on the backend, whilst using Amplify libraries on the UI.</p>
+<p>As someone who already has a deployed AppSync API, that means that we have to hunt and peck through the docs for the relevant code and instructions</p>
+<p>What is useful here is how to create the API on the client using <code>generateClient</code> from <code>aws-amplify/data</code>. This is important because there's a huge about of different ways to do this since Amplify has a large amount of modules and techniques, each looking the same but breaking in magical ways.</p>
+<ol start="2">
+<li>AppSync - Integrate with your app</li>
+</ol>
+<p>This is actually the most sensible spot to start.</p>
+<p>From the AWS Console, navigate to AppSync, then open your specific API. The instructions should appear my default on the main page.</p>
+<p>One big flaw with these instructions is the use of <code>./aws-exports.js</code> which is not defined or explained.</p>
+<p>We can guess that it involves configuration details, but in the following steps the configuration variables are hard-coded in the file.</p>
+<p>There's no mention here about how to hide this sensitive information or how to use .env variables.</p>
+<p>Also there's no configuration explanation for Cognito, even though most setups will include it.</p>
+<ol start="3">
+<li>Amplify UI docs</li>
+</ol>
+<p>Essentially the same as point 1. but more focused on the frontend. Thus more relevant for your needs. Requires framework scoping selection, below focused on Vue</p>
+<p>https://ui.docs.amplify.aws/vue/connected-components/authenticator</p>
+<p>The issue here is to do with the audience: even though it should be for us (someone who want to connect a UI to an existing AppSync backend via Amplify), the instructions are very simplistic.</p>
+<p>The initial example doesn't cover any Sign In, Sign Up flows, nor does it explain how to render different auth components depending on the authentication states: authenticated, unauthenticated, or loading.</p>
+<p>You get a lot more information within the 'Advanced Usage' section of the docs, but all of the initial instructions are replaced.</p>
+<p>Arguable if these requires are 'advanced' or just base requirements.</p>
+<h1>Bonus? - Sandboxing</h1>
+<p>Throughout the docs sandboxing is mentioned, but never fully detailed.</p>
+<p>https://docs.amplify.aws/vue/deploy-and-host/sandbox-environments/features/</p>
+<p>Still murky as to how to use sandboxing with an existing API but the secrets explanation is very helpful and interesting.</p>
+<p>It seems that via sandboxing you attach secrets to a sandbox and can then reference it within your backend. Again the 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue backend, is it out initial AppSync backend?</p>
+<p>This is also where they describe how to 'Generate client config' essentially producing the <code>amplify_outputs.json</code> mentioned above.</p>
+<p>Unclear whether this is a bonus or not because we already have an API and there are not details on how to integrate a sandbox with a pre-deployed API.</p>
+
+                ]]>
+            </description>
+        </item><item>
             <title>Strava to FOSS analysis and visualisation</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025.03.19.strava-to-foss</link>
             <pubDate>Wed, 19 Mar 2025 00:00:00 Z</pubDate>
