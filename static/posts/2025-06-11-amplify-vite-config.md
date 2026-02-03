@@ -36,11 +36,11 @@ The config is required to ensure a browser compatible version of `AWS JS SDK`.
 
 ## Problem
 
-Yhe logic above assumes that projects will configure Vite aliases with find / replacement pattern. 
+Logic above expects to config Vite aliases with find / replacement pattern. 
 
-However the default config recommends a much simple object structure with key / value definitions. 
+However the default starter config recommends a simple object structure with key / value pairs. 
 
-For instance the Vue3 wizard produces this Vite configuration
+The Vue v3 wizard produces this Vite configuration
 
 ```js
 // vite.config.js
@@ -61,7 +61,7 @@ export default defineConfig({
 
 ## Solution
 
-Although we could introduce the find / replacement pattern into the original config, it's far more sensible to replace the documentation recommendation to match the key/value format
+Far more sensible to bypass the documentation suggestion, and match the key/value format.
 
 ```js
 // vite.config.js
@@ -83,10 +83,10 @@ export default defineConfig({
 
 ## Why does it matter?
 
-Meets users where ever they are, by matching closely the default starter config. 
+Yes, because it meets users where ever they are by matching closely the default starter config vs. introducing a new pattern. 
 
-You could end up with a lot of convoluted issues with Vite because of this configuration.
+Depending on config you could end up with some odd issues.
 
-For example a mis-configured alias would trigger errors stemming from `EnvironmentPluginContainer.resolveId` and `EnvironmentModuleGraph._resolveUrl`. This would be a false negative pointing to mis-configured environment variables as opposed to the Vite alias resolution. 
+> A mis-configured alias would trigger errors stemming from `EnvironmentPluginContainer.resolveId` and `EnvironmentModuleGraph._resolveUrl`. A false negative pointing to mis-configured environment variables as opposed Vite alias resolution.
 
-Be careful with it!
+

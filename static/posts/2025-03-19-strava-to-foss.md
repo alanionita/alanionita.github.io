@@ -70,11 +70,12 @@ Unclear why, but some activities don't have this entry, whilst other valid entri
 
 Also unclear is whether this value will contain elevation data, we have `_high` and `_low` elev values within the activity. A good mystery to uncover in a future post and feature.
 
-> Note that most of the supporting code from this point forward is about the `osm.ipynb` notebook.
-
 ## Geospatial primer
 
+
 ### Geometry
+
+> Note: the supporting code from this point forward in the `osm.ipynb` notebook.
 
 Quick intro to geospatial data is that most things relate to Lines, Polylines, and Polygons.
 

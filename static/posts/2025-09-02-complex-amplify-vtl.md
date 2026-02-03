@@ -318,7 +318,9 @@ If payload newProfile contains name, bio, and bio is `null` or `""`
 
 ## Notes
 
-1. ExpressionValues are strings
+### ExpressionValues
+
+ExpressionValues are strings.
 
 One crucial thing to note is the discrepancy between the ProfileInput types and the DynamoDB expressionValues. 
 
@@ -326,7 +328,7 @@ Even though some values are of type AWSUrl or AWSDate, when given to the express
 
 Please note that this issue will trigger a false positive in testing because template itself is still value regardless of the correct value of expressionValues
 
-2. Template evaluation with the AppSync API
+### Template evaluation
 
 AppSync testing can be done by combining the "@aws-amplify/amplify-appsync-simulator" and "amplify-velocity-template" packages. 
 
@@ -336,7 +338,7 @@ A more reliable option is the `EvaluateMappingTemplateCommand` from "@aws-sdk/cl
 
 [AWS Amplify EvaluateMappingTemplateCommand documentation](https://docs.aws.amazon.com/appsync/latest/APIReference/API_EvaluateMappingTemplate.html)
 
-3. VTL variations
+### VTL variations
 
 You can also try a simpler loop for building the expression.
 

@@ -10,39 +10,53 @@ tags: ['aws', 'amplify', 'docs']
 
 # Amplify Documentation Safari
 
-Join me for a thrilling ride through the Amplify docs, where you have to bob and weave in order to reach your goal of connecting an AppSync backend to a Vue frontend via the Amplify service and modules.
+Join me for a pinball ride through the Amplify docs, where you have to bob and weave in order to reach our goal of connecting an AppSync backend to a Vue frontend via the Amplify service and modules.
 
 ## Background
 
-Amplify is an amazingly promising service for integrating frontends with GraphQL backends.
-
-Common recipe for these recipes are: 
-- Backend: Cognito, AppSync with data sources as Lambda, DynamoDB, etc
-- Frontend: Vue, React etc
-
-I'd like to use Amplify for 3 purposes:
-- Connecting to my AppSync API
-- Authenticating via Cogntio, managing tokens behind the scenes
-- Running GraphQL queries and getting data back in the UI
-
-## Reasoning
+### Amplify
 
 Amplify is an ecosystem that contains cli, scaffolding, and UI tools.
 
 The combination of these tools means that we can:
-- configure a client API to hit our AppSync backend
-- configure the authentication flow as Cognito
-- use pre-build UI components to handle the authentication stories via Cognito: sign in, sign up, login, forgot password
-- manage tokens from Cognito
-- send queries down to this API
+- Configure a client API to hit our AppSync backend
+- Configure the authentication flow as Cognito
+- Use pre-build UI components to handle the authentication stories via Cognito: sign in, sign up, login, forgot password
+- Manage tokens from Cognito
+- Send queries down to this API
 
-The goal of this article is to sign-post and add commentary about documentation. 
+Of note to us, is the integration with Cognito for auth, and calls to the Appsync backend.
 
-I will however cover 2 big bonuses to using Amplify before talking about docs.
+### Cognito
 
-### Amplify, code generation
+Cognito is an OAuth flow implementation and as such would require some legwork (boilerplate code) to manage keys and orchestrate the flows correctly.
 
-A big nuisance for GraphQL processes is the mirroring of queries across backend and frontend. 
+With Amplify we get UI components, and API configurations. We no longer manage tokens and the standard OAuth flows, vastly simplifying the service logic.
+
+### Service architecture
+
+Backend:
+- AppSync with data sources as Lambda, DynamoDB, etc
+- Cognito for auth
+
+Frontend: 
+- Framework use: Vue, React etc
+- Cognitor for auth
+
+## Plans
+
+Use Amplify for:
+- Connecting to a pre-deployed AppSync API
+- Authenticating via Cognito, managing tokens behind the scenes
+- Running GraphQL queries and getting data back in the UI
+
+The goals of this article: 
+- Enumerate and explain documentation locations
+- Sign-post and add commentary about documentation
+
+## Amplify, code generation
+
+A big chore for GraphQL processes is the mirroring of queries across backend and frontend. 
 
 With Amplify you can with one command generate code for all Queries and Mutations from your AppSync API:
 
@@ -82,70 +96,92 @@ export const getProfile = /* GraphQL */ `
 `;
 ```
 
-### Cognito
+## Amplify Docs safari
 
-Cognito is an OAuth flow implementation and as such would require some legwork (boilerplate code) to manage keys and orchestrate the flows correctly.
+### 1. Amplify Vue Docs
 
-With Amplify we get UI components, and API configurations that means we manage no tokens, vastly simplifying the app configuration.
+Best starting point is the official Amplify Docs, scoped by framework of choice.
 
-## Amplify docs safari
+[Amplify UI / Vue ](https://docs.amplify.aws/vue/)
 
-Let's meander through the Amplify documentation valley.
+From here, follow the [Set up Amplify Data](https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/)
 
-1. Amplify Docs
-
-You would think that the best docs location is the official Amplify Docs, scoped by framework of choice. Below referencing Vue.
-
-https://docs.amplify.aws/vue/
-
-Most sensible place to go from here is to "Set up Amplify Data" (https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/), but once on the page you notice that most the setup here involves from scratch development of both backend and frontend in parallel using Amplify. 
+Once on the page you notice that the setup involves the scaffolding of both backend and frontend in parallel using Amplify. 
 
 The audience for Amplify seems to be folks that use it for both. 
 
-I'd wager a bet that most developers build AppSync with Serverless Framework, CDK, or Terraform, bypassing Amplify on the backend, whilst using Amplify libraries on the UI.
+> I'd wager a bet that most developers build AppSync with Serverless Framework, CDK, or Terraform, bypassing Amplify on the backend, whilst using Amplify libraries on the UI.
 
-As someone who already has a deployed AppSync API, that means that we have to hunt and peck through the docs for the relevant code and instructions
+As someone with a pre-deployed AppSync API, that means hunting and pecking through the docs for relevant code and instructions.
 
-What is useful here is how to create the API on the client using `generateClient` from `aws-amplify/data`. This is important because there's a huge about of different ways to do this since Amplify has a large amount of modules and techniques, each looking the same but breaking in magical ways. 
+What is useful here, is how to create the API on the client using `generateClient` from `aws-amplify/data`
 
-2. AppSync - Integrate with your app
+> Important because of the many ways to achieve this. Amplify modules tend to look the same, but contain key api variations that cause setup trouble. 
 
-This is actually the most sensible spot to start. 
+As a result, the docs above are not a good starting point!
 
-From the AWS Console, navigate to AppSync, then open your specific API. The instructions should appear my default on the main page.
+### 2. AppSync Console
 
-One big flaw with these instructions is the use of `./aws-exports.js` which is not defined or explained. 
+Most sensible spot to start, is the Appsync Console (web).
+
+- From the AWS Console
+- Navigate to AppSync
+- Open your specific AP
+
+The instructions should appear my default on the main page, but they are are incomplete.
+
+These instructions make use of `./aws-exports.js` which is not defined or explained.
+
+> After a bit of experimentation, the aws-exports.js file is generated by one of the aws-amplify methods for creating an API. 
 
 We can guess that it involves configuration details, but in the following steps the configuration variables are hard-coded in the file. 
 
-There's no mention here about how to hide this sensitive information or how to use .env variables.
+Also there are no:
+- mentions about how to hide this sensitive information or how to use .env variables
+- configuration explanations for Cognito, even though most Appsync solutions will use it
 
-Also there's no configuration explanation for Cognito, even though most setups will include it. 
+### 3. Amplify UI Vue docs
 
-3. Amplify UI docs
+Essentially the same as point 1. but more focused on the frontend. Thus more relevant for your needs. 
 
-Essentially the same as point 1. but more focused on the frontend. Thus more relevant for your needs. Requires framework scoping selection, below focused on Vue
+Requires framework scoping selection, below focused on Vue.
 
-https://ui.docs.amplify.aws/vue/connected-components/authenticator
+[Amplify UI / Vue / connected-components / Authenticator](https://ui.docs.amplify.aws/vue/connected-components/authenticator)
 
-The issue here is to do with the audience: even though it should be for us (someone who want to connect a UI to an existing AppSync backend via Amplify), the instructions are very simplistic. 
+At this point in our journey with Amplify and Appsync, we identiy as a developer who wants to connect a UI to an existing AppSync backend via Amplify.
 
-The initial example doesn't cover any Sign In, Sign Up flows, nor does it explain how to render different auth components depending on the authentication states: authenticated, unauthenticated, or loading.
+Even though the docs here should be for us, the instructions are too simple:
+- Doesn't cover any Sign In, Sign Up flows
+- Doesn't explain how to render different auth components depending on the authentication states: authenticated, unauthenticated, or loading.
 
-You get a lot more information within the 'Advanced Usage' section of the docs, but all of the initial instructions are replaced. 
+There is more information within the 'Advanced Usage' section of the docs, but all of the initial instructions are replaced my them. 
 
-Arguable if these requires are 'advanced' or just base requirements.
+> To me, these 'advanced' use cases, are just base requirements in 2025
 
 ## Sandboxing
 
 Throughout the docs sand-boxing is mentioned, but never fully detailed. 
 
-https://docs.amplify.aws/vue/deploy-and-host/sandbox-environments/features/
+[Amplify docs / sanbox-environments / features](https://docs.amplify.aws/vue/deploy-and-host/sandbox-environments/features/)
 
-Still murky as to how to use sand-boxing with an existing API but the secrets explanation is very helpful and interesting. 
+Unclear how to use sand-boxing with an existing API but the secrets explanation is very helpful and interesting.
 
-It seems that via sand-boxing you attach secrets to a sandbox and can then reference it within your backend. Again the 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue backend, is it out initial AppSync backend?
+Via sand-boxing you attach secrets to a sandbox, and then reference it within your backend. The 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue SSR backend, or is it an AWS backend?
 
-This is also where they describe how to 'Generate client config' essentially producing the `amplify_outputs.json` mentioned above.
+Here we can find the 'Generate client config' docs, which outlines how to create `amplify_outputs.json` mentioned above.
 
-Unclear whether this is a bonus or not because we already have an API and there are not details on how to integrate a sandbox with a pre-deployed API. 
+No details on how to integrate a sandbox with a pre-deployed API or how to manage a sandbox in that instance. Seems like 'sand-boxing' is purely reserved for Amplify deployed resources, which tend to be sand-boxed within Amplify environments by default.
+
+## Conclusion
+
+We have found a solution for configuring the auth with Amplify, and doing the Cognito auth via it's libraries.
+
+We have also found a way to `defineClient()` via Amplify and make calls to the GraphQL backend.
+
+Unresolved is the topic of, how to best establish the GraphQL backend integration.
+
+The docs are inconsistent in details, and they rarely cover the setup from the perspective of different users. For the Amplify team, the only user of their API is a developer which is deploying with Amplify.
+
+What happens to the UI libraries then? Are they only meant for those users? 
+
+I do plan to write a "how to" containing all the steps for the setup, and best practice suggestions.
