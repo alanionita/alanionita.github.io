@@ -96,7 +96,7 @@ Take a regular 20km run as geospatial lists: we end up with ~300 coordinate poin
 
 ### Formats and GeoInfra
 
-Geospacial data use a JSON flavour called `.geojson`. You'll see below that there's a big fuss about saving our converted data to `.geojson` so that we do the format conversion in one step and end up with a portable reusable geospatial file for later geospatial focused tasks.
+Geospatial data use a JSON flavour called `.geojson`. You'll see below that there's a big fuss about saving our converted data to `.geojson` so that we do the format conversion in one step and end up with a portable reusable geospatial file for later geospatial focused tasks.
 
 We can go further and instead of saving to a file, we can save the data to a database like PostGIS. That's not covered here, but stay tuned.
 

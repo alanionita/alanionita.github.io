@@ -609,7 +609,7 @@ export default defineConfig({
 <p>I can't stress to you how useful this can be for future analysis.</p>
 <p>Take a regular 20km run as geospatial lists: we end up with ~300 coordinate points, we can then compare distances between these, track time across each coordinate point and more.</p>
 <h3>Formats and GeoInfra</h3>
-<p>Geospacial data use a JSON flavour called <code>.geojson</code>. You'll see below that there's a big fuss about saving our converted data to <code>.geojson</code> so that we do the format conversion in one step and end up with a portable reusable geospatial file for later geospatial focused tasks.</p>
+<p>Geospatial data use a JSON flavour called <code>.geojson</code>. You'll see below that there's a big fuss about saving our converted data to <code>.geojson</code> so that we do the format conversion in one step and end up with a portable reusable geospatial file for later geospatial focused tasks.</p>
 <p>We can go further and instead of saving to a file, we can save the data to a database like PostGIS. That's not covered here, but stay tuned.</p>
 <h2>Geospatial data</h2>
 <p>Back to our Strava data.</p>
