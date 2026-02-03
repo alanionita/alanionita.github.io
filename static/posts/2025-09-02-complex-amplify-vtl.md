@@ -7,7 +7,7 @@ created: 02/09/2025
 tags: ['aws', 'appsync', 'vtl']
 ---
 
-# Complex Amplify VTL resolver writing and testing
+# Complex VTL resolvers, for Amplify
 
 Let's start with a problem: you want to implement a profile editing feature, your app is a VueJS frontend and an Node AppSync GraphQL backend, and you database layer is a set of DynamoDB tables. 
 As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas and Apache VTL resolvers.
@@ -52,21 +52,20 @@ Here's a simple DynamoDB.UpdateItem command example.
 
 The AppSync GraphQL query looks a bit like this.
 
-```js
-const query = `mutation editMyProfile($input: ProfileInput!) {
-        editMyProfile(newProfile: $input) {
-          ... myProfileFields
+```gql
+mutation editMyProfile($input: ProfileInput!) {
+    editMyProfile(newProfile: $input) {
+        ... myProfileFields
 
-          tweets {
-            nextToken
-            tweets {
-                ... on Tweet {
-                    ... tweetFields
-                }
+        tweets {
+        nextToken
+        tweets {
+            ... on Tweet {
+                ... tweetFields
             }
-          }
         }
-    }`
+    }
+}
 ```
 
 And the ProfileInput type has this shape.
@@ -87,7 +86,7 @@ Within ProfileInput, only `name` is required, with the remaining values being op
 
 In the VTL template we wrote the command as if that all the attributes exist at execution time. When they are missing DynamoDB will override those values with `'null'`, a significant issue that leads to data loss.
 
-## Best practice for DynamoDB updates
+## DynamoDB.UpdateItem
 
 Updates is DynamoDB tend to require complex queries because they have a large amount of requirements, and come with the added risk of data loss.
 

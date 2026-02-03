@@ -32,9 +32,7 @@ export default defineConfig({
 
 The config is required to ensure a browser compatible version of `AWS JS SDK`. 
 
-Sidenotes: 
-- Why do we need the AWS JS SDK if we're using Amplify? 
-- None of the docs for Amplify mention the `aws-sdk` as a dependency. 
+> Why do we need the AWS JS SDK if we're using Amplify? None of the Amplify docs mention the `aws-sdk` as a dependency. 
 
 ## Problem
 
@@ -89,6 +87,6 @@ Meets users where ever they are, by matching closely the default starter config.
 
 You could end up with a lot of convoluted issues with Vite because of this configuration.
 
-For example a mis-configured alias would trigger errors stemming from `EnvironmentPluginContainer.resolveId` and `EnvironmentModuleGraph._resolveUrl`. This would be a false negative pointing to mis-configured environement variables as opposed to the Vite alias resolution. 
+For example a mis-configured alias would trigger errors stemming from `EnvironmentPluginContainer.resolveId` and `EnvironmentModuleGraph._resolveUrl`. This would be a false negative pointing to mis-configured environment variables as opposed to the Vite alias resolution. 
 
 Be careful with it!

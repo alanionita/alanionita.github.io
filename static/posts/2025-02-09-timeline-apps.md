@@ -1,5 +1,5 @@
 ---
-title: Timeline apps - past, present, future
+title: Timeline apps, a timeline
 url: 2025-02-09-timeline-apps
 desc: ''
 updated: 09/02/2025
@@ -7,7 +7,7 @@ created: 09/02/2025
 tags: ['essay']
 ---
 
-# Timeline apps - past, present, future
+# Timeline apps, a timeline
 
 Social Media is a disaster. Under the guise of connecting with friends and belonging to a community there's just one driver: profit. 
 
@@ -19,7 +19,7 @@ And in that chase for profit we have lost out on core hygiene elements that plat
 
 The future however might not be so bleak because of the increasing popularity of "timeline apps". To understand them I'd like to set the scene for the trend and them explain the apps themselves.
 
-## Social Media advertising
+## Advertising
 
 Social Media advertising spend in 2024 was $164bil [*1] globally, but after digging into the data and predictions it seems to be designed by hockey stick hopefuls not real analysts.
 
@@ -29,7 +29,7 @@ Nice growth you'd say? Sure, "+22% YoY" the IAB.UK quotes. The interesting thing
 
 Anecdotally I remember social being up to 11% in 2013, so 0.207 billion pounds vs 2.5 billion pounds. 12x increase in 11 years. Again not bad! 
 
-The driver for the ad industry is the not necessarily consistent return, they're not pension funds. The ad industry "rides the wave" and so they need to follow and the hottest trends and deploy capital accordingly. The driver is maximum return on investment, and maxROI is gained from deploying capital with a weight towards top performing segments. 
+The driver for the ad industry is the not necessarily consistent return, they're not pension funds. The ad industry "rides the wave" and so they need to follow and the hottest trends and deploy capital accordingly. The driver is maximum return on investment, and max ROI is gained from deploying capital with a weight towards top performing segments. 
 
 In 2024 that segment was not social, it was digital video. And by a long margin 2x. As an ad agent you cannot pass on that opportunity. 
 
@@ -37,7 +37,7 @@ Which leaves social advertising with a massive deficit in capital deployment: th
 
 Social advertising is not making money where "making" is the exponential scale that most business crave for. 
 
-## RSS and the past
+## The past, RSS
 
 Social media advertising is generally in decline today, mostly because of the financial view explained above and because of other smaller platform related issues.
 
@@ -48,7 +48,7 @@ Google Reader was built on top of RSS, a protocol that stands for Really Simple 
 Google Reader was nice and was the first "timeline app". 
 
 
-## Timeline apps today
+## Today, siloed apps
 
 Today the big social media platforms are in trouble. They can't make revenue and most are adopting dark patterns to force us to share more details with a platform, whilst implementing harder and harder journey for exporting data and deleting accounts. A Facebook was notoriously hard to delete in 2013-2014, which is why people moved to Twitter.
 

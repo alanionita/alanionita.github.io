@@ -1,5 +1,5 @@
 ---
-title: Flutter - Development Setup
+title: Flutter, dev environment setup
 url: 2025-02-12-flutter-setup
 desc: ''
 updated: 12/02/2025
@@ -7,7 +7,7 @@ created: 12/02/2025
 tags: ['mobile']
 ---
 
-# Flutter - Development Setup
+# Flutter, dev environment setup
 
 Initial dive into Flutter for Desktop Linux development. 
 
@@ -15,7 +15,7 @@ Starting from scratch, with the below guide, and although I have read about Flut
 
 Going through the install guide found [here](https://docs.flutter.dev/get-started/install/linux/desktop)
 
-## Flutter install
+## Install
 
 ### Hardware requirements
 
@@ -115,26 +115,25 @@ As always I created a Flutter Ansible playbook to make it easier to quickly setu
 
 ```
 
-### Configure a text editor or IDE
+### Configure text editor
 
-In VS Code install Flutter extension. Recomemnded that you install VS Code version > 1.86.
+In VS Code install Flutter extension. Recommended that you install VS Code version > 1.86.
 
 The correct extension is published by Dart Code.
 
-### Install the Flutter SDK
+### Install Flutter SDK
 
-There's a manual tar download option, but in this case I will use VS Code command pallete and follow the wizard. 
-
+There's a manual tar download option, but in this case I will use VS Code command palette and follow the wizard. 
 
 ### Create the project
 
 From command palette create a new Application and wait until it starts.
 
-Very slow on the T480, but ultimately created a functional app. 
+Very slow on the Thinkpad T480 laptop, but ultimately created a functional app. 
 
 Test the installation of Flutter using the `flutter doctor` command within VS Code terminal. 
 
-## Start developing apps with Flutter
+## Start developing apps
 
 Use the following guides to continue learning about development with Flutter.
 

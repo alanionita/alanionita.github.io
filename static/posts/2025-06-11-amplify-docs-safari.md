@@ -25,7 +25,7 @@ I'd like to use Amplify for 3 purposes:
 - Authenticating via Cogntio, managing tokens behind the scenes
 - Running GraphQL queries and getting data back in the UI
 
-## Resoning
+## Reasoning
 
 Amplify is an ecosystem that contains cli, scaffolding, and UI tools.
 
@@ -40,7 +40,7 @@ The goal of this article is to sign-post and add commentary about documentation.
 
 I will however cover 2 big bonuses to using Amplify before talking about docs.
 
-## Bonus - Code generation [@amplify-cli/]
+### Amplify, code generation
 
 A big nuisance for GraphQL processes is the mirroring of queries across backend and frontend. 
 
@@ -48,7 +48,6 @@ With Amplify you can with one command generate code for all Queries and Mutation
 
 ```
 npx @aws-amplify/cli codegen add --apiId YOUR_APPSYNC_API_ID --region YOUR_REGION
-
 ```
 
 This generates files inside `graphql/` for `queries.js` and `mutations.js` with following examples
@@ -81,16 +80,15 @@ export const getProfile = /* GraphQL */ `
     }
   }
 `;
-
 ```
 
-## Bonus - Cognito
+### Cognito
 
 Cognito is an OAuth flow implementation and as such would require some legwork (boilerplate code) to manage keys and orchestrate the flows correctly.
 
 With Amplify we get UI components, and API configurations that means we manage no tokens, vastly simplifying the app configuration.
 
-## Documentation safari
+## Amplify docs safari
 
 Let's meander through the Amplify documentation valley.
 
@@ -100,7 +98,7 @@ You would think that the best docs location is the official Amplify Docs, scoped
 
 https://docs.amplify.aws/vue/
 
-Most sensible place to go from here is to "Set up Amplify Data" (https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/), but once on the page you realise that most the setup here involves from scratch development of both backend and frontend in parallel using Amplify. 
+Most sensible place to go from here is to "Set up Amplify Data" (https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/), but once on the page you notice that most the setup here involves from scratch development of both backend and frontend in parallel using Amplify. 
 
 The audience for Amplify seems to be folks that use it for both. 
 
@@ -138,15 +136,15 @@ You get a lot more information within the 'Advanced Usage' section of the docs, 
 
 Arguable if these requires are 'advanced' or just base requirements.
 
-# Bonus? - Sandboxing
+## Sandboxing
 
-Throughout the docs sandboxing is mentioned, but never fully detailed. 
+Throughout the docs sand-boxing is mentioned, but never fully detailed. 
 
 https://docs.amplify.aws/vue/deploy-and-host/sandbox-environments/features/
 
-Still murky as to how to use sandboxing with an existing API but the secrets explanation is very helpful and interesting. 
+Still murky as to how to use sand-boxing with an existing API but the secrets explanation is very helpful and interesting. 
 
-It seems that via sandboxing you attach secrets to a sandbox and can then reference it within your backend. Again the 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue backend, is it out initial AppSync backend?
+It seems that via sand-boxing you attach secrets to a sandbox and can then reference it within your backend. Again the 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue backend, is it out initial AppSync backend?
 
 This is also where they describe how to 'Generate client config' essentially producing the `amplify_outputs.json` mentioned above.
 

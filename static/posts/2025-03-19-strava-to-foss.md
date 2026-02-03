@@ -68,7 +68,7 @@ For the sake of our task we need to get the route of the activity, and one way t
 
 Unclear why, but some activities don't have this entry, whilst other valid entries contain a string. 
 
-Also unclear is whether this value will contain elevation data, we have `_high` and `_low` elev values within the actitvity. A good mystery to uncover in a future post and feature.
+Also unclear is whether this value will contain elevation data, we have `_high` and `_low` elev values within the activity. A good mystery to uncover in a future post and feature.
 
 > Note that most of the supporting code from this point forward is about the `osm.ipynb` notebook.
 
@@ -191,8 +191,6 @@ In conclusion, to free our Strava data we need to:
 - Generate a map from the coordinates and the graph
 
 As a final touch we output the map to an html file, which you can see [here](https://alanionita.github.io/strava-to-foss-notebooks-python/)
-
-## Conclusion
 
 This is just scratching the surface of what is possible, and I strongly recommend you give it a try.
 

@@ -1,5 +1,5 @@
 ---
-title: Svelte - v5 Migration
+title: Svelte, v5 Migration
 url: 2025-02-13-svelte-5-migration
 desc: ''
 updated: 13/02/2025
@@ -7,7 +7,7 @@ created: 13/02/2025
 tags: ['web', 'frontend', 'svelte-js']
 ---
 
-# Svelte - v5 Migration
+# Svelte, v5 Migration
 
 Big fan of SvelteJS as framework and in particular the Svelte monolith that is SvelteKit. 
 
@@ -23,9 +23,13 @@ This article aims to show:
 
 Upgrading in Svelte couldn't be easier, because of the [sv migrate tooling](https://svelte.dev/docs/cli/sv-migrate).
 
-### Usage
+## Usage
 
-Within the repo run `npx sv migrate TARGET` where target here is svelte-5, so `npx sv migrate svelte-5`. Check the sv migrate docs for other available targets.
+Within the repo run `npx sv migrate TARGET` where target here is svelte-5. Check the sv migrate docs for other available targets.
+
+```sh
+npx sv migrate svelte-5
+```
 
 sv migrate will then ask:
 - Ask about current dir, since some of the change will impact a mono-repo
@@ -34,13 +38,15 @@ sv migrate will then ask:
 
 My repo is fairly simple so I went ahead and said yes and selected all the option on the above.
 
-## Changes - Packages
+## Changes, packages
+
+### Package versions
 
 One thing of note here about `sv migrate` vs a manual package upgrade is that you don't need to trial a bunch of module versions before you reach the right mix. 
 
 Having tried it before I will tell you now that: upgrading all packages to latest will break your build. 
 
-sv migrate already contains the right module combinations and here are the changes.
+`sv migrate` already contains the right module combinations and here are the changes.
 
 ```md
 Updated svelte to ^5.0.0
@@ -52,7 +58,7 @@ Updated typescript to ^5.5.0
 Updated vite to ^5.4.4
 ```
 
-Latest versions for reference
+Latest versions for reference (2025-02-13):
 
 ```md
 svelte                      5.20.0
@@ -66,7 +72,7 @@ vite 	                     6.1.0
 
 As you can see things move fast, and in the 3 months since release we've already had a fair bit of drift. This is mostly fine since Svelte is relatively stable. 
 
-Of most concerns is the vite major release of v6, and the large number of minor versions on the svelte packages. 
+Of most concerns is the `vite` major release of v6, and the large number of minor versions on the svelte packages. 
 
 ### Vite v5 vs v6
 
@@ -82,15 +88,13 @@ v6 updates:
 - Larger support for asset references in HTML element: v5 only <link> and <img> could reference assets. v6 has an extended list [https://vite.dev/guide/features#html](https://vite.dev/guide/features#html)
 - CSS: postcss-load-config updated in v6, sass uses modern api by default, custom CSS output file in library mode 
 
-### Svelte minor releases difference
-
-Because of the volume of releases there's a possibility here that we might be missing key bug fixes. 
+> Svelte: because of the volume of releases there's a possibility here that we might be missing key bug fixes. 
 
 ### Installing packages
 
 Now lets install the migrated packages and see what happens. 
 
-1. Remove previous installed packages
+1 Remove previous installed packages
 
 ```sh
 rm -rf node_modules/ && rm package-lock.json
@@ -98,12 +102,15 @@ rm -rf node_modules/ && rm package-lock.json
 
 2. Install with package of choice (npm)
 
-`npm install`
+```sh
+npm install
+```
 
 Issues: 
-- 1. `@sveltejs/vite-plugin-svelte@^4.0.0` not found (see logs below)
-- 2. `<script lang="ts"></script>` flaged as an issue with @sveltejs/adapter-auto
-- 3. `{@render children?.()}` throwing error about unrecognised @ symbol
+
+1. `@sveltejs/vite-plugin-svelte@^4.0.0` not found (see logs below)
+2. `<script lang="ts"></script>` flagged as an issue with @sveltejs/adapter-auto
+3. `{@render children?.()}` throwing error about unrecognised @ symbol
 
 
 ```sh
@@ -142,19 +149,23 @@ npm error For a full report see:
 
 ### Fixing errors
 
-- 1. @sveltejs/vite-plugin-svelte: not a real error, but I suspect an issue with timeout during the npm i process; making sure I have a clean install by removing node_modules and package-lock.json allowed me to get a successful install without the error
-- 2. script tag issue with "@sveltejs/adapter-auto": fixed it by updating the version to ^4.0.0
-- 3. noticed an issue with tsconfig.json, whereby "moduleResolution" required "module" to be present and set to preserve; after adding that value the IDE refreshed and the @render issue went away
+1. `@sveltejs/vite-plugin-svelte` is not a real error, but I suspect an issue with timeout during the npm i process; making sure I have a clean install by removing node_modules and package-lock.json allowed me to get a successful install without the error
 
-## Changes - Components
+2. Script tag issue with "@sveltejs/adapter-auto": fixed it by updating the version to ^4.0.0
+
+3. Noticed an issue with tsconfig.json, whereby "moduleResolution" required "module" to be present and set to preserve; after adding that value the IDE refreshed and the @render issue went away
+
+## Changes, components
 
 ### Runes
 
-Multiple changes stem from the new Runes API: compiler instructions that tell Svelte about reactivity. Runes start with `$`
+Multiple changes stem from the new Runes API: compiler instructions that tell Svelte about reactivity. 
 
-### let -> $props
+Runes start with `$`.
 
-In v4 props were achieve using `export let xyz = "xyz"` declarations. These declarations made content available from <script></script> into the main body of the component.
+### let to $props
+
+In v4 props were achieve using `export let xyz = "xyz"` declarations. These declarations made content available from `<script></script>` into the main body of the component.
 
 In v5 all props come from the $props rune as seen below:
 
@@ -215,17 +226,15 @@ v6
 </div>
 ```
 
-### render method no longer compiled for SSR
-
-This is specifically related to SSR application, but worth mentioning.
+> Render method no longer compiled for SSR. This is specifically related to SSR application, but worth mentioning.
 
 ### children() and snippets
 
-In v4 the main paradigm for creating higher order components was to use <slots>. 
+In v4 the main paradigm for creating higher order components was to use `<slots>`. 
 
 In v5 they are deprecated in favour of <snippet> constructs which increase the flexibility. Also added in v6 a clearer construct for children. 
 
-In my case I've only used <slots> for HOCs and those instances have been refactored to use children instead
+In my case I've only used <slots> for HOCs and those instances have been refactored to use children instead.
 
 v4
 
@@ -256,9 +265,9 @@ v5
 
 Most of the codebase saw change related to the new children component which is typed as Snippet from 'svelte' package. 
 
-No other significant changes present, but be advised that there are further changes detailed in the release note [https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes](https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes)
+No other significant changes present, but be advised that there are further changes detailed in the [release note](https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes).
 
-### let -> $state
+### let to $state
 
 Covered here last because I haven't implemented any states within this template. 
 
@@ -266,8 +275,7 @@ I can see this being an important change to keep in mind in production apps sinc
 
 This essentially brings the biggest headaches, since prior to v5 developers built up this pattern of separation between prop definitions and state. This separation is still present in v5 but the change of let -> $props will confuse readers who will see more let -> $state.
 
-I actually agree with the pattern separation, but getting used to it will take some time, mostly because the old definitions were worse.
-
+In agreement with the pattern separation seen here, but getting used to it will take some time. The old definitions were worse for sure, but like any pattern development they get ingrained.
 
 v4
 
@@ -289,4 +297,4 @@ v5
 
 Big update, one of the biggest yet! Largely positive, but with significant gotchas and implementation details. 
 
-Overall a move in the right direction, but shifting into the new paradigms will cause some headscratching. 
+Overall a move in the right direction, but shifting into the new paradigms will cause some head scratching. 

@@ -1,5 +1,5 @@
 ---
-title:  Thinkpad T480 screen flicker fix
+title:  Thinkpad T480, screen flicker fix
 url: 2025-02-07-t480-screen-flicker
 desc: ''
 updated: 07/02/2025
@@ -7,17 +7,22 @@ created: 07/02/2025
 tags: ['hardware']
 ---
 
-#  Thinkpad T480 screen fix on X11
+#  Thinkpad T480, screen flicker fix
 
-It's unclear to me why, but Linux Mint 22.1 on the T480 causes screen flickering. 
+Linux Mint 22.1 on the T480 causes screen flickering. 
 
-To experience the issue check the login screen once the laptop has come out of suspend, or open a dock applet and pause on a dropdown for a long time. 
+To replicate:
+- check the login screen once the laptop has come out of suspend
+- or open a dock applet
+- hold the mouse on on a dropdown for a long time. 
 
-Issue seems to be related to transparency and screen sleep.
+Issue seems to be related to transparency and screen sleep, in X11.
 
-## How to Fix 
+## Fix
 
-1. Check that `mesa-utils` package is installed 
+### mesa-utils
+
+Check that `mesa-utils` package is installed 
 
 ```sh
 apt list | grep "mesa-utils"
@@ -25,7 +30,7 @@ apt list | grep "mesa-utils"
 
 Install the package if not present
 
-2. Add this file to X11 config
+### X11 config
 
 Open the X11 config directory
 
@@ -44,8 +49,8 @@ Section "Device"
 EndSection
 ```
 
-3. Restart the computer 
+### Reboot
 
 ---
 
-You can also fix it by installing KDE Plasma :P /s
+> You can also fix it by installing KDE Plasma :P /s

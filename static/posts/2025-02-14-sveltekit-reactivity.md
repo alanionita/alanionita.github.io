@@ -43,7 +43,7 @@ Why is a browser gated piece of code still running on the server? Who is running
 
 However there is a way to avoid this behavior and bypass the errors. 
 
-## Svelte / Page options
+## Svelte, Page options
 
 Official documentation on page options -> https://svelte.dev/docs/kit/page-options
 
@@ -53,7 +53,7 @@ Within that +layout.ts file we need to focus on 2 page options specifically:
 - ssr
 - csr
 
-## Svelte / Page options / ssr
+## Page options, ssr
 
 > Normally, SvelteKit renders your page on the server first and sends that HTML to the client where it’s hydrated. If you set ssr to false, it renders an empty ‘shell’ page instead. This is useful if your page is unable to be rendered on the server (because you use browser-only globals like document for example), but in most situations it’s not recommended (see appendix).
 
@@ -119,7 +119,7 @@ What else is needed?
 
 Do we have to import the offending API itself? Surely not, since that would also require up to shadow the existing Web API (when available) with an manually imported one. 
 
-## Svelte / Page options / csr
+## Page options, csr
 
 > Ordinarily, SvelteKit hydrates your server-rendered HTML into an interactive client-side-rendered (CSR) page. Some pages don’t require JavaScript at all — many blog posts and ‘about’ pages fall into this category. In these cases you can disable CSR:
 
@@ -131,21 +131,21 @@ export const ssr = false;
 export const csr = true; 
 ```
 
-## Svelte / Page options / prerender
+## The quirk
 
-This is a counter intuitive naming. Although it does configure prerendering, the purpose for using it is nuanced. 
+This is a counter intuitive naming. Although it does configure pre-rendering, the purpose for using it is nuanced. 
 
-In our case we can't prerender a Map page, since they usually involved regular requests for: loading, zooming, fetching tiles etc. All managed by external libraries.
+In our case we can't pre-render a Map page, since they usually involved regular requests for: loading, zooming, fetching tiles etc. All managed by external libraries.
 
-But we do want to prerender the page itself. 
+But we do want to pre-render the page itself. 
 
 Map pages are usually a code injection scenario: we inject our dynamic element into a static HTML. This is a one-way binding, in other words we inject the map and only interact with it there on.
 
 Sometimes we may have a dynamic element that is external to the map and is tied to it in some way: a filter that changes as the map changes, a banner that updates as we move the map, a sector select that moves the map as we change sectors. All of which are still code injection scenarios, with 2-way bind.
 
-Both scenarios are compatible with prerendering: since we only want to route to be prerendered, and the html by proxy.
+Both scenarios are compatible with pre-rendering: since we only want to route to be pre-rendered, and the html by proxy.
 
-Routes with prerender true are excluded from manifests, so our server is tiny.
+Routes with pre-render true are excluded from manifests, so our server is tiny.
 
 In my use case I want dynamic Maps within static files, no servers involved. 
 
@@ -158,7 +158,7 @@ export const csr = true;
 export const prerender = true;
 ```
 
-Of note prerender can also be 'auto', where you want popular routes to be pre-rendered and historic content to be server-rendered. 
+Of note pre-render can also be 'auto', where you want popular routes to be pre-rendered and historic content to be server-rendered. 
 
 Unclear at what scale this is required, because a server rendering content is probably more maintenance and resource-heavy than fully static build. 
 
@@ -166,7 +166,7 @@ The fully static build takes longer to compile, but once deployed it's essential
 
 Either way, the "auto" option is there.
 
-For larger prerendered builds it's important to also consider `entries`. These need to pre-build to ensure the best prerendering performance. I will cover them in a future post.
+For larger pre-rendered builds it's important to also consider `entries`. These need to pre-build to ensure the best pre-rendering performance. I will cover them in a future post.
 
 ## Summary
 

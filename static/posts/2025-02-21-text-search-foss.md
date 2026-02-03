@@ -1,17 +1,17 @@
 ---
-title: FOSS tools complex?
-url: 2025-02-21-foss-tools-complex
+title: Kafka and Elastic, too complex in 2025?
+url: 2025-02-21-text-search-foss
 desc: ''
 updated: 21/02/2025
 created: 21/02/2025
 tags: ['foss']
 ---
 
-# FOSS tools complex in 2025?
+# Kafka and Elastic, too complex in 2025?
 
 Apache Kafka for example has an air of complexity and flamboyance around it.
 
-A vast majority of Hacker News comments rag on Kafka, the latest comments making it sound like a "CV-padding technology, needlesly complex, overtly unnecessary". 
+A vast majority of Hacker News comments rag on Kafka, the latest comments making it sound like a "CV-padding technology, needlessly complex, overtly unnecessary". 
 
 Similar myths around Elastic Search: complex, hard to maintain, expensive. 
 
@@ -21,17 +21,17 @@ What is the real damage of these myths?
 
 Because of the grapevine new people don't use Kafka, new people avoid Elastic Search. 
 
-This perpetraits a scenario where the hard tools remain hard because new people can't shape their structure and usage. Without new users the tooling teams can't understand the new UX problems they need to solve.
+This activates a scenario where the hard tools remain hard because new people can't shape their structure and usage. Without new users the tooling teams can't understand the new UX problems they need to solve.
 
 More importantly where are these people to going for replacements?
 
-For Kafka replacements, people go to the cloud. They end up using AWS Kinesis streams, or AWS EventBridge - both expensive and complex services. Argueably as complex as Kafka and closed source.
+For Kafka replacements, people go to the cloud. They end up using AWS Kinesis streams, or AWS EventBridge - both expensive and complex services. Arguably as complex as Kafka and closed source.
 
 For Elastic Search replacements, people go to the cloud again, to database provider services like MongoDB Atlas, or to AWS OpenSearch. Both of these options are costly and just as complex.
 
 Cost in itself should be a criteria for businesses, if a managed service costs but is more easy to manage then we need to asses the trade-off. Sometimes however the costs act as feature gates and the managed services are just as hard to maintain or grok.
 
-For individuals, cost is a barier, no doubt about it. Yet, despite this barrier, the industry wants developers who can build real-time systems or complex text-search.
+For individuals, cost is a barrier, no doubt about it. Yet, despite this barrier, the industry wants developers who can build real-time systems or complex text-search.
 
 Where and how do we get these new developers? Where and how do they gain this experience? 
 
@@ -41,7 +41,7 @@ Cloud services, costs, and cost-gating features limits the market from gaining n
 
 Apache Kafka for the most part is FOSS. It has for-cost closed source components and services, but the basic streaming is there. Kafka can also run in a homelab and is not resource hungry. 
 
-For the next few days I plan to post further updates on this: Kafka for a timeseries data injestion pipeline.
+For the next few days I plan to post further updates on this: Kafka for a time-series data ingestion pipeline.
 
 In other words a "soft real-time" problem.
 
@@ -59,15 +59,15 @@ Despite the results, Elastic Search wasn't recommended because of costs and main
 
 On management, our index required used 3 shards, and a fairly high spec set of machines. No where near as complex as it could get; a baby Elastic Search setup. 
 
-Fast forward to 2025 and using Elastic Search a vastly improved experience, having managed to run a node with 1G memory, bulk index in < 30s, and make text search calls with <200ms retrival. Not the largest index in the world, but I can tell that even with 1G limitation it can take more documents and I don't expect the retrieval to be impacted. 
+Fast forward to 2025 and using Elastic Search a vastly improved experience, having managed to run a node with 1G memory, bulk index in < 30s, and make text search calls with <200ms retrieval. Not the largest index in the world, but I can tell that even with 1G limitation it can take more documents and I don't expect the retrieval to be impacted. 
 
-Elastic Search is FOSS, configuration was straighforward, and the query experience is modern and straightforward - GraphQL-like in a way. 
+Elastic Search is FOSS, configuration was straightforward, and the query experience is modern and straightforward - GraphQL-like in a way. 
 
 ## Summary
 
 Without Elastic Search, how else can you build text search systems at home on a Raspberry Pi?!
 
-Without Kafka how else can you ingest timeseries data from MCUs or replicate AWS Kinesis and AWS EventBridge services?
+Without Kafka how else can you ingest time-series data from MCUs or replicate AWS Kinesis and AWS EventBridge services?
 
 Both are important tools for modern software development, and should be on everyone's radar who wants design data-intensive apps.
 
