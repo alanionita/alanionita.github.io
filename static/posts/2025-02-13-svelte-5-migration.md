@@ -158,7 +158,7 @@ In v4 props were achieve using `export let xyz = "xyz"` declarations. These decl
 
 In v5 all props come from the $props rune as seen below:
 
-```svelte
+```ts
 <script>
 	let { optional = 'unset', required } = $props();
 </script>
@@ -168,7 +168,7 @@ In my case, the app is also using Typescript so there are further changes on the
 
 v5
 
-```svelte
+```ts
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/shadcn.js";
@@ -190,7 +190,7 @@ v5
 
 v6
 
-```svelte
+```ts
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/shadcn.js";
@@ -229,7 +229,7 @@ In my case I've only used <slots> for HOCs and those instances have been refacto
 
 v4
 
-```svelte
+```ts
 <script>
 	import '../app.css';
 </script>
@@ -239,7 +239,7 @@ v4
 
 v5
 
-```svelte
+```ts
 <script lang="ts">
 	import '../app.css';
 	interface Props {
@@ -271,7 +271,7 @@ I actually agree with the pattern separation, but getting used to it will take s
 
 v4
 
-```svelte
+```ts
 <script>
 	let count = 0;
 </script>
@@ -279,7 +279,7 @@ v4
 ```
 
 v5
-```svelte
+```ts
 <script>
 	let count = $state(0);
 </script>

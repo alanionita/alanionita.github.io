@@ -7,7 +7,7 @@ created: 14/02/2025
 tags: ['web', 'frontend', 'svelte-js']
 ---
 
-# SveleteKit - reactivity quirk
+# SveleteKit, a reactivity quirk
 
 Svelte is great for heavy web scenarios: maps, visualizations, animations etc. And it's common that most of these scenarios depend on Web API. 
 
@@ -15,7 +15,7 @@ Most of the times we use the `$app/environment` browser designation to allow for
 
 eg. Map example 
 
-```svelte
+```ts
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import Map from '$lib/components/map.svelte';
@@ -59,7 +59,7 @@ Within that +layout.ts file we need to focus on 2 page options specifically:
 
 Turning this option off does indeed fix the problem of browser-dependencies being run outside of a browser gate.
 
-```svelte
+```ts
 // +layout.ts
 export const ssr = false;
 
@@ -73,7 +73,7 @@ What does importing mean here? In the majority of cases where this becomes a pro
 
 Map example again: lib/components/map.svelte
 
-```svelte
+```ts
 // Map.svelte
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
@@ -125,7 +125,7 @@ Do we have to import the offending API itself? Surely not, since that would also
 
 This setting is not technically a requirement, but is a bit of configuration that translates what we want to expect: we want the Map page to always run Javascript because it contains an external module that has it's own features and requirements.
 
-```svelte
+```ts
 // +layout.ts
 export const ssr = false;
 export const csr = true; 
@@ -151,7 +151,7 @@ In my use case I want dynamic Maps within static files, no servers involved.
 
 All routes are default `prerendered = true` and the Svelte `adapter-static` is used. 
 
-```svelte     
+```ts     
 // +layout.ts
 export const ssr = false;
 export const csr = true;

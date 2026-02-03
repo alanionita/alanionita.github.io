@@ -8,8 +8,8 @@
 	import graphql from 'highlight.js/lib/languages/graphql';
 	import markdown from 'highlight.js/lib/languages/markdown';
 	import php from 'highlight.js/lib/languages/php';
-	import svelte from 'highlight.svelte'
-	import 'highlight.js/styles/github.css';
+	import typescript from 'highlight.js/lib/languages/typescript';
+	import 'highlight.js/styles/monokai.min.css';
 	import { onMount } from 'svelte';
 
 	interface Props {
@@ -26,7 +26,7 @@
 		hljs.registerLanguage('gql', graphql);
 		hljs.registerLanguage('vtl', php);
 		hljs.registerLanguage('md', markdown);
-		hljs.registerLanguage('svelte', svelte);
+		hljs.registerLanguage('ts', typescript);
 		hljs.highlightAll();
 	});
 </script>
