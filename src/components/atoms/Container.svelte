@@ -17,8 +17,6 @@
 		max-width: var(--max-width);
 		width: -webkit-fill-available;
 		margin: 0 auto;
-		background-color: 'pink';
-		
 	}
 
 	@media all and (max-width: 900px) {
