@@ -42,7 +42,7 @@ Having tried it before I will tell you now that: upgrading all packages to lates
 
 sv migrate already contains the right module combinations and here are the changes.
 
-```
+```md
 Updated svelte to ^5.0.0
 Updated @sveltejs/kit to ^2.5.27
 Updated @sveltejs/vite-plugin-svelte to ^4.0.0
@@ -54,7 +54,7 @@ Updated vite to ^5.4.4
 
 Latest versions for reference
 
-```
+```md
 svelte                      5.20.0
 @sveltejs/kit               2.17.1
 @sveltejs/vite-plugin-svelte 5.0.3
@@ -92,7 +92,9 @@ Now lets install the migrated packages and see what happens.
 
 1. Remove previous installed packages
 
-`rm -rf node_modules/ && rm package-lock.json`
+```sh
+rm -rf node_modules/ && rm package-lock.json
+```
 
 2. Install with package of choice (npm)
 
@@ -100,11 +102,11 @@ Now lets install the migrated packages and see what happens.
 
 Issues: 
 - 1. `@sveltejs/vite-plugin-svelte@^4.0.0` not found (see logs below)
-- 2. <script lang="ts"></script> flaged as an issue with @sveltejs/adapter-auto
-- 3. {@render children?.()} throwing error about unrecognised @ symbol
+- 2. `<script lang="ts"></script>` flaged as an issue with @sveltejs/adapter-auto
+- 3. `{@render children?.()}` throwing error about unrecognised @ symbol
 
 
-```
+```sh
 npm error code ERESOLVE
 npm error ERESOLVE could not resolve
 npm error
@@ -156,7 +158,7 @@ In v4 props were achieve using `export let xyz = "xyz"` declarations. These decl
 
 In v5 all props come from the $props rune as seen below:
 
-```javascript
+```svelte
 <script>
 	let { optional = 'unset', required } = $props();
 </script>
@@ -166,7 +168,7 @@ In my case, the app is also using Typescript so there are further changes on the
 
 v5
 
-```javascript
+```svelte
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/shadcn.js";
@@ -188,7 +190,7 @@ v5
 
 v6
 
-```javascript
+```svelte
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/shadcn.js";
@@ -227,7 +229,7 @@ In my case I've only used <slots> for HOCs and those instances have been refacto
 
 v4
 
-```javascript
+```svelte
 <script>
 	import '../app.css';
 </script>
@@ -237,7 +239,7 @@ v4
 
 v5
 
-```javascript
+```svelte
 <script lang="ts">
 	import '../app.css';
 	interface Props {
@@ -269,7 +271,7 @@ I actually agree with the pattern separation, but getting used to it will take s
 
 v4
 
-```javascript
+```svelte
 <script>
 	let count = 0;
 </script>
@@ -277,7 +279,7 @@ v4
 ```
 
 v5
-```javascript
+```svelte
 <script>
 	let count = $state(0);
 </script>

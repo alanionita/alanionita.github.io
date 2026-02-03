@@ -25,12 +25,14 @@ Hardware requirements are high. On Linux especially, we need to expect lesser pe
 
 As an ethos too, Linux enables more usage out of older software so the requirements will end us (the developers) push for hardware updates. To me, hardware updates are fine for commercial software, but for personal software it's just enough friction for someone to stop using your app. 
 
+```md
 | Requirement   | Minimum   | Recommended     |
 | ------------- | --------- | --------------- |
 | CPU cores     | 4         | 8               |
 | Memory        | 8         | 16              |
 | Display res   | 1366x768  | 1920x1080       |
 | HDD           | 4GB       | 52GB            |
+```
 
 If you were a retro enthusiast and were working on a Core 2 Duo device you're out of luck. And to add to that, 16GB RAM recommended. 
 

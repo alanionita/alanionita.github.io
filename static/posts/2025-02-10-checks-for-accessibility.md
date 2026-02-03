@@ -25,7 +25,7 @@ Implement:
 - Create a dynamic title component and load it into each page.
 - This will allow for a dynamic title that always includes "Alan Ionita - " for search ranking purposes
 
-```javascript
+```js
 // PageTitle component
 
 <script>
@@ -39,7 +39,7 @@ Implement:
 
 ```
 
-```javascript
+```js
 // *Page component
 import PageTitle from '...'
 
@@ -150,7 +150,7 @@ Test notes:
 
 Run the following in the Developer Tools Console
 
-```javascript
+```js
 document.querySelectorAll('style, link[rel="stylesheet"]').forEach(e => e.remove());
 ```
 

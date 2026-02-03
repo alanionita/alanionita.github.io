@@ -15,7 +15,7 @@ Most of the times we use the `$app/environment` browser designation to allow for
 
 eg. Map example 
 
-```javascript
+```svelte
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import Map from '$lib/components/map.svelte';
@@ -53,15 +53,13 @@ Within that +layout.ts file we need to focus on 2 page options specifically:
 - ssr
 - csr
 
-*
-
 ## Svelte / Page options / ssr
 
 > Normally, SvelteKit renders your page on the server first and sends that HTML to the client where it’s hydrated. If you set ssr to false, it renders an empty ‘shell’ page instead. This is useful if your page is unable to be rendered on the server (because you use browser-only globals like document for example), but in most situations it’s not recommended (see appendix).
 
 Turning this option off does indeed fix the problem of browser-dependencies being run outside of a browser gate.
 
-```javascript
+```svelte
 // +layout.ts
 export const ssr = false;
 
@@ -75,7 +73,7 @@ What does importing mean here? In the majority of cases where this becomes a pro
 
 Map example again: lib/components/map.svelte
 
-```javascript
+```svelte
 // Map.svelte
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
@@ -127,7 +125,7 @@ Do we have to import the offending API itself? Surely not, since that would also
 
 This setting is not technically a requirement, but is a bit of configuration that translates what we want to expect: we want the Map page to always run Javascript because it contains an external module that has it's own features and requirements.
 
-```javascript
+```svelte
 // +layout.ts
 export const ssr = false;
 export const csr = true; 
@@ -153,7 +151,7 @@ In my use case I want dynamic Maps within static files, no servers involved.
 
 All routes are default `prerendered = true` and the Svelte `adapter-static` is used. 
 
-```javascript     
+```svelte     
 // +layout.ts
 export const ssr = false;
 export const csr = true;

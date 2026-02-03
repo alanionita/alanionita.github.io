@@ -47,6 +47,7 @@ Unfortunately the HypriotOS community and support is small at the minute and I'v
 
 I wanted to move away from it before support became a problem.
 
+```md
 * ✅ easy headless setup (no monitor, keyboard, or mouse needed)
 * 🟡 reliable OS
 * ✅ flexible OS
@@ -54,6 +55,7 @@ I wanted to move away from it before support became a problem.
 * ❌ ROS support*
 * ✅ small footprint
 * ❌ solid support
+```md
 
 ## What's wrong with Raspberry Pi OS?
 
@@ -61,6 +63,7 @@ Raspberry Pi OS (Raspian) was harder to set up in headless mode a few months ago
 
 I should test this again, but since my main requirement is not met (ROS support) I might not use it anyway.
 
+```md
 * 🟡 easy headless setup (no monitor, keyboard, or mouse needed)
 * ✅ reliable OS
 * ✅ flexible OS
@@ -68,6 +71,7 @@ I should test this again, but since my main requirement is not met (ROS support)
 * ❌ ROS support*
 * ✅ small footprint
 * ✅ solid support
+```
 
 ## OS Study
 
@@ -81,6 +85,7 @@ This also means that it will be a popular option for enterprise clients too so a
 
 The setup is simple because Ubuntu Server is included in the [Raspberry Pi Imager](https://www.raspberrypi.org/software/).
 
+```md
 * ✅ easy headless setup (no monitor, keyboard, or mouse needed)
 * ✅ reliable OS
 * ✅ flexible OS
@@ -88,6 +93,7 @@ The setup is simple because Ubuntu Server is included in the [Raspberry Pi Image
 * ✅ ROS support*
 * 🟡 small footprint
 * ✅ solid support
+```
 
 Not the smallest OS on the list, especially after updating and upgrading.
 
@@ -105,7 +111,7 @@ Skills learned through using the OS are not as transferable as Ubuntu, but you c
 
 The setup on the site is a lot more complex that what I came up with
 
-```shell
+```sh
 // 1. Download the tar from the Alpine site
 
 // 2. Create a bootable SD card using PI imager
@@ -119,6 +125,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
 
 Annoyingly I need a desktop and peripherals in order to complete the setup.
 
+```md
 * ❌ easy headless setup (no monitor, keyboard, or mouse needed)
 * ✅ reliable OS
 * ✅ flexible OS
@@ -126,6 +133,7 @@ Annoyingly I need a desktop and peripherals in order to complete the setup.
 * ❌ ROS support*
 * ✅ small footprint
 * ✅ solid support
+```
 
 Result: cannot complete the setup in headless mode
 
@@ -151,6 +159,7 @@ The setup is simple because Ubuntu Core is included in the [Raspberry Pi Imager]
 
 Annoyingly though Ubuntu Core requires a desktop and peripherals in order to complete the setup.
 
+```md
 * ❌ easy headless setup (no monitor, keyboard, or mouse needed)
 * ✅ reliable OS
 * ❌ flexible OS
@@ -158,6 +167,7 @@ Annoyingly though Ubuntu Core requires a desktop and peripherals in order to com
 * ❌ ROS support*
 * ✅ small footprint
 * ✅ solid support
+```
 
 I marked it down for flexibility because Ubuntu Core is not meant for development. Also marked it down for transferable skills since it seems like there's a lot of specific Ubuntu Core knowledge needed to make this work and those skills are not all transferable.
 
@@ -173,6 +183,7 @@ Another benefit here was the fact that I can configure the build before compilat
 
 The config files use `yaml` which is a super transferable skill in Docker and Cloud environments.
 
+```md
 * 🏁 easy headless setup (no monitor, keyboard, or mouse needed)
 * 🏁 reliable OS
 * ✅ flexible OS
@@ -180,6 +191,7 @@ The config files use `yaml` which is a super transferable skill in Docker and Cl
 * ❌ ROS support*
 * ✅ small footprint
 * 🏁 solid support
+```
 
 The setup seems easy enough but I had issues with the gcc and make so I couldn't actually try this out properly.
 

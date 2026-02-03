@@ -53,7 +53,7 @@ npx @aws-amplify/cli codegen add --apiId YOUR_APPSYNC_API_ID --region YOUR_REGIO
 
 This generates files inside `graphql/` for `queries.js` and `mutations.js` with following examples
 
-```javascript
+```js
 export const getProfile = /* GraphQL */ `
   query GetProfile($screenName: String!) {
     getProfile(screenName: $screenName) {

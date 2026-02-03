@@ -16,7 +16,7 @@ The profile editing requires dynamic data inputs: when editing a profile you can
 
 Here's a simple DynamoDB.UpdateItem command example.
 
-```vtl
+```json
 {
     "version" : "2018-05-29",
     "operation" : "UpdateItem",
@@ -52,7 +52,7 @@ Here's a simple DynamoDB.UpdateItem command example.
 
 The AppSync GraphQL query looks a bit like this.
 
-```javascript
+```js
 const query = `mutation editMyProfile($input: ProfileInput!) {
         editMyProfile(newProfile: $input) {
           ... myProfileFields
@@ -283,8 +283,6 @@ Again we hit the data loss problem, however we can stop building the 'remove' in
         "expression" : "attribute_exists(id)"
     }
 }
-
-
 ```
 
 We continue to use the 'remove' lists for incoming values set to `null` or `""` eg. user wants to change their website to an empty string. 

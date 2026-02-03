@@ -19,7 +19,7 @@ Issue seems to be related to transparency and screen sleep.
 
 1. Check that `mesa-utils` package is installed 
 
-```shell
+```sh
 apt list | grep "mesa-utils"
 ```
 
@@ -29,13 +29,13 @@ Install the package if not present
 
 Open the X11 config directory
 
-```shell
+```sh
 cd /etc/X11/xorg.conf.d
 ```
 
 Create the `20-intel.conf` within the above directory, with the following contents
 
-```shell
+```sh
 Section "Device"
  Identifier "Intel Graphics"
  Driver "Intel"

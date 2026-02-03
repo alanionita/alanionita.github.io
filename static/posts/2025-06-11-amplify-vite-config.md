@@ -14,7 +14,7 @@ Under the Vue docs for Amplify UI, we see a the following config specification.
 
 https://ui.docs.amplify.aws/vue/connected-components/authenticator
 
-```javascript
+```js
 // vite.config.js
 
 export default defineConfig({
@@ -44,7 +44,7 @@ However the default config recommends a much simple object structure with key / 
 
 For instance the Vue3 wizard produces this Vite configuration
 
-```javascript
+```js
 // vite.config.js
 
 export default defineConfig({
@@ -65,7 +65,7 @@ export default defineConfig({
 
 Although we could introduce the find / replacement pattern into the original config, it's far more sensible to replace the documentation recommendation to match the key/value format
 
-```javascript
+```js
 // vite.config.js
 
 export default defineConfig({
