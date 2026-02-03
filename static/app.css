@@ -65,13 +65,13 @@
     border-width: 2px 0;
     border-style: solid;
     border-color: #eee;
-    padding: 1rem 2rem 0.5em;
-    margin: 1rem 0rem 1rem 3rem;
+    padding: 1rem 2rem;
     position: relative;
+    width: 100%;
+    left: -10%;
     color: var(--color-primary);
-    font-size: var(--fluid-type-post);
+    font-size: var(--fluid-type-code);
     font-weight: 700;
-    font-style: italic;
     background-color: var(--color-accent);
 }
 

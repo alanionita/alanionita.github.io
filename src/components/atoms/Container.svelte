@@ -23,8 +23,8 @@
 
 	@media all and (max-width: 900px) {
 		.max-width {
-			padding-left: var(--padding);
-			padding-right: var(--padding);
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
 			max-width: var(--max-width-sm);
 		}
 	}
