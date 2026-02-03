@@ -14,22 +14,24 @@
 
 <style module="true">
 	.max-width {
-		max-width: var(--max-width);
-		width: -webkit-fill-available;
-		margin: 0 auto;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		max-width: var(--max-width-sm);
 	}
 
-	@media all and (max-width: 900px) {
+	/* at Tablet */
+	@media all and (min-width: 40rem) and (max-width: 48rem) {
 		.max-width {
-			padding-left: 0.5rem;
-			padding-right: 0.5rem;
-			max-width: var(--max-width-sm);
+			max-width: var(--max-width-md);
 		}
 	}
 
-	@media all and (max-width: 1080px) {
+	/* above Tablet */
+	@media all and (min-width: 49rem) {
 		.max-width {
-			max-width: var(--max-width-md);
+			max-width: var(--max-width);
+			width: -webkit-fill-available;
+			margin: 0 auto;
 		}
 	}
 </style>

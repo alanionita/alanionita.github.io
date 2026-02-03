@@ -36,10 +36,19 @@
     --color-accent: #A59132;
     --color-yellow-aaa: #DCC249;
     /* Fluid type */
-    --fluid-type: min(max(1rem, 4vw), 32px);
-    --fluid-type-h2: min(max(1rem, 4vw), 28px);
-    --fluid-type-post: min(max(1rem, 4vw), 20px);
-    --fluid-type-code: min(max(1rem, 4vw), 16px);
+    --fluid-type: min(max(1rem, 8vw), 32px);
+    --fluid-type-h2: min(max(1rem, 8vw), 28px);
+    --fluid-type-post: min(max(1rem, 8vw), 20px);
+    --fluid-type-code: min(max(1rem, 8vw), 16px);
+    /* Media queries */
+    /* NOTE: these cannot be used directly in @media */
+    /*   - limitations to the var() spec */
+    /*   - they are here for REFERENCE only */
+    --sm: 40rem;
+    --md: 48rem;
+    --lg: 64rem;
+    --xl: 80rem;
+    --2xl: 96rem;
 }
 
 /* Defaults */
@@ -88,7 +97,14 @@ pre code {
     text-align: left;
     position: relative;
     width: 116%;
-    left: -8%
+    left: -8%;
+}
+
+@media all and (max-width: 40rem) {
+    pre code {
+        position: static;
+        width: 100%;
+    }
 }
 
 pre {

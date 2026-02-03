@@ -67,7 +67,8 @@
 		padding: 4rem 0rem;
 	}
 
-	@media screen and (min-width: 1025px) and (max-width: 2200px) {
+	/* above Tablet */
+	@media all and (min-width: 48rem) {
 		.p-article {
 			padding: 0rem 8rem;
 		}
