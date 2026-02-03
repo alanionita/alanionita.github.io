@@ -1,6 +1,6 @@
 ---
 title: FOSS tools complex?
-url: 2025.02.21.foss-tools-complex
+url: 2025-02-21-foss-tools-complex
 desc: ''
 updated: 21/02/2025
 created: 21/02/2025

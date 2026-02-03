@@ -1,6 +1,6 @@
 ---
 title: Complex Amplify VTL resolver
-url: 2025.09.02.complex-amplify-vtl-writing-testing
+url: 2025-09-02-complex-amplify-vtl
 desc: ''
 updated: 02/09/2025
 created: 02/09/2025

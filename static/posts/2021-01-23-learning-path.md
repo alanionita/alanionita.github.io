@@ -1,5 +1,5 @@
 ---
-url: 2021.01.23.learning-path
+url: 2021-01-23-learning-path
 title: Choose a Learning Path
 desc: ""
 updated: 23/01/2021

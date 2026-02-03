@@ -1,6 +1,6 @@
 ---
 title: W3C - easy checks for accessibility
-url: 2025.02.10.checks-for-accessibility
+url: 2025-02-10-checks-for-accessibility
 desc: ''
 updated: 10/02/2025
 created: 10/02/2025

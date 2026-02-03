@@ -1,5 +1,5 @@
 ---
-url: 2021.01.17.mvp-fallacy
+url: 2021-01-17-mvp-fallacy
 title: The MVP fallacy
 desc: ""
 updated: 17/01/2021

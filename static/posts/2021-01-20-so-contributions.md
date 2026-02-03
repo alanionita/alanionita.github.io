@@ -1,5 +1,5 @@
 ---
-url: 2021.01.20.so-contributions
+url: 2021-01-20-so-contributions
 title: Stack Overflow Contributions
 desc: ""
 updated: 20/01/2021

@@ -1,5 +1,5 @@
 ---
-url: 2021.03.21.pi-os-study
+url: 2021-03-21-pi-os-study
 title:  Raspberry Pi OS Study
 desc: ''
 updated: 21/03/2021

@@ -1,5 +1,5 @@
 ---
-url: 2024.07.27.code-highlight
+url: 2024-07-27-code-highlight
 title: Testing - Code syntax highlighting
 desc: ''
 updated: 27/07/2024

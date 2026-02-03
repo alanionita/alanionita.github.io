@@ -1,6 +1,6 @@
 ---
 title: Timeline apps - past, present, future
-url: 2025.02.09.timeline-apps
+url: 2025-02-09-timeline-apps
 desc: ''
 updated: 09/02/2025
 created: 09/02/2025

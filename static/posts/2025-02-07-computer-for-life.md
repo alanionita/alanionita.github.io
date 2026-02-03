@@ -1,6 +1,6 @@
 ---
 title: A computer for life
-url: 2025.02.07.computer-for-life
+url: 2025-02-07-computer-for-life
 desc: ''
 updated: 07/02/2025
 created: 07/02/2025

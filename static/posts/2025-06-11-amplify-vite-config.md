@@ -1,6 +1,6 @@
 ---
 title: Amplify Vite config correction
-url: 2025.06.11.amplify-vite-config
+url: 2025-06-11-amplify-vite-config
 desc: ''
 updated: 11/06/2025
 created: 11/06/2025

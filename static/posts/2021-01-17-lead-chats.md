@@ -1,5 +1,5 @@
 ---
-url: 2021.01.17.lead-chats
+url: 2021-01-17-lead-chats
 title: Lead chats or 1-2-1s
 desc: ""
 updated: 17/01/2021

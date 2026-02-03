@@ -1,6 +1,6 @@
 ---
 title: Strava to FOSS analysis and visualisation
-url: 2025.03.19.strava-to-foss
+url: 2025-03-19-strava-to-foss
 desc: ''
 updated: 19/03/2025
 created: 19/03/2025

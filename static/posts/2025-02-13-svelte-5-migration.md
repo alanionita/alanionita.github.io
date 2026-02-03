@@ -1,6 +1,6 @@
 ---
 title: Svelte - v5 Migration
-url: 2025.02.13.svelte-5-migration
+url: 2025-02-13-svelte-5-migration
 desc: ''
 updated: 13/02/2025
 created: 13/02/2025

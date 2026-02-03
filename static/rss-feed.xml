@@ -5,10 +5,10 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Tue, 02 Sep 2025 14:20:41 GMT</lastBuildDate>
+                <lastBuildDate>Tue, 03 Feb 2026 11:46:14 GMT</lastBuildDate>
                 <item>
             <title>Complex Amplify VTL resolver</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.09.02.complex-amplify-vtl-writing-testing</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-09-02-complex-amplify-vtl</link>
             <pubDate>Tue, 02 Sep 2025 00:00:00 +0100</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -361,7 +361,7 @@ As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas
             </description>
         </item><item>
             <title>Amplify Vite config correction</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.06.11.amplify-vite-config</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-06-11-amplify-vite-config</link>
             <pubDate>Wed, 11 Jun 2025 00:00:00 +0100</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -436,7 +436,7 @@ export default defineConfig({
             </description>
         </item><item>
             <title>Amplify Documentation Safari</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.06.11.amplify-docs-safari.md</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-06-11-amplify-docs-safari.md</link>
             <pubDate>Wed, 11 Jun 2025 00:00:00 +0100</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -549,7 +549,7 @@ export default defineConfig({
             </description>
         </item><item>
             <title>Strava to FOSS analysis and visualisation</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.03.19.strava-to-foss</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-03-19-strava-to-foss</link>
             <pubDate>Wed, 19 Mar 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -686,7 +686,7 @@ export default defineConfig({
             </description>
         </item><item>
             <title>One Big Text File (obtf)</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.03.03.obtf</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-03-03-obtf</link>
             <pubDate>Mon, 03 Mar 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -730,7 +730,7 @@ R. Reference
             </description>
         </item><item>
             <title>FOSS tools complex?</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.21.foss-tools-complex</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-21-foss-tools-complex</link>
             <pubDate>Fri, 21 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -774,7 +774,7 @@ R. Reference
             </description>
         </item><item>
             <title>SveleteKit - reactivity quirk</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.14.sveltekit-reactivity</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-14-sveltekit-reactivity</link>
             <pubDate>Fri, 14 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -906,7 +906,7 @@ export const prerender = true;
             </description>
         </item><item>
             <title>Svelte - v5 Migration</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.13.svelte-5-migration</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-13-svelte-5-migration</link>
             <pubDate>Thu, 13 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1152,7 +1152,7 @@ npm error For a full report see:
             </description>
         </item><item>
             <title>Flutter - Development Setup</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.12.flutter-setup</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-12-flutter-setup</link>
             <pubDate>Wed, 12 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1284,7 +1284,7 @@ npm error For a full report see:
             </description>
         </item><item>
             <title>W3C - easy checks for accessibility</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.10.checks-for-accessibility</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-10-checks-for-accessibility</link>
             <pubDate>Mon, 10 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1440,7 +1440,7 @@ import PageTitle from '...'
             </description>
         </item><item>
             <title>Timeline apps - past, present, future</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.09.timeline-apps</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-09-timeline-apps</link>
             <pubDate>Sun, 09 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1505,7 +1505,7 @@ import PageTitle from '...'
             </description>
         </item><item>
             <title>Thinkpad T480 screen flicker fix</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.07.t480-screen-flicker</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-07-t480-screen-flicker</link>
             <pubDate>Fri, 07 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1545,7 +1545,7 @@ EndSection
             </description>
         </item><item>
             <title>A computer for life</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025.02.07.computer-for-life</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-07-computer-for-life</link>
             <pubDate>Fri, 07 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1602,7 +1602,7 @@ But to all this negativity there's a potential solution</p>
             </description>
         </item><item>
             <title>Testing - Code syntax highlighting</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2024.07.27.code-highlight</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2024-07-27-code-highlight</link>
             <pubDate>Sat, 27 Jul 2024 00:00:00 +0100</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1691,7 +1691,7 @@ foo
             </description>
         </item><item>
             <title>Life OS</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.28.life-os</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-03-28-life-os</link>
             <pubDate>Sun, 28 Mar 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1745,7 +1745,7 @@ foo
             </description>
         </item><item>
             <title>Raspberry Pi OS Study</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.21.pi-os-study</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-03-21-pi-os-study</link>
             <pubDate>Sun, 21 Mar 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1888,7 +1888,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>What Next</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.19.what-next</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-03-19-what-next</link>
             <pubDate>Fri, 19 Mar 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1946,7 +1946,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>Why Teach</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.03.18.why-teach</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-03-18-why-teach</link>
             <pubDate>Thu, 18 Mar 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -1989,7 +1989,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>AWS - Serverless Advice</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.27.serverless-advice</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-01-27-serverless-advice</link>
             <pubDate>Wed, 27 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -2034,7 +2034,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>Choose a Learning Path</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.23.learning-path</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-01-23-learning-path</link>
             <pubDate>Sat, 23 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -2113,7 +2113,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>Stack Overflow Contributions</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.20.so-contributions</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-01-20-so-contributions</link>
             <pubDate>Wed, 20 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -2182,7 +2182,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>The MVP fallacy</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.17.mvp-fallacy</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-01-17-mvp-fallacy</link>
             <pubDate>Sun, 17 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -2223,7 +2223,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>Lead chats or 1-2-1s</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.17.lead-chats</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-01-17-lead-chats</link>
             <pubDate>Sun, 17 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
@@ -2282,7 +2282,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
             </description>
         </item><item>
             <title>Why write a blog?</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2021.01.13.why-write</link>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2021-01-13-why-write</link>
             <pubDate>Wed, 13 Jan 2021 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>

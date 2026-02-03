@@ -1,6 +1,6 @@
 ---
 title: Amplify Documentation Safari
-url: 2025.06.11.amplify-docs-safari.md
+url: 2025-06-11-amplify-docs-safari.md
 desc: ''
 updated: 11/06/2025
 created: 11/06/2025

@@ -1,5 +1,5 @@
 ---
-url: 2021.01.27.serverless-advice
+url: 2021-01-27-serverless-advice
 title: AWS - Serverless Advice
 desc: Serverless advice and resource list for beginners
 updated: 27/01/2021

@@ -1,6 +1,6 @@
 ---
 title:  Thinkpad T480 screen flicker fix
-url: 2025.02.07.t480-screen-flicker
+url: 2025-02-07-t480-screen-flicker
 desc: ''
 updated: 07/02/2025
 created: 07/02/2025

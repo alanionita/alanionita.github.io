@@ -1,6 +1,6 @@
 ---
 title: Flutter - Development Setup
-url: 2025.02.12.flutter-setup
+url: 2025-02-12-flutter-setup
 desc: ''
 updated: 12/02/2025
 created: 12/02/2025
