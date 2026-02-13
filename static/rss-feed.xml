@@ -5,20 +5,115 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Tue, 03 Feb 2026 11:46:14 GMT</lastBuildDate>
+                <lastBuildDate>Fri, 13 Feb 2026 15:45:11 GMT</lastBuildDate>
                 <item>
+            <title>Docker for Node</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2026-02-06-docker-for-node</link>
+            <pubDate>Fri, 06 Feb 2026 00:00:00 Z</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Docker for Node</h1>
+<p>Any non-Alpine Linux images have a significant amount of vulnerabilities. However Alpine is bare-bones and requires more work to get setup.</p>
+<blockquote>
+<p>Worth saying that vulnerabilities, what are vulnerabilities etc is tricky to define here. I'm increasingly feeling like the ranking of vulnerabilities is biased towards 'high', but I think it's important to zoom in on the volume of vulnerabilities here</p>
+</blockquote>
+<p>Scenario: host a micro-service with Typescript modules and some features to post out to another Docker service. Think about it as a simple lambda.</p>
+<p>This doesn't need a full-fat Linux distro for the container, so why would you use it?</p>
+<p>Well... I think you'd use it because it's there.</p>
+<p>Going to the <a href="https://hub.docker.com/_/node/tags">Node images repository</a> and you can see huge amount of image options.</p>
+<p>Let's take the <a href="https://hub.docker.com/layers/library/node/24.13-trixie/images/sha256-542d79268854032f4580af3af391fc3246d0b6dc4b45accb9617ea939bbbc709">node:24.13-trixie</a> for example:</p>
+<ul>
+<li>It has a total for 6 high, 9 medium, 136 low vulnerabilities</li>
+<li>Node v24.13 introducing 6 high, 1 medium, 1 low vulnerabilities</li>
+</ul>
+<p>If we filter the vulnerabilities we notice that the entire image has just 1 'unpatchable' vulnerability, which at the time of writing is 14days old.</p>
+<h1>Not plug and play</h1>
+<p>A few years ago I experienced a hard bug with downstream dependency due to Debian security repo changing locations, and it bricked a lot of images - including the Node image I was using.</p>
+<p>The <a href="https://stackoverflow.com/questions/68802802/repository-http-security-debian-org-debian-security-buster-updates-inrelease/76153964#76153964">Stack Overflow question</a> for that issue has 118k views.</p>
+<p>That experience made me audit the images more before using them.</p>
+<p>The community vibe around images is more 'just plug and play', a naive view that is very far from the truth.</p>
+<p>Images are very sensitive and can't be relied upon fully even when published by Node themselves.</p>
+<h1>Suggestions</h1>
+<p>If you are using hosted images, learn to review the images you use, what dependencies they have, what fixes they require.</p>
+<p>In general, choosing an Alpine base gives you most stable base.</p>
+<p>If you really want certainty, build your own image from an Alpine base, and reuse it.</p>
+<p>Review the CVEs that can't be fixed for your own judgment on the issue:</p>
+<ul>
+<li>What is it about?</li>
+<li>How can it be exploited?</li>
+<li>How does it affect your code?</li>
+<li>How doesn't it stack on the MITRE framework</li>
+</ul>
+<h2>How to audit, quickly</h2>
+<p>This is just the quick process, there's more to it that this but you can start with this.</p>
+<ul>
+<li>Go to <a href="https://hub.docker.com/">Docker hub</a> and search for your image</li>
+<li>Look for 'official' badge</li>
+</ul>
+<blockquote>
+<p>Ignore DHI images for now, even though these will be top of the list; will cover DHI in another post</p>
+</blockquote>
+<p>On /image page</p>
+<ul>
+<li>Tag Summary (right column)</li>
+<li>Review and make note of recently updated tag</li>
+<li>Check pulls</li>
+</ul>
+<blockquote>
+<p>For non-official/obscure images you want to see how many people are using it; not to say that use is a direct proxy for a quality image, but it's a data point</p>
+</blockquote>
+<ul>
+<li>Click on "Tags"</li>
+</ul>
+<p>On /image/tags page</p>
+<ul>
+<li>Look for the 'recent' tags from above</li>
+<li>Review vulnerabilities, size, and commands</li>
+</ul>
+<blockquote>
+<p>As part of the command you can see the name of the tag, can be used in Docker file definitions</p>
+</blockquote>
+<ul>
+<li>Open the tag page</li>
+</ul>
+<p>On /images/tags/tag page</p>
+<ul>
+<li>Review where the vulnerabilities are coming from</li>
+</ul>
+<blockquote>
+<p>Up to this point all the vulnerability totals are sums for the whole image; however, the base image in some case will have 0 or more vulnerabilities, in addition to the module added to the base image</p>
+</blockquote>
+<ul>
+<li>Review the CVEs themselves</li>
+<li>You can expand a vulnerability to see further details, review the dates</li>
+<li>Then I navigate to the Docker.Scout page for the vulnerability</li>
+</ul>
+<blockquote>
+<p>This gives you more insight into the mechanics of the CVE, and based on this decide how to deal with it + impact of it on your app</p>
+</blockquote>
+<ul>
+<li>Review the scripts with alert badges</li>
+</ul>
+<blockquote>
+<p>Important to understand the scripts with issues, especially if you might have to rebuild the image itself</p>
+</blockquote>
+
+                ]]>
+            </description>
+        </item><item>
             <title>Complex Amplify VTL resolver</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025-09-02-complex-amplify-vtl</link>
             <pubDate>Tue, 02 Sep 2025 00:00:00 +0100</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Complex Amplify VTL resolver writing and testing</h1>
+                    <h1>Complex VTL resolvers, for Amplify</h1>
 <p>Let's start with a problem: you want to implement a profile editing feature, your app is a VueJS frontend and an Node AppSync GraphQL backend, and you database layer is a set of DynamoDB tables.
 As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas and Apache VTL resolvers.</p>
 <p>The profile editing requires dynamic data inputs: when editing a profile you can edit one feature, none of them, or all of them.</p>
 <p>Here's a simple DynamoDB.UpdateItem command example.</p>
-<pre><code class="language-vtl">{
+<pre><code class="language-json">{
     "version" : "2018-05-29",
     "operation" : "UpdateItem",
     "key": {
@@ -51,20 +146,19 @@ As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas
 
 </code></pre>
 <p>The AppSync GraphQL query looks a bit like this.</p>
-<pre><code class="language-javascript">const query = `mutation editMyProfile($input: ProfileInput!) {
-        editMyProfile(newProfile: $input) {
-          ... myProfileFields
+<pre><code class="language-gql">mutation editMyProfile($input: ProfileInput!) {
+    editMyProfile(newProfile: $input) {
+        ... myProfileFields
 
-          tweets {
-            nextToken
-            tweets {
-                ... on Tweet {
-                    ... tweetFields
-                }
+        tweets {
+        nextToken
+        tweets {
+            ... on Tweet {
+                ... tweetFields
             }
-          }
         }
-    }`
+    }
+}
 </code></pre>
 <p>And the ProfileInput type has this shape.</p>
 <pre><code class="language-gql">input ProfileInput {
@@ -79,7 +173,7 @@ As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas
 </code></pre>
 <p>Within ProfileInput, only <code>name</code> is required, with the remaining values being optional.</p>
 <p>In the VTL template we wrote the command as if that all the attributes exist at execution time. When they are missing DynamoDB will override those values with <code>'null'</code>, a significant issue that leads to data loss.</p>
-<h2>Best practice for DynamoDB updates</h2>
+<h2>DynamoDB.UpdateItem</h2>
 <p>Updates is DynamoDB tend to require complex queries because they have a large amount of requirements, and come with the added risk of data loss.</p>
 <p>Officially AWS recommends that an Update query handles these situations:</p>
 <ul>
@@ -264,8 +358,6 @@ As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas
         "expression" : "attribute_exists(id)"
     }
 }
-
-
 </code></pre>
 <p>We continue to use the 'remove' lists for incoming values set to <code>null</code> or <code>""</code> eg. user wants to change their website to an empty string.</p>
 <p>We no longer handle any 'add' instructions because can handle new properties with 'set'.</p>
@@ -300,22 +392,17 @@ As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas
 <li>Where *bio is under the REMOVE verb</li>
 </ul>
 <h2>Notes</h2>
-<ol>
-<li>ExpressionValues are strings</li>
-</ol>
+<h3>ExpressionValues</h3>
+<p>ExpressionValues are strings.</p>
 <p>One crucial thing to note is the discrepancy between the ProfileInput types and the DynamoDB expressionValues.</p>
 <p>Even though some values are of type AWSUrl or AWSDate, when given to the expressionValue they must be of type string ("S"), otherwise the query will fail.</p>
 <p>Please note that this issue will trigger a false positive in testing because template itself is still value regardless of the correct value of expressionValues</p>
-<ol start="2">
-<li>Template evaluation with the AppSync API</li>
-</ol>
+<h3>Template evaluation</h3>
 <p>AppSync testing can be done by combining the "@aws-amplify/amplify-appsync-simulator" and "amplify-velocity-template" packages.</p>
 <p>This method is prone to errors, and requires some output parsing of the templates after they've been loaded by the simulator eg. trimming training commas from the output.</p>
 <p>A more reliable option is the <code>EvaluateMappingTemplateCommand</code> from "@aws-sdk/client-appsync". This uses an AppSync Client to evaluate any template string for validity, and it's a locally executing command.</p>
 <p><a href="https://docs.aws.amazon.com/appsync/latest/APIReference/API_EvaluateMappingTemplate.html">AWS Amplify EvaluateMappingTemplateCommand documentation</a></p>
-<ol start="3">
-<li>VTL variations</li>
-</ol>
+<h3>VTL variations</h3>
 <p>You can also try a simpler loop for building the expression.</p>
 <pre><code class="language-vtl">#set($exp = "SET #name = :name")
 #set($expNames = {"#name":"name"})
@@ -369,7 +456,7 @@ As for the implementation, the AppSync resolvers are a mix of Javascript Lambdas
                     <h1>Amplify Vite config correction</h1>
 <p>Under the Vue docs for Amplify UI, we see a the following config specification.</p>
 <p>https://ui.docs.amplify.aws/vue/connected-components/authenticator</p>
-<pre><code class="language-javascript">// vite.config.js
+<pre><code class="language-js">// vite.config.js
 
 export default defineConfig({
   plugins: [vue()],
@@ -384,16 +471,14 @@ export default defineConfig({
 })
 </code></pre>
 <p>The config is required to ensure a browser compatible version of <code>AWS JS SDK</code>.</p>
-<p>Sidenotes:</p>
-<ul>
-<li>Why do we need the AWS JS SDK if we're using Amplify?</li>
-<li>None of the docs for Amplify mention the <code>aws-sdk</code> as a dependency.</li>
-</ul>
+<blockquote>
+<p>Why do we need the AWS JS SDK if we're using Amplify? None of the Amplify docs mention the <code>aws-sdk</code> as a dependency.</p>
+</blockquote>
 <h2>Problem</h2>
-<p>Yhe logic above assumes that projects will configure Vite aliases with find / replacement pattern.</p>
-<p>However the default config recommends a much simple object structure with key / value definitions.</p>
-<p>For instance the Vue3 wizard produces this Vite configuration</p>
-<pre><code class="language-javascript">// vite.config.js
+<p>Logic above expects to config Vite aliases with find / replacement pattern.</p>
+<p>However the default starter config recommends a simple object structure with key / value pairs.</p>
+<p>The Vue v3 wizard produces this Vite configuration</p>
+<pre><code class="language-js">// vite.config.js
 
 export default defineConfig({
   plugins: [
@@ -409,8 +494,8 @@ export default defineConfig({
 })
 </code></pre>
 <h2>Solution</h2>
-<p>Although we could introduce the find / replacement pattern into the original config, it's far more sensible to replace the documentation recommendation to match the key/value format</p>
-<pre><code class="language-javascript">// vite.config.js
+<p>Far more sensible to bypass the documentation suggestion, and match the key/value format.</p>
+<pre><code class="language-js">// vite.config.js
 
 export default defineConfig({
   plugins: [
@@ -427,10 +512,11 @@ export default defineConfig({
 })
 </code></pre>
 <h2>Why does it matter?</h2>
-<p>Meets users where ever they are, by matching closely the default starter config.</p>
-<p>You could end up with a lot of convoluted issues with Vite because of this configuration.</p>
-<p>For example a mis-configured alias would trigger errors stemming from <code>EnvironmentPluginContainer.resolveId</code> and <code>EnvironmentModuleGraph._resolveUrl</code>. This would be a false negative pointing to mis-configured environement variables as opposed to the Vite alias resolution.</p>
-<p>Be careful with it!</p>
+<p>Yes, because it meets users where ever they are by matching closely the default starter config vs. introducing a new pattern.</p>
+<p>Depending on config you could end up with some odd issues.</p>
+<blockquote>
+<p>A mis-configured alias would trigger errors stemming from <code>EnvironmentPluginContainer.resolveId</code> and <code>EnvironmentModuleGraph._resolveUrl</code>. A false negative pointing to mis-configured environment variables as opposed Vite alias resolution.</p>
+</blockquote>
 
                 ]]>
             </description>
@@ -442,40 +528,52 @@ export default defineConfig({
             <description>
                 <![CDATA[
                     <h1>Amplify Documentation Safari</h1>
-<p>Join me for a thrilling ride through the Amplify docs, where you have to bob and weave in order to reach your goal of connecting an AppSync backend to a Vue frontend via the Amplify service and modules.</p>
+<p>Join me for a pinball ride through the Amplify docs, where you have to bob and weave in order to reach our goal of connecting an AppSync backend to a Vue frontend via the Amplify service and modules.</p>
 <h2>Background</h2>
-<p>Amplify is an amazingly promising service for integrating frontends with GraphQL backends.</p>
-<p>Common recipe for these recipes are:</p>
-<ul>
-<li>Backend: Cognito, AppSync with data sources as Lambda, DynamoDB, etc</li>
-<li>Frontend: Vue, React etc</li>
-</ul>
-<p>I'd like to use Amplify for 3 purposes:</p>
-<ul>
-<li>Connecting to my AppSync API</li>
-<li>Authenticating via Cogntio, managing tokens behind the scenes</li>
-<li>Running GraphQL queries and getting data back in the UI</li>
-</ul>
-<h2>Resoning</h2>
+<h3>Amplify</h3>
 <p>Amplify is an ecosystem that contains cli, scaffolding, and UI tools.</p>
 <p>The combination of these tools means that we can:</p>
 <ul>
-<li>configure a client API to hit our AppSync backend</li>
-<li>configure the authentication flow as Cognito</li>
-<li>use pre-build UI components to handle the authentication stories via Cognito: sign in, sign up, login, forgot password</li>
-<li>manage tokens from Cognito</li>
-<li>send queries down to this API</li>
+<li>Configure a client API to hit our AppSync backend</li>
+<li>Configure the authentication flow as Cognito</li>
+<li>Use pre-build UI components to handle the authentication stories via Cognito: sign in, sign up, login, forgot password</li>
+<li>Manage tokens from Cognito</li>
+<li>Send queries down to this API</li>
 </ul>
-<p>The goal of this article is to sign-post and add commentary about documentation.</p>
-<p>I will however cover 2 big bonuses to using Amplify before talking about docs.</p>
-<h2>Bonus - Code generation [@amplify-cli/]</h2>
-<p>A big nuisance for GraphQL processes is the mirroring of queries across backend and frontend.</p>
+<p>Of note to us, is the integration with Cognito for auth, and calls to the Appsync backend.</p>
+<h3>Cognito</h3>
+<p>Cognito is an OAuth flow implementation and as such would require some legwork (boilerplate code) to manage keys and orchestrate the flows correctly.</p>
+<p>With Amplify we get UI components, and API configurations. We no longer manage tokens and the standard OAuth flows, vastly simplifying the service logic.</p>
+<h3>Service architecture</h3>
+<p>Backend:</p>
+<ul>
+<li>AppSync with data sources as Lambda, DynamoDB, etc</li>
+<li>Cognito for auth</li>
+</ul>
+<p>Frontend:</p>
+<ul>
+<li>Framework use: Vue, React etc</li>
+<li>Cognitor for auth</li>
+</ul>
+<h2>Plans</h2>
+<p>Use Amplify for:</p>
+<ul>
+<li>Connecting to a pre-deployed AppSync API</li>
+<li>Authenticating via Cognito, managing tokens behind the scenes</li>
+<li>Running GraphQL queries and getting data back in the UI</li>
+</ul>
+<p>The goals of this article:</p>
+<ul>
+<li>Enumerate and explain documentation locations</li>
+<li>Sign-post and add commentary about documentation</li>
+</ul>
+<h2>Amplify, code generation</h2>
+<p>A big chore for GraphQL processes is the mirroring of queries across backend and frontend.</p>
 <p>With Amplify you can with one command generate code for all Queries and Mutations from your AppSync API:</p>
 <pre><code>npx @aws-amplify/cli codegen add --apiId YOUR_APPSYNC_API_ID --region YOUR_REGION
-
 </code></pre>
 <p>This generates files inside <code>graphql/</code> for <code>queries.js</code> and <code>mutations.js</code> with following examples</p>
-<pre><code class="language-javascript">export const getProfile = /* GraphQL */ `
+<pre><code class="language-js">export const getProfile = /* GraphQL */ `
   query GetProfile($screenName: String!) {
     getProfile(screenName: $screenName) {
       id
@@ -502,48 +600,69 @@ export default defineConfig({
     }
   }
 `;
-
 </code></pre>
-<h2>Bonus - Cognito</h2>
-<p>Cognito is an OAuth flow implementation and as such would require some legwork (boilerplate code) to manage keys and orchestrate the flows correctly.</p>
-<p>With Amplify we get UI components, and API configurations that means we manage no tokens, vastly simplifying the app configuration.</p>
-<h2>Documentation safari</h2>
-<p>Let's meander through the Amplify documentation valley.</p>
-<ol>
-<li>Amplify Docs</li>
-</ol>
-<p>You would think that the best docs location is the official Amplify Docs, scoped by framework of choice. Below referencing Vue.</p>
-<p>https://docs.amplify.aws/vue/</p>
-<p>Most sensible place to go from here is to "Set up Amplify Data" (https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/), but once on the page you realise that most the setup here involves from scratch development of both backend and frontend in parallel using Amplify.</p>
+<h2>Amplify Docs safari</h2>
+<h3>1. Amplify Vue Docs</h3>
+<p>Best starting point is the official Amplify Docs, scoped by framework of choice.</p>
+<p><a href="https://docs.amplify.aws/vue/">Amplify UI / Vue </a></p>
+<p>From here, follow the <a href="https://docs.amplify.aws/vue/build-a-backend/data/set-up-data/">Set up Amplify Data</a></p>
+<p>Once on the page you notice that the setup involves the scaffolding of both backend and frontend in parallel using Amplify.</p>
 <p>The audience for Amplify seems to be folks that use it for both.</p>
+<blockquote>
 <p>I'd wager a bet that most developers build AppSync with Serverless Framework, CDK, or Terraform, bypassing Amplify on the backend, whilst using Amplify libraries on the UI.</p>
-<p>As someone who already has a deployed AppSync API, that means that we have to hunt and peck through the docs for the relevant code and instructions</p>
-<p>What is useful here is how to create the API on the client using <code>generateClient</code> from <code>aws-amplify/data</code>. This is important because there's a huge about of different ways to do this since Amplify has a large amount of modules and techniques, each looking the same but breaking in magical ways.</p>
-<ol start="2">
-<li>AppSync - Integrate with your app</li>
-</ol>
-<p>This is actually the most sensible spot to start.</p>
-<p>From the AWS Console, navigate to AppSync, then open your specific API. The instructions should appear my default on the main page.</p>
-<p>One big flaw with these instructions is the use of <code>./aws-exports.js</code> which is not defined or explained.</p>
+</blockquote>
+<p>As someone with a pre-deployed AppSync API, that means hunting and pecking through the docs for relevant code and instructions.</p>
+<p>What is useful here, is how to create the API on the client using <code>generateClient</code> from <code>aws-amplify/data</code></p>
+<blockquote>
+<p>Important because of the many ways to achieve this. Amplify modules tend to look the same, but contain key api variations that cause setup trouble.</p>
+</blockquote>
+<p>As a result, the docs above are not a good starting point!</p>
+<h3>2. AppSync Console</h3>
+<p>Most sensible spot to start, is the Appsync Console (web).</p>
+<ul>
+<li>From the AWS Console</li>
+<li>Navigate to AppSync</li>
+<li>Open your specific AP</li>
+</ul>
+<p>The instructions should appear my default on the main page, but they are are incomplete.</p>
+<p>These instructions make use of <code>./aws-exports.js</code> which is not defined or explained.</p>
+<blockquote>
+<p>After a bit of experimentation, the aws-exports.js file is generated by one of the aws-amplify methods for creating an API.</p>
+</blockquote>
 <p>We can guess that it involves configuration details, but in the following steps the configuration variables are hard-coded in the file.</p>
-<p>There's no mention here about how to hide this sensitive information or how to use .env variables.</p>
-<p>Also there's no configuration explanation for Cognito, even though most setups will include it.</p>
-<ol start="3">
-<li>Amplify UI docs</li>
-</ol>
-<p>Essentially the same as point 1. but more focused on the frontend. Thus more relevant for your needs. Requires framework scoping selection, below focused on Vue</p>
-<p>https://ui.docs.amplify.aws/vue/connected-components/authenticator</p>
-<p>The issue here is to do with the audience: even though it should be for us (someone who want to connect a UI to an existing AppSync backend via Amplify), the instructions are very simplistic.</p>
-<p>The initial example doesn't cover any Sign In, Sign Up flows, nor does it explain how to render different auth components depending on the authentication states: authenticated, unauthenticated, or loading.</p>
-<p>You get a lot more information within the 'Advanced Usage' section of the docs, but all of the initial instructions are replaced.</p>
-<p>Arguable if these requires are 'advanced' or just base requirements.</p>
-<h1>Bonus? - Sandboxing</h1>
-<p>Throughout the docs sandboxing is mentioned, but never fully detailed.</p>
-<p>https://docs.amplify.aws/vue/deploy-and-host/sandbox-environments/features/</p>
-<p>Still murky as to how to use sandboxing with an existing API but the secrets explanation is very helpful and interesting.</p>
-<p>It seems that via sandboxing you attach secrets to a sandbox and can then reference it within your backend. Again the 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue backend, is it out initial AppSync backend?</p>
-<p>This is also where they describe how to 'Generate client config' essentially producing the <code>amplify_outputs.json</code> mentioned above.</p>
-<p>Unclear whether this is a bonus or not because we already have an API and there are not details on how to integrate a sandbox with a pre-deployed API.</p>
+<p>Also there are no:</p>
+<ul>
+<li>mentions about how to hide this sensitive information or how to use .env variables</li>
+<li>configuration explanations for Cognito, even though most Appsync solutions will use it</li>
+</ul>
+<h3>3. Amplify UI Vue docs</h3>
+<p>Essentially the same as point 1. but more focused on the frontend. Thus more relevant for your needs.</p>
+<p>Requires framework scoping selection, below focused on Vue.</p>
+<p><a href="https://ui.docs.amplify.aws/vue/connected-components/authenticator">Amplify UI / Vue / connected-components / Authenticator</a></p>
+<p>At this point in our journey with Amplify and Appsync, we identiy as a developer who wants to connect a UI to an existing AppSync backend via Amplify.</p>
+<p>Even though the docs here should be for us, the instructions are too simple:</p>
+<ul>
+<li>Doesn't cover any Sign In, Sign Up flows</li>
+<li>Doesn't explain how to render different auth components depending on the authentication states: authenticated, unauthenticated, or loading.</li>
+</ul>
+<p>There is more information within the 'Advanced Usage' section of the docs, but all of the initial instructions are replaced my them.</p>
+<blockquote>
+<p>To me, these 'advanced' use cases, are just base requirements in 2025</p>
+</blockquote>
+<h2>Sandboxing</h2>
+<p>Throughout the docs sand-boxing is mentioned, but never fully detailed.</p>
+<p><a href="https://docs.amplify.aws/vue/deploy-and-host/sandbox-environments/features/">Amplify docs / sanbox-environments / features</a></p>
+<p>Unclear how to use sand-boxing with an existing API but the secrets explanation is very helpful and interesting.</p>
+<p>Via sand-boxing you attach secrets to a sandbox, and then reference it within your backend. The 'backend' definition here is murky, is it a local backend generated with Amplify, is it a Vue SSR backend, or is it an AWS backend?</p>
+<p>Here we can find the 'Generate client config' docs, which outlines how to create <code>amplify_outputs.json</code> mentioned above.</p>
+<p>No details on how to integrate a sandbox with a pre-deployed API or how to manage a sandbox in that instance. Seems like 'sand-boxing' is purely reserved for Amplify deployed resources, which tend to be sand-boxed within Amplify environments by default.</p>
+<h2>Conclusion</h2>
+<p>We have found a solution for configuring the auth with Amplify, and doing the Cognito auth via it's libraries.</p>
+<p>We have also found a way to <code>defineClient()</code> via Amplify and make calls to the GraphQL backend.</p>
+<p>Unresolved is the topic of, how to best establish the GraphQL backend integration.</p>
+<p>The docs are inconsistent in details, and they rarely cover the setup from the perspective of different users. For the Amplify team, the only user of their API is a developer which is deploying with Amplify.</p>
+<p>What happens to the UI libraries then? Are they only meant for those users?</p>
+<p>I do plan to write a "how to" containing all the steps for the setup, and best practice suggestions.</p>
 
                 ]]>
             </description>
@@ -593,12 +712,12 @@ export default defineConfig({
 ]
 </code></pre>
 <p>Unclear why, but some activities don't have this entry, whilst other valid entries contain a string.</p>
-<p>Also unclear is whether this value will contain elevation data, we have <code>_high</code> and <code>_low</code> elev values within the actitvity. A good mystery to uncover in a future post and feature.</p>
-<blockquote>
-<p>Note that most of the supporting code from this point forward is about the <code>osm.ipynb</code> notebook.</p>
-</blockquote>
+<p>Also unclear is whether this value will contain elevation data, we have <code>_high</code> and <code>_low</code> elev values within the activity. A good mystery to uncover in a future post and feature.</p>
 <h2>Geospatial primer</h2>
 <h3>Geometry</h3>
+<blockquote>
+<p>Note: the supporting code from this point forward in the <code>osm.ipynb</code> notebook.</p>
+</blockquote>
 <p>Quick intro to geospatial data is that most things relate to Lines, Polylines, and Polygons.</p>
 <p>We normally work with these basic geometric shapes using a low level lib called Shapely.</p>
 <p>Whenever we use a geospatial framework, like GeoPanda, they in turn will use Shapely under the hood.</p>
@@ -676,7 +795,6 @@ export default defineConfig({
 <li>Generate a map from the coordinates and the graph</li>
 </ul>
 <p>As a final touch we output the map to an html file, which you can see <a href="https://alanionita.github.io/strava-to-foss-notebooks-python/">here</a></p>
-<h2>Conclusion</h2>
 <p>This is just scratching the surface of what is possible, and I strongly recommend you give it a try.</p>
 <p>For the next iteration, I'll be fetching all my Strava data, converting it to geospatial, and save it inside a database.</p>
 <p>Final result</p>
@@ -695,13 +813,16 @@ export default defineConfig({
 <p>Learning from <a href="https://ellanew.com/tagged/obtf">Ellane W</a>, I started journaling inside a "one big text file".</p>
 <h2>Context</h2>
 <p>My note-taking system is text based, predominantly Markdown files, structure using the PARA system:</p>
-<ul>
-<li>Projects  -> <code>./project.*.md</code></li>
-<li>Area      -> <code>./area.*.md</code></li>
-<li>Reference -> <code>./reference.*.md</code></li>
-<li>Archive   -> <code>./arch.*.md</code></li>
-<li>Journal   -> <code>./journal.*.md</code></li>
-</ul>
+<pre><code class="language-md">
+| Category      | File           |
+| ------------- | -------------- |
+| Projects      | project.*.md   |
+| Area          | area.*.md      |
+| Reference     | reference.*.md |
+| Archive       | arch.*.md      |
+| Journal       | journal.*.md   |
+
+</code></pre>
 <p>Project - Most large chunks of work go into a project, if it's not big enough for a project, it usually goes in the other bins. Recently I added yearly sub-scoping <code>project.2025.*.md</code>. eg project.2025.portfolio-svelte.md, project.2025.kafka-pipeline.md, etc. This helps with yearly reviews, when I can easily <code>ls project.2025*</code> to get all the in progress / complete projects in a year.</p>
 <p>Archive - When I no longer need a note, it goes into archives. Over time the aim is to summarise the archives and discard the notes. Holding onto notes seems redundant. They should be distilled into "thoughts" or "timelines" for each topic, reflecting your current take on each topic.</p>
 <p>Area - Meant to keep track of various parts of life. eg area.personal.md, area.work.md, area.sport.md etc. Vastly under-used at the minute within my system.</p>
@@ -709,50 +830,58 @@ export default defineConfig({
 <p>Journal - Stores daily, quarterly, yearly notes, and this is where most of the note-taking happens. The ideal workflow is: jot down notes within a <code>journal.*.md</code> note and at the end of day, review, summarise, and update <code>area.*.md</code> or <code>resource.*.md</code>. In reality it's just a dumping ground.</p>
 <p>All the notes are stored within a cloud-hosted git repo.</p>
 <h2>The problem</h2>
-<p>In 2025 I wrote ~200 notes, most of which are scoped under <code>journal.daily.*.md</code> leaves. My lax approach to reviewing the notes, means that whenever I'm ready to review the journal entries, I end up with dozens of files to peruse and summarise into a weekly / quarterly superset.</p>
+<p>In 2025 I wrote ~500 daily note files, most of which are scoped under <code>journal.daily.*.md</code> leaves.</p>
+<p>My lax approach to reviewing the notes, means that whenever I review the journal entries, the queue is full with dozens of files to peruse and summarise into a weekly / quarterly superset.</p>
 <p>Moving files into <code>archive.*</code> is not easy unless you automate it with the script below.</p>
 <h2>Solution</h2>
-<p>Instead of ~200 leaves of <code>journal.daily.*.md</code> files have one yearly-scoped journal file <code>journal.2025.md</code></p>
-<p>Within the file in order to add some keywords and ease search retrieval I implemented a key - very heavily inspired by Ellane W. suggestions.</p>
-<pre><code class="language-markdown">T. Task
+<p>Instead of ~500 leaves of <code>journal.daily.*.md</code> files have one yearly-scoped journal file <code>journal.2025.md</code>.</p>
+<p>Each note entry uses a key prefix, heavily inspired by Ellane W. suggestions. A blend of bullet journalling and PARA structure.</p>
+<pre><code class="language-md">T. Task
 X. Task done
 N. Note
 P. Project
 R. Reference
 </code></pre>
-<p>The entries in the file are all collected under a day heading <code># 03-03-2025, Monday</code>, and new calendar entries are placed at the top of the file.</p>
+<p>Entries all encapsulated under a day heading. New calendar entries are placed at the top of the file.</p>
+<pre><code class="language-md"># 04-03-2025, Tuesday
+...
+
+# 03-03-2025, Monday
+
+...
+</code></pre>
 <h2>Observations</h2>
-<p>The "obtf" is handy for reviews already, making it dead-easy to see past days note with a simple scroll vs opening various files.</p>
-<p>Search and retrieval is great with <code>grep</code> too, and using one big text file means that I use less <code>fzf</code> scripts or <code>grep -nr "term" .</code>.</p>
-<p>The new journal opens in vim via terminal alias <code>,journal</code>, and this allows me wicked fast scribbles.</p>
+<p>The "obtf" is already making reviews easy, highlighting past days with a simple scroll vs opening various files.</p>
+<p>Using one big text file means that I use less <code>fzf</code> scripts or <code>grep -nr "term" .</code>.</p>
+<p>The new journal opens in vim via terminal alias <code>,journal</code>, making for some wicked fast scribbles.</p>
 
                 ]]>
             </description>
         </item><item>
-            <title>FOSS tools complex?</title>
-            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-21-foss-tools-complex</link>
+            <title>Kafka and Elastic, too complex in 2025?</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-21-text-search-foss</link>
             <pubDate>Fri, 21 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>FOSS tools complex in 2025?</h1>
+                    <h1>Kafka and Elastic, too complex in 2025?</h1>
 <p>Apache Kafka for example has an air of complexity and flamboyance around it.</p>
-<p>A vast majority of Hacker News comments rag on Kafka, the latest comments making it sound like a "CV-padding technology, needlesly complex, overtly unnecessary".</p>
+<p>A vast majority of Hacker News comments rag on Kafka, the latest comments making it sound like a "CV-padding technology, needlessly complex, overtly unnecessary".</p>
 <p>Similar myths around Elastic Search: complex, hard to maintain, expensive.</p>
 <p>If I were too include languages here, Haskell would be the top contender: considered too academic, impractical, obtuse, and a full stop questionable choice.</p>
 <p>What is the real damage of these myths?</p>
 <p>Because of the grapevine new people don't use Kafka, new people avoid Elastic Search.</p>
-<p>This perpetraits a scenario where the hard tools remain hard because new people can't shape their structure and usage. Without new users the tooling teams can't understand the new UX problems they need to solve.</p>
+<p>This activates a scenario where the hard tools remain hard because new people can't shape their structure and usage. Without new users the tooling teams can't understand the new UX problems they need to solve.</p>
 <p>More importantly where are these people to going for replacements?</p>
-<p>For Kafka replacements, people go to the cloud. They end up using AWS Kinesis streams, or AWS EventBridge - both expensive and complex services. Argueably as complex as Kafka and closed source.</p>
+<p>For Kafka replacements, people go to the cloud. They end up using AWS Kinesis streams, or AWS EventBridge - both expensive and complex services. Arguably as complex as Kafka and closed source.</p>
 <p>For Elastic Search replacements, people go to the cloud again, to database provider services like MongoDB Atlas, or to AWS OpenSearch. Both of these options are costly and just as complex.</p>
 <p>Cost in itself should be a criteria for businesses, if a managed service costs but is more easy to manage then we need to asses the trade-off. Sometimes however the costs act as feature gates and the managed services are just as hard to maintain or grok.</p>
-<p>For individuals, cost is a barier, no doubt about it. Yet, despite this barrier, the industry wants developers who can build real-time systems or complex text-search.</p>
+<p>For individuals, cost is a barrier, no doubt about it. Yet, despite this barrier, the industry wants developers who can build real-time systems or complex text-search.</p>
 <p>Where and how do we get these new developers? Where and how do they gain this experience?</p>
 <p>Cloud services, costs, and cost-gating features limits the market from gaining new developers, and limits developers from learning these tools.</p>
 <h2>Kafka and the Apache stack</h2>
 <p>Apache Kafka for the most part is FOSS. It has for-cost closed source components and services, but the basic streaming is there. Kafka can also run in a homelab and is not resource hungry.</p>
-<p>For the next few days I plan to post further updates on this: Kafka for a timeseries data injestion pipeline.</p>
+<p>For the next few days I plan to post further updates on this: Kafka for a time-series data ingestion pipeline.</p>
 <p>In other words a "soft real-time" problem.</p>
 <h2>Elastic Search</h2>
 <p>In 2020 I used a cloud managed Elastic Search service through AWS. This was before their business bust up.</p>
@@ -761,11 +890,11 @@ R. Reference
 <p>Elastic Search allowed us to achieve transcription, indexing, and retrieval, in less than 200ms. With networking done over WebSockets, in a event-driven system.</p>
 <p>Despite the results, Elastic Search wasn't recommended because of costs and maintenance.</p>
 <p>On management, our index required used 3 shards, and a fairly high spec set of machines. No where near as complex as it could get; a baby Elastic Search setup.</p>
-<p>Fast forward to 2025 and using Elastic Search a vastly improved experience, having managed to run a node with 1G memory, bulk index in &#x3C; 30s, and make text search calls with &#x3C;200ms retrival. Not the largest index in the world, but I can tell that even with 1G limitation it can take more documents and I don't expect the retrieval to be impacted.</p>
-<p>Elastic Search is FOSS, configuration was straighforward, and the query experience is modern and straightforward - GraphQL-like in a way.</p>
+<p>Fast forward to 2025 and using Elastic Search a vastly improved experience, having managed to run a node with 1G memory, bulk index in &#x3C; 30s, and make text search calls with &#x3C;200ms retrieval. Not the largest index in the world, but I can tell that even with 1G limitation it can take more documents and I don't expect the retrieval to be impacted.</p>
+<p>Elastic Search is FOSS, configuration was straightforward, and the query experience is modern and straightforward - GraphQL-like in a way.</p>
 <h2>Summary</h2>
 <p>Without Elastic Search, how else can you build text search systems at home on a Raspberry Pi?!</p>
-<p>Without Kafka how else can you ingest timeseries data from MCUs or replicate AWS Kinesis and AWS EventBridge services?</p>
+<p>Without Kafka how else can you ingest time-series data from MCUs or replicate AWS Kinesis and AWS EventBridge services?</p>
 <p>Both are important tools for modern software development, and should be on everyone's radar who wants design data-intensive apps.</p>
 <p>Most importantly, they are FOSS and local, and grant you full control.</p>
 <p>Just add a pinch of energy and time investment.</p>
@@ -779,11 +908,11 @@ R. Reference
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>SveleteKit - reactivity quirk</h1>
+                    <h1>SveleteKit, a reactivity quirk</h1>
 <p>Svelte is great for heavy web scenarios: maps, visualizations, animations etc. And it's common that most of these scenarios depend on Web API.</p>
 <p>Most of the times we use the <code>$app/environment</code> browser designation to allow for server process to fully complete, and then execute the Web API components, as gate by <code>browser</code> designation.</p>
 <p>eg. Map example</p>
-<pre><code class="language-javascript">&#x3C;script lang="ts">
+<pre><code class="language-ts">&#x3C;script lang="ts">
 	import { browser } from '$app/environment';
 	import Map from '$lib/components/map.svelte';
 &#x3C;/script>
@@ -802,7 +931,7 @@ R. Reference
 <p>The above example of browser gating will fail when implemented within a SvelteKit application, usually with the error that <code>X API cannot be found</code>, causing confusion.</p>
 <p>Why is a browser gated piece of code still running on the server? Who is running? These are questions I've yet to answer.</p>
 <p>However there is a way to avoid this behavior and bypass the errors.</p>
-<h2>Svelte / Page options</h2>
+<h2>Svelte, Page options</h2>
 <p>Official documentation on page options -> https://svelte.dev/docs/kit/page-options</p>
 <blockquote>
 <p>You can control each of these on a page-by-page basis by exporting options from +page.js or +page.server.js, or for groups of pages using a shared +layout.js or +layout.server.js.</p>
@@ -812,15 +941,12 @@ R. Reference
 <li>ssr</li>
 <li>csr</li>
 </ul>
-<ul>
-<li></li>
-</ul>
-<h2>Svelte / Page options / ssr</h2>
+<h2>Page options, ssr</h2>
 <blockquote>
 <p>Normally, SvelteKit renders your page on the server first and sends that HTML to the client where it’s hydrated. If you set ssr to false, it renders an empty ‘shell’ page instead. This is useful if your page is unable to be rendered on the server (because you use browser-only globals like document for example), but in most situations it’s not recommended (see appendix).</p>
 </blockquote>
 <p>Turning this option off does indeed fix the problem of browser-dependencies being run outside of a browser gate.</p>
-<pre><code class="language-javascript">// +layout.ts
+<pre><code class="language-ts">// +layout.ts
 export const ssr = false;
 
 </code></pre>
@@ -830,7 +956,7 @@ export const ssr = false;
 </blockquote>
 <p>What does importing mean here? In the majority of cases where this becomes a problem, we experience the problem when importing from an external module, which depends on Web APIs within.</p>
 <p>Map example again: lib/components/map.svelte</p>
-<pre><code class="language-javascript">// Map.svelte
+<pre><code class="language-ts">// Map.svelte
 &#x3C;script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
@@ -869,35 +995,35 @@ export const ssr = false;
 <p>Again what does importing mean here? We have technically imported the code and gated it correctly. And since the Map component is imported by the <code>+page.svelte</code> that should pass the criteria outlined.</p>
 <p>What else is needed?</p>
 <p>Do we have to import the offending API itself? Surely not, since that would also require up to shadow the existing Web API (when available) with an manually imported one.</p>
-<h2>Svelte / Page options / csr</h2>
+<h2>Page options, csr</h2>
 <blockquote>
 <p>Ordinarily, SvelteKit hydrates your server-rendered HTML into an interactive client-side-rendered (CSR) page. Some pages don’t require JavaScript at all — many blog posts and ‘about’ pages fall into this category. In these cases you can disable CSR:</p>
 </blockquote>
 <p>This setting is not technically a requirement, but is a bit of configuration that translates what we want to expect: we want the Map page to always run Javascript because it contains an external module that has it's own features and requirements.</p>
-<pre><code class="language-javascript">// +layout.ts
+<pre><code class="language-ts">// +layout.ts
 export const ssr = false;
 export const csr = true; 
 </code></pre>
-<h2>Svelte / Page options / prerender</h2>
-<p>This is a counter intuitive naming. Although it does configure prerendering, the purpose for using it is nuanced.</p>
-<p>In our case we can't prerender a Map page, since they usually involved regular requests for: loading, zooming, fetching tiles etc. All managed by external libraries.</p>
-<p>But we do want to prerender the page itself.</p>
+<h2>The quirk</h2>
+<p>This is a counter intuitive naming. Although it does configure pre-rendering, the purpose for using it is nuanced.</p>
+<p>In our case we can't pre-render a Map page, since they usually involved regular requests for: loading, zooming, fetching tiles etc. All managed by external libraries.</p>
+<p>But we do want to pre-render the page itself.</p>
 <p>Map pages are usually a code injection scenario: we inject our dynamic element into a static HTML. This is a one-way binding, in other words we inject the map and only interact with it there on.</p>
 <p>Sometimes we may have a dynamic element that is external to the map and is tied to it in some way: a filter that changes as the map changes, a banner that updates as we move the map, a sector select that moves the map as we change sectors. All of which are still code injection scenarios, with 2-way bind.</p>
-<p>Both scenarios are compatible with prerendering: since we only want to route to be prerendered, and the html by proxy.</p>
-<p>Routes with prerender true are excluded from manifests, so our server is tiny.</p>
+<p>Both scenarios are compatible with pre-rendering: since we only want to route to be pre-rendered, and the html by proxy.</p>
+<p>Routes with pre-render true are excluded from manifests, so our server is tiny.</p>
 <p>In my use case I want dynamic Maps within static files, no servers involved.</p>
 <p>All routes are default <code>prerendered = true</code> and the Svelte <code>adapter-static</code> is used.</p>
-<pre><code class="language-javascript">// +layout.ts
+<pre><code class="language-ts">// +layout.ts
 export const ssr = false;
 export const csr = true;
 export const prerender = true;
 </code></pre>
-<p>Of note prerender can also be 'auto', where you want popular routes to be pre-rendered and historic content to be server-rendered.</p>
+<p>Of note pre-render can also be 'auto', where you want popular routes to be pre-rendered and historic content to be server-rendered.</p>
 <p>Unclear at what scale this is required, because a server rendering content is probably more maintenance and resource-heavy than fully static build.</p>
 <p>The fully static build takes longer to compile, but once deployed it's essentially free. With CI/CD and strong hardware this long compile time is a minor negative point.</p>
 <p>Either way, the "auto" option is there.</p>
-<p>For larger prerendered builds it's important to also consider <code>entries</code>. These need to pre-build to ensure the best prerendering performance. I will cover them in a future post.</p>
+<p>For larger pre-rendered builds it's important to also consider <code>entries</code>. These need to pre-build to ensure the best pre-rendering performance. I will cover them in a future post.</p>
 <h2>Summary</h2>
 <p>Strange behavior and even stranger docs, however the configuration above does produce the expected results.</p>
 <p>In hindsight I'd expect the handling of CSR and SSR to be more consistent, but with most frameworks preferring 'server' options it's to be expected that CSR behavior is not quite there by default.</p>
@@ -905,13 +1031,13 @@ export const prerender = true;
                 ]]>
             </description>
         </item><item>
-            <title>Svelte - v5 Migration</title>
+            <title>Svelte, v5 Migration</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-13-svelte-5-migration</link>
             <pubDate>Thu, 13 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Svelte - v5 Migration</h1>
+                    <h1>Svelte, v5 Migration</h1>
 <p>Big fan of SvelteJS as framework and in particular the Svelte monolith that is SvelteKit.</p>
 <p>I maintain a scaffolding repo which act as a base to most Svelte projects I create. You can see that scaffold <a href="https://github.com/alanionita/scaffold-sveltekit-tailwind-shadcn">here</a>.</p>
 <p>As of October 2024 Svelte released Svelte 5, their biggest release yet as covered <a href="https://svelte.dev/blog/svelte-5-is-alive">here</a>, but it brings some significant changes to day to day Svelte writing and patterns.</p>
@@ -922,8 +1048,10 @@ export const prerender = true;
 </ul>
 <h2>Upgrading</h2>
 <p>Upgrading in Svelte couldn't be easier, because of the <a href="https://svelte.dev/docs/cli/sv-migrate">sv migrate tooling</a>.</p>
-<h3>Usage</h3>
-<p>Within the repo run <code>npx sv migrate TARGET</code> where target here is svelte-5, so <code>npx sv migrate svelte-5</code>. Check the sv migrate docs for other available targets.</p>
+<h2>Usage</h2>
+<p>Within the repo run <code>npx sv migrate TARGET</code> where target here is svelte-5. Check the sv migrate docs for other available targets.</p>
+<pre><code class="language-sh">npx sv migrate svelte-5
+</code></pre>
 <p>sv migrate will then ask:</p>
 <ul>
 <li>Ask about current dir, since some of the change will impact a mono-repo</li>
@@ -931,11 +1059,12 @@ export const prerender = true;
 <li>Ask if you want to tooling to convert components to new syntax</li>
 </ul>
 <p>My repo is fairly simple so I went ahead and said yes and selected all the option on the above.</p>
-<h2>Changes - Packages</h2>
+<h2>Changes, packages</h2>
+<h3>Package versions</h3>
 <p>One thing of note here about <code>sv migrate</code> vs a manual package upgrade is that you don't need to trial a bunch of module versions before you reach the right mix.</p>
 <p>Having tried it before I will tell you now that: upgrading all packages to latest will break your build.</p>
-<p>sv migrate already contains the right module combinations and here are the changes.</p>
-<pre><code>Updated svelte to ^5.0.0
+<p><code>sv migrate</code> already contains the right module combinations and here are the changes.</p>
+<pre><code class="language-md">Updated svelte to ^5.0.0
 Updated @sveltejs/kit to ^2.5.27
 Updated @sveltejs/vite-plugin-svelte to ^4.0.0
 Updated prettier-plugin-svelte to ^3.2.6
@@ -943,8 +1072,8 @@ Updated eslint-plugin-svelte to ^2.45.1
 Updated typescript to ^5.5.0
 Updated vite to ^5.4.4
 </code></pre>
-<p>Latest versions for reference</p>
-<pre><code>svelte                      5.20.0
+<p>Latest versions for reference (2025-02-13):</p>
+<pre><code class="language-md">svelte                      5.20.0
 @sveltejs/kit               2.17.1
 @sveltejs/vite-plugin-svelte 5.0.3
 prettier-plugin-svelte       3.3.3
@@ -953,7 +1082,7 @@ typescript                   5.7.3
 vite 	                     6.1.0
 </code></pre>
 <p>As you can see things move fast, and in the 3 months since release we've already had a fair bit of drift. This is mostly fine since Svelte is relatively stable.</p>
-<p>Of most concerns is the vite major release of v6, and the large number of minor versions on the svelte packages.</p>
+<p>Of most concerns is the <code>vite</code> major release of v6, and the large number of minor versions on the svelte packages.</p>
 <h3>Vite v5 vs v6</h3>
 <p>In my context I'm ok with a lagging codebase and will upgrade whenever crutial.</p>
 <p>For anyone else who might be impacted I wanted to summarise what changed in vite v6, Read further in the migration guide, <a href="https://vite.dev/guide/migration.html">https://vite.dev/guide/migration.html</a>.</p>
@@ -966,37 +1095,26 @@ vite 	                     6.1.0
 <li>Larger support for asset references in HTML element: v5 only  and  could reference assets. v6 has an extended list <a href="https://vite.dev/guide/features#html">https://vite.dev/guide/features#html</a></li>
 <li>CSS: postcss-load-config updated in v6, sass uses modern api by default, custom CSS output file in library mode</li>
 </ul>
-<h3>Svelte minor releases difference</h3>
-<p>Because of the volume of releases there's a possibility here that we might be missing key bug fixes.</p>
+<blockquote>
+<p>Svelte: because of the volume of releases there's a possibility here that we might be missing key bug fixes.</p>
+</blockquote>
 <h3>Installing packages</h3>
 <p>Now lets install the migrated packages and see what happens.</p>
-<ol>
-<li>Remove previous installed packages</li>
-</ol>
-<p><code>rm -rf node_modules/ &#x26;&#x26; rm package-lock.json</code></p>
+<p>1 Remove previous installed packages</p>
+<pre><code class="language-sh">rm -rf node_modules/ &#x26;&#x26; rm package-lock.json
+</code></pre>
 <ol start="2">
 <li>Install with package of choice (npm)</li>
 </ol>
-<p><code>npm install</code></p>
+<pre><code class="language-sh">npm install
+</code></pre>
 <p>Issues:</p>
-<ul>
-<li>
 <ol>
 <li><code>@sveltejs/vite-plugin-svelte@^4.0.0</code> not found (see logs below)</li>
+<li><code>&#x3C;script lang="ts">&#x3C;/script></code> flagged as an issue with @sveltejs/adapter-auto</li>
+<li><code>{@render children?.()}</code> throwing error about unrecognised @ symbol</li>
 </ol>
-</li>
-<li>
-<ol start="2">
-<li></li>
-</ol>
-</li>
-<li>
-<ol start="3">
-<li>{@render children?.()} throwing error about unrecognised @ symbol</li>
-</ol>
-</li>
-</ul>
-<pre><code>npm error code ERESOLVE
+<pre><code class="language-sh">npm error code ERESOLVE
 npm error ERESOLVE could not resolve
 npm error
 npm error While resolving: streak-tracker--svelte@0.0.1
@@ -1029,36 +1147,31 @@ npm error For a full report see:
 
 </code></pre>
 <h3>Fixing errors</h3>
-<ul>
-<li>
 <ol>
-<li>@sveltejs/vite-plugin-svelte: not a real error, but I suspect an issue with timeout during the npm i process; making sure I have a clean install by removing node_modules and package-lock.json allowed me to get a successful install without the error</li>
-</ol>
+<li>
+<p><code>@sveltejs/vite-plugin-svelte</code> is not a real error, but I suspect an issue with timeout during the npm i process; making sure I have a clean install by removing node_modules and package-lock.json allowed me to get a successful install without the error</p>
 </li>
 <li>
-<ol start="2">
-<li>script tag issue with "@sveltejs/adapter-auto": fixed it by updating the version to ^4.0.0</li>
-</ol>
+<p>Script tag issue with "@sveltejs/adapter-auto": fixed it by updating the version to ^4.0.0</p>
 </li>
 <li>
-<ol start="3">
-<li>noticed an issue with tsconfig.json, whereby "moduleResolution" required "module" to be present and set to preserve; after adding that value the IDE refreshed and the @render issue went away</li>
-</ol>
+<p>Noticed an issue with tsconfig.json, whereby "moduleResolution" required "module" to be present and set to preserve; after adding that value the IDE refreshed and the @render issue went away</p>
 </li>
-</ul>
-<h2>Changes - Components</h2>
+</ol>
+<h2>Changes, components</h2>
 <h3>Runes</h3>
-<p>Multiple changes stem from the new Runes API: compiler instructions that tell Svelte about reactivity. Runes start with <code>$</code></p>
-<h3>let -> $props</h3>
-<p>In v4 props were achieve using <code>export let xyz = "xyz"</code> declarations. These declarations made content available from  into the main body of the component.</p>
+<p>Multiple changes stem from the new Runes API: compiler instructions that tell Svelte about reactivity.</p>
+<p>Runes start with <code>$</code>.</p>
+<h3>let to $props</h3>
+<p>In v4 props were achieve using <code>export let xyz = "xyz"</code> declarations. These declarations made content available from <code>&#x3C;script>&#x3C;/script></code> into the main body of the component.</p>
 <p>In v5 all props come from the $props rune as seen below:</p>
-<pre><code class="language-javascript">&#x3C;script>
+<pre><code class="language-ts">&#x3C;script>
 	let { optional = 'unset', required } = $props();
 &#x3C;/script>
 </code></pre>
 <p>In my case, the app is also using Typescript so there are further changes on the type definitions, which will be covered later.</p>
 <p>v5</p>
-<pre><code class="language-javascript">&#x3C;script lang="ts">
+<pre><code class="language-ts">&#x3C;script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/shadcn.js";
 
@@ -1077,7 +1190,7 @@ npm error For a full report see:
 
 </code></pre>
 <p>v6</p>
-<pre><code class="language-javascript">&#x3C;script lang="ts">
+<pre><code class="language-ts">&#x3C;script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/shadcn.js";
 
@@ -1100,21 +1213,22 @@ npm error For a full report see:
 	{@render children?.()}
 &#x3C;/div>
 </code></pre>
-<h3>render method no longer compiled for SSR</h3>
-<p>This is specifically related to SSR application, but worth mentioning.</p>
+<blockquote>
+<p>Render method no longer compiled for SSR. This is specifically related to SSR application, but worth mentioning.</p>
+</blockquote>
 <h3>children() and snippets</h3>
-<p>In v4 the main paradigm for creating higher order components was to use .</p>
+<p>In v4 the main paradigm for creating higher order components was to use <code>&#x3C;slots></code>.</p>
 <p>In v5 they are deprecated in favour of  constructs which increase the flexibility. Also added in v6 a clearer construct for children.</p>
-<p>In my case I've only used  for HOCs and those instances have been refactored to use children instead</p>
+<p>In my case I've only used  for HOCs and those instances have been refactored to use children instead.</p>
 <p>v4</p>
-<pre><code class="language-javascript">&#x3C;script>
+<pre><code class="language-ts">&#x3C;script>
 	import '../app.css';
 &#x3C;/script>
 
 &#x3C;slot>&#x3C;/slot>
 </code></pre>
 <p>v5</p>
-<pre><code class="language-javascript">&#x3C;script lang="ts">
+<pre><code class="language-ts">&#x3C;script lang="ts">
 	import '../app.css';
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -1127,51 +1241,52 @@ npm error For a full report see:
 </code></pre>
 <h3>Component typing changes</h3>
 <p>Most of the codebase saw change related to the new children component which is typed as Snippet from 'svelte' package.</p>
-<p>No other significant changes present, but be advised that there are further changes detailed in the release note <a href="https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes">https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes</a></p>
-<h3>let -> $state</h3>
+<p>No other significant changes present, but be advised that there are further changes detailed in the <a href="https://svelte.dev/docs/svelte/v5-migration-guide#Components-are-no-longer-classes-Component-typing-changes">release note</a>.</p>
+<h3>let to $state</h3>
 <p>Covered here last because I haven't implemented any states within this template.</p>
 <p>I can see this being an important change to keep in mind in production apps since the let definition is common.</p>
 <p>This essentially brings the biggest headaches, since prior to v5 developers built up this pattern of separation between prop definitions and state. This separation is still present in v5 but the change of let -> $props will confuse readers who will see more let -> $state.</p>
-<p>I actually agree with the pattern separation, but getting used to it will take some time, mostly because the old definitions were worse.</p>
+<p>In agreement with the pattern separation seen here, but getting used to it will take some time. The old definitions were worse for sure, but like any pattern development they get ingrained.</p>
 <p>v4</p>
-<pre><code class="language-javascript">&#x3C;script>
+<pre><code class="language-ts">&#x3C;script>
 	let count = 0;
 &#x3C;/script>
 
 </code></pre>
 <p>v5</p>
-<pre><code class="language-javascript">&#x3C;script>
+<pre><code class="language-ts">&#x3C;script>
 	let count = $state(0);
 &#x3C;/script>
 </code></pre>
 <h2>Summary</h2>
 <p>Big update, one of the biggest yet! Largely positive, but with significant gotchas and implementation details.</p>
-<p>Overall a move in the right direction, but shifting into the new paradigms will cause some headscratching.</p>
+<p>Overall a move in the right direction, but shifting into the new paradigms will cause some head scratching.</p>
 
                 ]]>
             </description>
         </item><item>
-            <title>Flutter - Development Setup</title>
+            <title>Flutter, dev environment setup</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-12-flutter-setup</link>
             <pubDate>Wed, 12 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Flutter - Development Setup</h1>
+                    <h1>Flutter, dev environment setup</h1>
 <p>Initial dive into Flutter for Desktop Linux development.</p>
 <p>Starting from scratch, with the below guide, and although I have read about Flutter previously I've not build anything until now. I do have some experience with Android development, but I will actively try to avoid using that experience, probably forgot it anyway.</p>
 <p>Going through the install guide found <a href="https://docs.flutter.dev/get-started/install/linux/desktop">here</a></p>
-<h2>Flutter install</h2>
+<h2>Install</h2>
 <h3>Hardware requirements</h3>
 <p>Support for Linux is there and automatically detected by the site. Nice landing page too, but frankly I just skipped to installation - don't need to read the marketing, since I already want to use it.</p>
 <p>Hardware requirements are high. On Linux especially, we need to expect lesser performance since we expect folks to use older software.</p>
 <p>As an ethos too, Linux enables more usage out of older software so the requirements will end us (the developers) push for hardware updates. To me, hardware updates are fine for commercial software, but for personal software it's just enough friction for someone to stop using your app.</p>
-<p>| Requirement   | Minimum   | Recommended     |
+<pre><code class="language-md">| Requirement   | Minimum   | Recommended     |
 | ------------- | --------- | --------------- |
 | CPU cores     | 4         | 8               |
 | Memory        | 8         | 16              |
 | Display res   | 1366x768  | 1920x1080       |
-| HDD           | 4GB       | 52GB            |</p>
+| HDD           | 4GB       | 52GB            |
+</code></pre>
 <p>If you were a retro enthusiast and were working on a Core 2 Duo device you're out of luck. And to add to that, 16GB RAM recommended.</p>
 <h3>Software requirements</h3>
 <p>All in all 12 environment level dependencies for developing Linux apps.</p>
@@ -1247,16 +1362,16 @@ npm error For a full report see:
         state: '{{state}}'
 
 </code></pre>
-<h3>Configure a text editor or IDE</h3>
-<p>In VS Code install Flutter extension. Recomemnded that you install VS Code version > 1.86.</p>
+<h3>Configure text editor</h3>
+<p>In VS Code install Flutter extension. Recommended that you install VS Code version > 1.86.</p>
 <p>The correct extension is published by Dart Code.</p>
-<h3>Install the Flutter SDK</h3>
-<p>There's a manual tar download option, but in this case I will use VS Code command pallete and follow the wizard.</p>
+<h3>Install Flutter SDK</h3>
+<p>There's a manual tar download option, but in this case I will use VS Code command palette and follow the wizard.</p>
 <h3>Create the project</h3>
 <p>From command palette create a new Application and wait until it starts.</p>
-<p>Very slow on the T480, but ultimately created a functional app.</p>
+<p>Very slow on the Thinkpad T480 laptop, but ultimately created a functional app.</p>
 <p>Test the installation of Flutter using the <code>flutter doctor</code> command within VS Code terminal.</p>
-<h2>Start developing apps with Flutter</h2>
+<h2>Start developing apps</h2>
 <p>Use the following guides to continue learning about development with Flutter.</p>
 <ol>
 <li>
@@ -1283,30 +1398,28 @@ npm error For a full report see:
                 ]]>
             </description>
         </item><item>
-            <title>W3C - easy checks for accessibility</title>
+            <title>W3C, easy checks for accessibility</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-10-checks-for-accessibility</link>
             <pubDate>Mon, 10 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>W3C - easy checks for accessibility</h1>
+                    <h1>W3C, easy checks for accessibility</h1>
 <p>Accessibility is important and has been since working at <a href="https://www.em-code.com/">Code Computer Love</a>, a design and development agency from Manchester known for top notch Design and UX research.</p>
 <p>Here is a rundown of the <a href="https://www.w3.org/WAI/test-evaluate/preliminary/">W3C - preliminary check</a> as applied to my new portfolio redesign.</p>
 <h2>Title page</h2>
 <p>Test:</p>
-<ul>
-<li>[ ] each page contains a title that is visible in the browser</li>
-</ul>
+<pre><code class="language-md">[ ] each page contains a title that is visible in the browser
+</code></pre>
 <p>Test notes:</p>
-<ul>
-<li>Missing</li>
-</ul>
+<pre><code>- Confirmed
+</code></pre>
 <p>Implement:</p>
 <ul>
 <li>Create a dynamic title component and load it into each page.</li>
 <li>This will allow for a dynamic title that always includes "Alan Ionita - " for search ranking purposes</li>
 </ul>
-<pre><code class="language-javascript">// PageTitle component
+<pre><code class="language-js">// PageTitle component
 
 &#x3C;script>
     const siteName = "Alan Ionita"
@@ -1318,7 +1431,7 @@ npm error For a full report see:
 &#x3C;/svelte:head>
 
 </code></pre>
-<pre><code class="language-javascript">// *Page component
+<pre><code class="language-js">// *Page component
 import PageTitle from '...'
 
 &#x3C;PageTitle text="Each page title" />
@@ -1326,40 +1439,56 @@ import PageTitle from '...'
 </code></pre>
 <h2>Page headings</h2>
 <p>Test:</p>
-<ul>
-<li>[ ] The page has a heading. In almost all pages there should be at least one heading.</li>
-<li>[ ] All text that looks like a heading is marked up as a heading.</li>
-<li>[ ] All text that is marked up as a heading is really a conceptual section heading.</li>
-<li>[ ] The heading hierarchy is meaningful. Ideally the page starts with an "h1" — which is usually similar to the page title — and does not skip levels; however, these are not absolute requirements.</li>
-</ul>
+<pre><code class="language-md">[ ] The page has a heading. In almost all pages there should be at least one heading.
+[ ] All text that looks like a heading is marked up as a heading.
+[ ] All text that is marked up as a heading is really a conceptual section heading.
+[ ] The heading hierarchy is meaningful. 
+    - Ideally the page starts with an "h1", which is usually similar to the page title
+</code></pre>
 <p>Test notes:</p>
-<ul>
-<li>HomePage: hierarchy is a bit odd with only "Alan Ionita," being marked up as h1; the whole section should be an h1 really</li>
-<li>HomePage: rest of the hierarchy makes sense</li>
-<li>HomePage: html structure for each section seems a bit overkill; too many nested elements</li>
-<li>BlogPage: headings are good</li>
-<li>BlogPostPage: markdown to html headings converted correctly, but needed to correct the source markdown to make sure that each post had an h1</li>
-</ul>
+<pre><code class="language-md">HomePage: 
+- hierarchy is a bit odd with only "Alan Ionita," being marked up as h1
+    - the whole section should be an h1 really
+- rest of the hierarchy makes sense
+- html structure for each section seems a bit overkill; too many nested elements
+
+BlogPage: 
+- headings are good
+
+BlogPostPage: 
+- markdown to html headings converted correctly
+- needed to correct the source markdown to make sure that each post had an h1
+</code></pre>
 <h2>Contrast ratio</h2>
 <p>Test:</p>
-<ul>
-<li>[ ] minimum contrast: a contrast ratio of at least 4.5:1 for normal-size text.</li>
-<li>[ ] provide support for high contrast</li>
-</ul>
+<pre><code class="language-md">[ ] minimum contrast: a contrast ratio of at least 4.5:1 for normal-size text.
+[ ] provide support for high contrast
+</code></pre>
 <p>Test notes:</p>
-<ul>
-<li>BlogPostPage: starting here, because it's the page with most content; core font is rated as AAA compliant with a contrast of 6.77;</li>
-<li>BlogPage: h1 is compliant to AAA (6.77), blog list main text is AA (3.09) and sub-text AA (3.84)</li>
-<li>HomePage: orange section is AA, rest is AAA; same scores as above</li>
-<li>Nav: not-visited links are not compliant (2.9)</li>
-</ul>
+<pre><code class="language-md">BlogPostPage: 
+- starting here, because it's the page with most content
+- core font is rated as AAA compliant with a contrast of 6.77
+
+BlogPage: 
+- h1 is compliant to AAA (6.77)
+- blog list main text is AA (3.09) 
+- sub-text AA (3.84)
+
+HomePage
+- orange section is AA
+- rest is AAA
+- same scores as above
+
+Nav: 
+- not-visited links are not compliant (2.9)
+</code></pre>
 <p>Implement:</p>
 <ul>
 <li>Find colour variant for orange to get to AAA adherence</li>
 <li>Missing support for "prefers-contrast" option, high contrast solution for users that need it. Will require some research on best colours to use to achieve a high contrast whilst still preserving the theme, as a fallback will just default to black,yellow combination</li>
 <li><code>prefers-contrast</code> further reading <a href="https://hacks.mozilla.org/2020/07/adding-prefers-contrast-to-firefox/">here</a></li>
 </ul>
-<h3>Protocol: check contrast</h3>
+<h3>Check contrast</h3>
 <p>My preference is to use Firefox for personal development and will not cover Chrome.</p>
 <ol>
 <li>
@@ -1380,58 +1509,72 @@ import PageTitle from '...'
 </ol>
 <h2>Text resize</h2>
 <p>Test:</p>
-<ul>
-<li>[ ] make sure that resizing text doesn't cause page overflows, or stop interactive elements from being accessible</li>
-</ul>
+<pre><code class="language-md">- [ ] make sure that resizing text doesn't cause page overflows, or stop interactive elements from being accessible
+</code></pre>
 <p>Test notes:</p>
-<ul>
-<li>Overflowing was causing the Nav to no longer be accessible, so made a change to fix that.</li>
-<li>All other elements and pages are passing.</li>
-</ul>
-<h2>Keyboard access and visual focus</h2>
+<pre><code class="language-md">- Overflowing was causing the Nav to no longer be accessible, so made a change to fix that.
+- All other elements and pages are passing.
+</code></pre>
+<h2>Keyboard, and visual focus</h2>
 <p>Test:</p>
-<ul>
-<li>[ ] test keyboard nav and visual focus</li>
-</ul>
+<pre><code class="language-md">- [ ] test keyboard nav and visual focus
+</code></pre>
 <p>Test notes:</p>
-<ul>
-<li>HomePage: keyboard navigation works correctly across links, but ideally the navigation should cover all the sections too; will require a refactor to improve the page</li>
-<li>BlogPage: works as expected since the list is correctly styled as a list</li>
-<li>BlogPostPage: correctly navigates through links, but this is correct behavior here</li>
-<li>Tab all, Tab away, Tab order is fine</li>
-<li>All functionality works by keyboard, although admittedly it's a very simple site with a low number of features</li>
-<li>Dropdown list navigation and image links considerations are not applicable here</li>
-</ul>
+<pre><code class="language-md">
+HomePage: 
+- keyboard navigation works correctly across links
+- ideally the navigation should cover all the sections too
+- will require a refactor to improve the page
+
+BlogPage: 
+- works as expected since the list is correctly styled as a list
+
+BlogPostPage: 
+- correctly navigates through links, but this is correct behavior here
+
+- Tab all, Tab away, Tab order is fine
+- All functionality works by keyboard
+- Admittedly it's a very simple site with a low number of features
+- Dropdown list navigation and image links considerations are not applicable here
+</code></pre>
 <p>Implement:</p>
 <ul>
 <li>Visual focus styling is a visually weak, somewhat clashing with the theme; will require a refactor</li>
 </ul>
 <h2>Forms, labels, and errors</h2>
 <p>Not applicable here</p>
-<h2>Moving, Flashing, or Blinking Content</h2>
+<h2>Moving, or Flashing Content</h2>
 <p>Test notes:</p>
 <ul>
 <li>Since the site is a static site, there's no perceivable load or layout shift.</li>
 <li>The only thing of note here is the transition from <code>/</code> to <code>/blog</code>, where <code>/</code> is a dark colour and <code>/blog</code> is a lighter colour. Here the design is such that on <code>/blog</code> there's colour degradation from top to bottom of page so the user is gradually moving from dark colours to lighter colours.</li>
 </ul>
-<h2>Multimedia (video, audio) alternatives</h2>
+<h2>Multimedia alternatives</h2>
 <p>Not applicable</p>
 <h2>Basic structure check</h2>
 <p>Test:</p>
-<ul>
-<li>[ ] Turn off images and show the text alternatives.</li>
-<li>[ ] Turn off style sheets (CSS), which specifies how the page is displayed with layout, colors, etc.</li>
-<li>[ ] Linearize the page or the tables (depending on the toolbar).</li>
-</ul>
+<pre><code class="language-md">[ ] Turn off images and show the text alternatives.
+[ ] Turn off style sheets (CSS), which specifies how the page is displayed with layout, colors, etc.
+[ ] Linearize the page or the tables (depending on the toolbar).
+</code></pre>
 <p>Test notes:</p>
-<ul>
-<li>HomePage: Images are not applicable, CSS off looks ok, already a fairly linear layout so working as expected; nav is off to right, should fix</li>
-<li>BlogPage: same nav issue, main text ok; post list is completely white and invisible, should fix- BlogPostPage: passing, same nav issue</li>
-<li>Both issues were down to poor testing, see the below script to correctly run the test</li>
-</ul>
-<h3>Protocol: Disabling CSS stylesheets</h3>
+<pre><code class="language-md">HomePage: 
+- images are not applicable, CSS off looks ok
+- already a fairly linear layout so working as expected 
+- nav is off to right, should fix
+
+BlogPage: 
+- same nav issue, main text ok
+- post list is completely white and invisible, should fix
+
+BlogPostPage: 
+- passing, same nav issue 
+
++ Both issues were down to poor testing, see the below script to correctly run the test
+</code></pre>
+<h3>Disabling CSS stylesheets</h3>
 <p>Run the following in the Developer Tools Console</p>
-<pre><code class="language-javascript">document.querySelectorAll('style, link[rel="stylesheet"]').forEach(e => e.remove());
+<pre><code class="language-js">document.querySelectorAll('style, link[rel="stylesheet"]').forEach(e => e.remove());
 </code></pre>
 <h2>Summary</h2>
 <p>With the exception of the orange colour and the visual focus, we have a AAA compliant website.</p>
@@ -1439,13 +1582,13 @@ import PageTitle from '...'
                 ]]>
             </description>
         </item><item>
-            <title>Timeline apps - past, present, future</title>
+            <title>Timeline apps, a timeline</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-09-timeline-apps</link>
             <pubDate>Sun, 09 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Timeline apps - past, present, future</h1>
+                    <h1>Timeline apps, a timeline</h1>
 <p>Social Media is a disaster. Under the guise of connecting with friends and belonging to a community there's just one driver: profit.</p>
 <p>And in that chase for profit we have lost out on core hygiene elements that platforms should consider:</p>
 <ul>
@@ -1455,21 +1598,21 @@ import PageTitle from '...'
 <li>user control</li>
 </ul>
 <p>The future however might not be so bleak because of the increasing popularity of "timeline apps". To understand them I'd like to set the scene for the trend and them explain the apps themselves.</p>
-<h2>Social Media advertising</h2>
+<h2>Advertising</h2>
 <p>Social Media advertising spend in 2024 was $164bil [*1] globally, but after digging into the data and predictions it seems to be designed by hockey stick hopefuls not real analysts.</p>
 <p>In the UK social media paid ads are classified under "Display" ads, and UK digital advertising industry body (IAB.UK) shows that in 2013, Display ads were worth 1.89 billion pounds [*2]. In 2024 the revenue [*3] from Display ads went up to 6.5 billion pounds.</p>
 <p>Nice growth you'd say? Sure, "+22% YoY" the IAB.UK quotes. The interesting thing however is how that money is split: video and non-video. Non-video is social media and other ads, which in 2024 amounted to 2.5 billion pounds.</p>
 <p>Anecdotally I remember social being up to 11% in 2013, so 0.207 billion pounds vs 2.5 billion pounds. 12x increase in 11 years. Again not bad!</p>
-<p>The driver for the ad industry is the not necessarily consistent return, they're not pension funds. The ad industry "rides the wave" and so they need to follow and the hottest trends and deploy capital accordingly. The driver is maximum return on investment, and maxROI is gained from deploying capital with a weight towards top performing segments.</p>
+<p>The driver for the ad industry is the not necessarily consistent return, they're not pension funds. The ad industry "rides the wave" and so they need to follow and the hottest trends and deploy capital accordingly. The driver is maximum return on investment, and max ROI is gained from deploying capital with a weight towards top performing segments.</p>
 <p>In 2024 that segment was not social, it was digital video. And by a long margin 2x. As an ad agent you cannot pass on that opportunity.</p>
 <p>Which leaves social advertising with a massive deficit in capital deployment: they will get at minimum 1/3 of ad spends.</p>
 <p>Social advertising is not making money where "making" is the exponential scale that most business crave for.</p>
-<h2>RSS and the past</h2>
+<h2>The past, RSS</h2>
 <p>Social media advertising is generally in decline today, mostly because of the financial view explained above and because of other smaller platform related issues.</p>
 <p>In 2013 social media ads were growing and performing well. In 2011 Google launched Google Plus+ and by 2013 the performance of Google Plus+, social advertising meant that Google decided to kill one of their most loved products, Google Reader.</p>
 <p>Google Reader was built on top of RSS, a protocol that stands for Really Simple Syndication. RSS allows a website to define what updates it has in the form of a feed. RSS Readers, like Google Reader would use these feeds to produce a custom feed for a user in a nice web interface.</p>
 <p>Google Reader was nice and was the first "timeline app".</p>
-<h2>Timeline apps today</h2>
+<h2>Today, siloed apps</h2>
 <p>Today the big social media platforms are in trouble. They can't make revenue and most are adopting dark patterns to force us to share more details with a platform, whilst implementing harder and harder journey for exporting data and deleting accounts. A Facebook was notoriously hard to delete in 2013-2014, which is why people moved to Twitter.</p>
 <p>Twitter, which started with a historical timeline, eventually moved to and "algorithm timeline" and pushed a lot of users and businesses to create solutions for this. <a href="https://en.wikipedia.org/wiki/TweetDeck">TweetDeck</a> was one such solutions and Twitter was relentless in making API changes that affected consumers like TweetDeck. Eventually Twitter bought TweetDeck and is not part of X Pro.</p>
 <p>There are endless of other stories regarding social media companies acting like cartels and protecting the data within their platform and making it as painful as possible for anyone to development improved UIs that accessed that data. The reason is advertising.</p>
@@ -1504,42 +1647,44 @@ import PageTitle from '...'
                 ]]>
             </description>
         </item><item>
-            <title>Thinkpad T480 screen flicker fix</title>
+            <title>Thinkpad T480, screen flicker fix</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2025-02-07-t480-screen-flicker</link>
             <pubDate>Fri, 07 Feb 2025 00:00:00 Z</pubDate>
             <author>Alan Ionita</author>
             <description>
                 <![CDATA[
-                    <h1>Thinkpad T480 screen fix on X11</h1>
-<p>It's unclear to me why, but Linux Mint 22.1 on the T480 causes screen flickering.</p>
-<p>To experience the issue check the login screen once the laptop has come out of suspend, or open a dock applet and pause on a dropdown for a long time.</p>
-<p>Issue seems to be related to transparency and screen sleep.</p>
-<h2>How to Fix</h2>
-<ol>
-<li>Check that <code>mesa-utils</code> package is installed</li>
-</ol>
-<pre><code class="language-shell">apt list | grep "mesa-utils"
+                    <h1>Thinkpad T480, screen flicker fix</h1>
+<p>Linux Mint 22.1 on the T480 causes screen flickering.</p>
+<p>To replicate:</p>
+<ul>
+<li>check the login screen once the laptop has come out of suspend</li>
+<li>or open a dock applet</li>
+<li>hold the mouse on on a dropdown for a long time.</li>
+</ul>
+<p>Issue seems to be related to transparency and screen sleep, in X11.</p>
+<h2>Fix</h2>
+<h3>mesa-utils</h3>
+<p>Check that <code>mesa-utils</code> package is installed</p>
+<pre><code class="language-sh">apt list | grep "mesa-utils"
 </code></pre>
 <p>Install the package if not present</p>
-<ol start="2">
-<li>Add this file to X11 config</li>
-</ol>
+<h3>X11 config</h3>
 <p>Open the X11 config directory</p>
-<pre><code class="language-shell">cd /etc/X11/xorg.conf.d
+<pre><code class="language-sh">cd /etc/X11/xorg.conf.d
 </code></pre>
 <p>Create the <code>20-intel.conf</code> within the above directory, with the following contents</p>
-<pre><code class="language-shell">Section "Device"
+<pre><code class="language-sh">Section "Device"
  Identifier "Intel Graphics"
  Driver "Intel"
  Option "AccelMethod" "sna"
  Option "TearFree" "true"
 EndSection
 </code></pre>
-<ol start="3">
-<li>Restart the computer</li>
-</ol>
+<h3>Reboot</h3>
 <hr></hr>
+<blockquote>
 <p>You can also fix it by installing KDE Plasma :P /s</p>
+</blockquote>
 
                 ]]>
             </description>
@@ -1611,7 +1756,7 @@ But to all this negativity there's a potential solution</p>
 <p>Currently only supports: Javascript, Yaml, Shell</p>
 <p>Needs expanding for every new language.</p>
 <h2>Javascript</h2>
-<pre><code class="language-javascript">const x = 10
+<pre><code class="language-js">const x = 10
 const y = 5
 
 function add(a, b) {
@@ -1620,33 +1765,10 @@ function add(a, b) {
 
 const result = add(x, y);
 </code></pre>
-<h2>Yml</h2>
-<pre><code class="language-yml">name: E2E Cypress testing
-on:
-  push:
-    branches:
-      - main
-jobs:
-  cypress-run:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          browser: chrome
-          headless: true
-          env: host=https://alanionita.github.io
-          
-      - uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: fails
-          path: cypress/    
-</code></pre>
 <h2>Yaml</h2>
+<blockquote>
+<p>Only registered for yaml, not longer supporting yml</p>
+</blockquote>
 <pre><code class="language-yaml">name: E2E Cypress testing
 on:
   push:
@@ -1676,7 +1798,7 @@ jobs:
 <blockquote>
 <p>Doesn't seem to be displaying correctly but works</p>
 </blockquote>
-<pre><code class="language-shell">
+<pre><code class="language-sh">
 cat ./test/test-file.txt
 
 wc -l en_US.twitter.txt
@@ -1684,6 +1806,156 @@ wc -l en_US.twitter.txt
 foo@bar:~$ whoami
 
 foo
+
+</code></pre>
+<h2>VTL</h2>
+<blockquote>
+<p>No highlightjs support, but using PHP language works</p>
+</blockquote>
+<pre><code class="language-vtl">#set( $expNames  = {} )
+#set( $expValues = {} )
+#set( $expSet = {} )
+#set( $expRemove = [] )
+
+#foreach( $entry in $context.arguments.newProfile.entrySet() )
+    #if( $entry.key != "name" )
+        #if( (!$entry.value) &#x26;&#x26; ("$!{entry.value}" == "") )
+            ## If the argument is set to null, then remove that attribute from the item in DynamoDB **
+
+            #set( $discard = ${expRemove.add("#${entry.key}")} )
+            $!{expNames.put("#${entry.key}", "$entry.key")}
+        #else
+            ## Otherwise set (or update) the attribute on the item in DynamoDB **
+
+            $!{expSet.put("#${entry.key}", ":${entry.key}")}
+            $!{expNames.put("#${entry.key}", "$entry.key")}
+            $!{expValues.put(":${entry.key}", { 
+                "S": "${entry.value}"
+            })}
+            
+        #end
+    #else
+        $!{expSet.put("#${entry.key}", ":${entry.key}")}
+        $!{expNames.put("#${entry.key}", "$entry.key")}
+        $!{expValues.put(":${entry.key}", { 
+            "S": "${entry.value}"
+        })}
+    #end
+#end
+
+## Start building the update expression, starting with attributes we are going to SET **
+
+#set( $expression = "" )
+#if( !${expSet.isEmpty()} )
+    #set( $expression = "SET" )
+    #foreach( $entry in $expSet.entrySet() )
+        #set( $expression = "${expression} ${entry.key} = ${entry.value}" )
+        #if ( $foreach.hasNext )
+            #set( $expression = "${expression}," )
+        #end
+    #end
+#end
+
+## Continue building the update expression, adding attributes we are going to REMOVE **
+#if( !${expRemove.isEmpty()} )
+    #set( $expression = "${expression} REMOVE" )
+
+    #foreach( $entry in $expRemove )
+        #set( $expression = "${expression} ${entry}" )
+        #if ( $foreach.hasNext )
+            #set( $expression = "${expression}," )
+        #end
+    #end
+#end
+
+{
+    "version": "2018-05-29",
+    "operation": "UpdateItem",
+    "key": {
+        "id" : $util.dynamodb.toDynamoDBJson($context.identity.username)
+    },
+    "update": {
+        "expression" : "${expression}"
+        #if( !${expNames.isEmpty()} )
+            ,"expressionNames" : $utils.toJson($expNames)
+        #end
+        #if( !${expValues.isEmpty()} )
+            ,"expressionValues" : $utils.toJson($expValues)
+        #end
+    },
+    "condition" : {
+        "expression" : "attribute_exists(id)"
+    }
+}
+
+</code></pre>
+<h2>JSON</h2>
+<pre><code class="language-json">{
+    "version" : "2018-05-29",
+    "operation" : "UpdateItem",
+    "key": {
+        "id" : $util.dynamodb.toDynamoDBJson($context.identity.username)
+    },
+
+    "update" : {
+        "expression" : "set #name = :name, imgUrl = :imgUrl, bgImgUrl = :bgImgUrl, bio = :bio, #location = :location, website = :website, birthdate = :birthdate",
+        "expressionNames" : {
+           "#name" : "name",
+           "#location": "location",
+       },
+
+       "expressionValues" : {
+            ":name" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.name),
+            ":imgUrl" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.imgUrl),
+            ":bgImgUrl" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.bgImgUrl),
+            ":bio" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.bio),
+            ":location" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.location),
+            ":website" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.website),
+            ":birthdate" : $util.dynamodb.toDynamoDBJson($context.arguments.newProfile.birthdate),
+        }
+
+    },
+
+    "condition" : {
+        "expression" : "attribute_exists(id)"
+    },
+}
+
+</code></pre>
+<h2>GraphQL</h2>
+<blockquote>
+<p>only registered for gql</p>
+</blockquote>
+<pre><code class="language-gql">input ProfileInput {
+    name: String!
+    imgUrl: AWSURL
+    bgImgUrl: AWSURL
+    bio: String
+    location: String
+    website: String
+    birthdate: AWSDate
+}
+
+</code></pre>
+<h2>Markdown</h2>
+<pre><code class="language-md">
+| Requirement   | Minimum   | Recommended     |
+| ------------- | --------- | --------------- |
+| CPU cores     | 4         | 8               |
+| Memory        | 8         | 16              |
+| Display res   | 1366x768  | 1920x1080       |
+| HDD           | 4GB       | 52GB            |
+
+</code></pre>
+<h2>Svelte</h2>
+<pre><code class="language-ts">&#x3C;script lang="ts">
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
+&#x3C;/script>
+
+&#x3C;h1>{data.title}&#x3C;/h1>
+&#x3C;div>{@html data.content}&#x3C;/div>
 
 </code></pre>
 
@@ -1710,7 +1982,7 @@ foo
 <h2>Why plan?</h2>
 <p>The reality is that life is measured in years, yet lived by the day, hour, minute, second.</p>
 <p>Life expectancy is up so in my situation, if I'm lucky, I can expect a good 50 years of ... life!</p>
-<p>50 years is a looooooong time without a map of what you care about, what you want to do, where you want to go, and who you want to be.</p>
+<p>50 years is a log time without a map of what you care about, what you want to do, where you want to go, and who you want to be.</p>
 <p>To some planning might remove some of the fun from the next few years. I've recently reread the <a href="https://waitbutwhy.com/2015/12/the-tail-end.html">The tail end</a> article from WaitButWhy to make me realise that I plan not to decide what I want to happen, but to make sure that everything I want does happen.</p>
 <p>Professionally, software development is and ever evolving field and as an engineer I need to chart the best course into the future, whilst making sure I'm still relevant now.</p>
 <h2>The ever evolving plan</h2>
@@ -1753,19 +2025,23 @@ foo
                     <h1>Raspberry Pi OS Study</h1>
 <p>I use the Raspberry Pi a lot, they are great little devices for prototyping ideas and building projects.</p>
 <p>Choosing an OS has been tricky because there are so many options out there.</p>
-<p>My needs are usually simple:</p>
-<ul>
-<li>[ ] easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>[ ] reliable OS</li>
-<li>[ ] flexible OS</li>
-<li>[ ] transferable skills</li>
-<li>[ ] ROS support*</li>
-<li>[ ] small footprint</li>
-<li>[ ] solid support</li>
-</ul>
-<p>*This is a new requirement that has limited my choices a lot.</p>
+<p>Requirements:</p>
+<pre><code class="language-md">[ ] easy headless setup (no monitor, keyboard, or mouse needed)
+[ ] reliable OS
+[ ] flexible OS
+[ ] transferable skills
+[ ] small footprint
+[ ] solid support
+[ ] ROS support*
+</code></pre>
+<p>Grades:</p>
+<pre><code>❌ fail
+✅ pass
+🟡 potential
+🏁 in progress
+</code></pre>
 <h2>What is my process</h2>
-<p>I've recently started using <a href="https://www.ansible.com">Ansible</a> to run a set of commands on the Pi that can harden the OS and improve the security.</p>
+<p>Using <a href="https://www.ansible.com">Ansible</a> to run a set of playbooks on the Pi: OS hardening, and improved the security etc.</p>
 <p>In general I just care about an OS that can take minutes to flash and is easy to SSH into via Ansible once connected to my network.</p>
 <p>I'm planning to write a post on Ansible soon.</p>
 <h2>What is the hardware?</h2>
@@ -1776,51 +2052,50 @@ foo
 <p>Hypriot was also really easy to configure before mounting - it came with a clear documentation and the config files were easy to get to.</p>
 <p>Unfortunately the HypriotOS community and support is small at the minute and I've encountered a few issues with the OS.</p>
 <p>I wanted to move away from it before support became a problem.</p>
-<ul>
-<li>✅ easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>🟡 reliable OS</li>
-<li>✅ flexible OS</li>
-<li>🟡 transferable skills</li>
-<li>❌ ROS support*</li>
-<li>✅ small footprint</li>
-<li>❌ solid support</li>
-</ul>
-<h2>What's wrong with Raspberry Pi OS?</h2>
+<pre><code class="language-md">✅ easy headless setup (no monitor, keyboard, or mouse needed)
+🟡 reliable OS
+✅ flexible OS
+🟡 transferable skills
+❌ ROS support*
+✅ small footprint
+❌ solid support
+</code></pre>
+<h2>Why, RPi OS?</h2>
 <p>Raspberry Pi OS (Raspian) was harder to set up in headless mode a few months ago. In my case I remember there being a lot of steps in order to set everything up.</p>
 <p>I should test this again, but since my main requirement is not met (ROS support) I might not use it anyway.</p>
-<ul>
-<li>🟡 easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>✅ reliable OS</li>
-<li>✅ flexible OS</li>
-<li>🟡 transferable skills</li>
-<li>❌ ROS support*</li>
-<li>✅ small footprint</li>
-<li>✅ solid support</li>
-</ul>
+<pre><code class="language-md">🟡 easy headless setup (no monitor, keyboard, or mouse needed)
+✅ reliable OS
+✅ flexible OS
+🟡 transferable skills
+❌ ROS support*
+✅ small footprint
+✅ solid support
+</code></pre>
 <h2>OS Study</h2>
-<h3><a href="https://ubuntu.com/download">Ubuntu Server LTS 20.04</a></h3>
+<h3>Ubuntu Server LTS 20.04</h3>
+<p>Download from <a href="https://ubuntu.com/download">here</a></p>
 <p>Best option with a small footprint (until you update/upgrade). Support with ROS and Ubuntu itself is a popular OS in general which makes troubleshooting easy.</p>
 <p>LTS stands for Long Term Support so I can reliably reuse this image for projects for the next few years.</p>
 <p>This also means that it will be a popular option for enterprise clients too so all the skills learned are transferable, which I can't say the same about Raspberry Pi OS or HypriotOS.</p>
 <p>The setup is simple because Ubuntu Server is included in the <a href="https://www.raspberrypi.org/software/">Raspberry Pi Imager</a>.</p>
-<ul>
-<li>✅ easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>✅ reliable OS</li>
-<li>✅ flexible OS</li>
-<li>✅ transferable skills</li>
-<li>✅ ROS support*</li>
-<li>🟡 small footprint</li>
-<li>✅ solid support</li>
-</ul>
+<pre><code class="language-md">✅ easy headless setup (no monitor, keyboard, or mouse needed)
+✅ reliable OS
+✅ flexible OS
+✅ transferable skills
+✅ ROS support*
+🟡 small footprint
+✅ solid support
+</code></pre>
 <p>Not the smallest OS on the list, especially after updating and upgrading.</p>
 <p>Result: best pick for now</p>
-<h3><a href="https://alpinelinux.org/about/">Alpine Linux</a></h3>
+<h3>Alpine Linux</h3>
+<p>Download from <a href="https://alpinelinux.org/about/">here</a></p>
 <p>Huge fan of Alpine from Docker and I really wanted to make this work as my server driver.</p>
 <p>Again the ROS requirement is a 'no-go', but for other project this could be an ideal OS.</p>
 <p>The size and performance is awesome!</p>
 <p>Skills learned through using the OS are not as transferable as Ubuntu, but you can reuse those skill if you ever deal with Docker instance - which is still a plus.</p>
 <p>The setup on the site is a lot more complex that what I came up with</p>
-<pre><code class="language-shell">// 1. Download the tar from the Alpine site
+<pre><code class="language-sh">// 1. Download the tar from the Alpine site
 
 // 2. Create a bootable SD card using PI imager
 
@@ -1831,17 +2106,17 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
 // 4. Pop the SD card into the Pi 
 </code></pre>
 <p>Annoyingly I need a desktop and peripherals in order to complete the setup.</p>
-<ul>
-<li>❌ easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>✅ reliable OS</li>
-<li>✅ flexible OS</li>
-<li>✅ transferable skills</li>
-<li>❌ ROS support*</li>
-<li>✅ small footprint</li>
-<li>✅ solid support</li>
-</ul>
+<pre><code class="language-md">❌ easy headless setup (no monitor, keyboard, or mouse needed)
+✅ reliable OS
+✅ flexible OS
+✅ transferable skills
+❌ ROS support*
+✅ small footprint
+✅ solid support
+</code></pre>
 <p>Result: cannot complete the setup in headless mode</p>
-<h2><a href="https://ubuntu.com/core">Ubuntu Core</a></h2>
+<h2>Ubuntu Core</h2>
+<p>Download from  <a href="https://ubuntu.com/core">here</a></p>
 <p>An OS specifically designed for embedded solutions.</p>
 <p>Core has a lot of interesting features for embedded: OTA updates, secure boot, full disk encryption, recovery mode, and Snaps.</p>
 <p>Everything apart from Snaps is awesome and as an ex-embedded developer I was drooling when I read about it.</p>
@@ -1854,35 +2129,47 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
 <p>That makes sense now and it's a serious contender for finished projects.</p>
 <p>The setup is simple because Ubuntu Core is included in the <a href="https://www.raspberrypi.org/software/">Raspberry Pi Imager</a>.</p>
 <p>Annoyingly though Ubuntu Core requires a desktop and peripherals in order to complete the setup.</p>
-<ul>
-<li>❌ easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>✅ reliable OS</li>
-<li>❌ flexible OS</li>
-<li>❌ transferable skills</li>
-<li>❌ ROS support*</li>
-<li>✅ small footprint</li>
-<li>✅ solid support</li>
-</ul>
+<pre><code class="language-md">❌ easy headless setup (no monitor, keyboard, or mouse needed)
+✅ reliable OS
+❌ flexible OS
+❌ transferable skills
+❌ ROS support*
+✅ small footprint
+✅ solid support
+</code></pre>
 <p>I marked it down for flexibility because Ubuntu Core is not meant for development. Also marked it down for transferable skills since it seems like there's a lot of specific Ubuntu Core knowledge needed to make this work and those skills are not all transferable.</p>
 <p>Result: cannot complete the setup in headless mode</p>
-<h2><a href="https://github.com/skiffos/skiffos">SkiffOS</a></h2>
+<h2>SkiffOS</h2>
+<p>Download from <a href="https://github.com/skiffos/skiffos">here</a></p>
 <p>Skiff is a lightweight OS and is very similar to HypriotOS.</p>
 <p>It's built around Docker using Buildroot to produce a minimal 'single-file' host OS. 🤯</p>
 <p>Another benefit here was the fact that I can configure the build before compilation so I can probably reduce the amount of work done on the machine to complete the setup.</p>
 <p>The config files use <code>yaml</code> which is a super transferable skill in Docker and Cloud environments.</p>
-<ul>
-<li>🏁 easy headless setup (no monitor, keyboard, or mouse needed)</li>
-<li>🏁 reliable OS</li>
-<li>✅ flexible OS</li>
-<li>✅ transferable skills</li>
-<li>❌ ROS support*</li>
-<li>✅ small footprint</li>
-<li>🏁 solid support</li>
-</ul>
+<pre><code class="language-md">🏁 easy headless setup (no monitor, keyboard, or mouse needed)
+🏁 reliable OS
+✅ flexible OS
+✅ transferable skills
+❌ ROS support*
+✅ small footprint
+🏁 solid support
+</code></pre>
 <p>The setup seems easy enough but I had issues with the gcc and make so I couldn't actually try this out properly.</p>
 <p>The fact that it comes with Docker pre-installed makes this a really 🌶 option for flexibility. It's also got a really small footprint depending on which layers you need and how many.</p>
 <p>🏁 means that although I started testing, I couldn't make my mind just yet. SkiffOS is a new project so I won't be able to tell how they are with future support just yet.</p>
-<p>Result: needs more testing in order to get a clear view</p>
+<p>Result: Needs more testing in order to get a clear view.</p>
+<h2>Results summary</h2>
+<p>Final rankings</p>
+<pre><code class="language-md">| Criteria              | RPi OS | Ubuntu    | Alpine  | Ubuntu   | SkiffOS |
+|                       |        | 20.04 LTS | Linux   | Core     |         |
+| --------------------- | ------ | ----------| ------- | -------- | ------- |
+| easy headless init    | 🟡     | ✅        | ❌      | ❌      | 🏁      |
+| reliable OS           | ✅     | ✅        | ✅      | ✅      | 🏁      |
+| flexible OS           | ✅     | ✅        | ✅      | ❌      | ✅      |
+| transferable skills   | 🟡     | ✅        | ✅      | ❌      | ✅      |
+| small footprint       | ✅     | 🟡        | ✅      | ✅      | ✅      |
+| solid support         | ✅     | ✅        | ✅      | ✅      | 🏁      |
+| ROS support*          | ❌     | ✅        | ❌      | ❌      | ❌      |
+</code></pre>
 
                 ]]>
             </description>
@@ -1902,7 +2189,7 @@ tar -xvf alpine-rpi-3.13.2-aarch64.tar.gz -C {SD-card}
 <p>Risk tolerance is unique to everyone. For me I'm in a high risk stage at the minute.</p>
 <p>This means that I can afford to explore a lot and not really care about consequences to my career.</p>
 <p>I actually don't see programming as a career, it more of a profession - it something I myself doing for the rest of my life. The fact that I get paid for it is a really nice bonus.</p>
-<pre><code class="language-shell">risk = time_investment / personal_gain;
+<pre><code class="language-sh">risk = time_investment / personal_gain;
 </code></pre>
 <p>Risk has nothing to do with fun and it's mainly related to return - can I make a living or make money from it.</p>
 <p>Choosing a high risk learning area is unlikely to payoff now, but it might return a bigger reward in the future as technology progresses.</p>
