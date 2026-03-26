@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { parse, format } from 'date-fns';
-	import { base } from '$app/paths';
 	import Link from './Link.svelte';
+	import { makeBlogPostURL } from '$lib/urls';
+
 	interface Props {
 		slug: string;
 		text: string;
@@ -10,25 +11,30 @@
 	}
 
 	let { slug, text, created, tags }: Props = $props();
+	
+	type FnGetCreated = () => string
 
-	let reqProps: {[key: string]: string | string[]} = {slug, text, created, tags};
-
-	for (const prop in reqProps) {
-		if (!reqProps[prop]) throw Error(`Err [BlogListItem]: Missing Prop: ${prop}`)
+	function makeTimeISOStr(getCreated: FnGetCreated) : Date {
+		const timeFormat = 'dd/MM/yyyy';
+		const date = parse(getCreated(), timeFormat, new Date());
+		return date
 	}
 
-	let datetime = parse(created, 'dd/MM/yyyy', new Date());
-	let datestr = format(datetime, 'EEEE, dd MMMM yyyy');
-	
-	let allTags = tags.join(', ')
+	function makeDateString(getCreated: FnGetCreated) : string {
+		const dateFormat = 'EEEE, dd MMMM yyyy';
+		let datetime: Date = makeTimeISOStr(getCreated);
+		return format(datetime, dateFormat);
+	}
 </script>
 
 <li>
-	<Link to="{base}/blog/{slug}" {text} class_name="highlight" />
+	<Link to={makeBlogPostURL(() => slug)} {text} class_name="highlight" />
 	<aside>
-		<time datetime={datetime.toISOString()}>{datestr}</time>
+		<time datetime={makeTimeISOStr(() => created).toISOString()}>
+			{makeDateString(() => created)}
+		</time>
 		<span>
-			Tags: {allTags}
+			Tags: {tags.join(', ')}
 		</span>
 	</aside>
 </li>
@@ -51,15 +57,8 @@
 		width: 100%;
 		flex-direction: column;
 		text-align: left;
-		/* align-items: flex-end; */
-		/* justify-content: flex-end; */
-	}
-	aside > * {
-			
 	}
 	aside > time {
-		/* color: var(--color-primary); */
-		/* text-align: right; */
 		font-weight: 300;
 		color: var(--color-text);
 	}
