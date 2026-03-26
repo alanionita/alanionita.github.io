@@ -1,15 +1,14 @@
 <script>
 	import Link from './Link.svelte';
-	import { base } from '$app/paths';
 </script>
 
 <nav class="nav">
 	<ul class="list">
 		<li class="list-item">
-			<Link class_name="nav" to="{base}/" text="./home" active_on="/" />
+			<Link class_name="nav" to="/" text="./home" active_on="/" />
 		</li>
 		<li class="list-item">
-			<Link class_name="nav" to="{base}/blog" text="./blog" active_on="/blog" />
+			<Link class_name="nav" to='/blog' text="./blog" active_on="/blog" />
 		</li>
 	</ul>
 </nav>
