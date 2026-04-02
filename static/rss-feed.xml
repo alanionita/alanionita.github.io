@@ -5,8 +5,66 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Tue, 31 Mar 2026 17:22:49 GMT</lastBuildDate>
+                <lastBuildDate>Thu, 02 Apr 2026 11:35:00 GMT</lastBuildDate>
                 <item>
+            <title>InfluxDB, infrastructure-as-code</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2026-04-02-influxdb-iac</link>
+            <pubDate>Thu, 02 Apr 2026 00:00:00 +0100</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>InfluxDB, infrastructure-as-code</h1>
+<p>There is a wealth of resources online covering the topic of setting up InfluxDB as a Docker Compose micro-service.</p>
+<p>Few of those discuss how to provision the initial setup as infrastructure-as-code, with built it authentication, local volumes (for debugging), and health checks.</p>
+<pre><code class="language-yml">  influxdb:
+    container_name: influxdb
+    image: influxdb:2.8.0   # Required: pined to prevent config drift v2.8
+    restart: unless-stopped
+    ports:
+      - 8086:8086
+    networks:
+      - grafana-monitoring
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_ADMIN_USER}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_ADMIN_PASS}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_ADMIN_TOKEN}
+      # DOCKER_INFLUXDB_INIT_AUTH_ENABLED: true   # Required: fix auth auto-enforce
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+</code></pre>
+<h1>Breakdown</h1>
+<p>The Docker image is pinned to v2.8. In April 2026, the 'influxdb:latest' image will switch over to v3, and that comes with some significant changes. Here we make sure to stay on v2.8.</p>
+<p>On the environment we use '.env' file which Docker Compose will consume to load the variables into your container.</p>
+<p>This allows for a complex configuration without leaking any sensitive information with the infrastructure code.</p>
+<p>Docker and InfluxDB recommend the use of Docker secrets, but secrets and environment variables are equally bad for security in lieu of encryption at rest or in transit. <a href="https://docs.influxdata.com/influxdb/v2/install/use-docker-compose/">InfluxDB, Install with Docker Compose</a>.</p>
+<p>There is one situation where secrets are better: build step that require credentials. Without using secrets it's very easy to read the 'docker history IMAGE_NAME' and read the secrets. Especially important if you plan to deploy an image to DockerHub</p>
+<p>In the face of two systems with equal consequences and outside of the edge case, I prefer to stick to the more popular system or environment variables.</p>
+<p>When using environment variables it's good to add an '.env-example' file for documenting the required variables.</p>
+<pre><code>INFLUXDB_ADMIN_USER=
+INFLUXDB_ADMIN_PASS=
+INFLUXDB_ADMIN_TOKEN=
+</code></pre>
+<p>Also remember to add '.env' and '.env.*' files to '.gitignore' and '.dockerignore'.</p>
+<h1>InfluxDB, Configuration</h1>
+<p>Most walkthroughs show how easy it is to spin up an InfluxDB container and manually create the user and token, usually in the context of a stack with Grafana and InfluxDB. In these, you have to first run the stack to configure InfluxDB authentication, then re-run the stack to create a 'Datasource' entry for InfluxDB in Grafana.</p>
+<p>You can use 'DOCKER_INFLUXDB_INIT_MODE' set to 'setup' alongside 'DOCKER_INFLUXDB_INIT_USERNAME', and 'DOCKER_INFLUXDB_INIT_PASSWORD' to configure the InfluxDB user via iac.</p>
+<p>The 'INFLUXDB_ADMIN_TOKEN' configures a token from an existing value.</p>
+<p>With this setup you can now configure Grafana Datasource or Telegraf pipelines to talk to InfluxDB with authentication, and work from the first 'docker compose up'.</p>
+<p>The bind mounts seen here are for development-only, and should be migrated to named volumes in production. During development I like the convenience of see and interrogate the data produced by a stack within the same folder as the infrastructure code.</p>
+<p>A health check is configured here because InfluxDB is usually a required service for downstream use, so it's nice to start those downstream services once all the dependencies are healthy.</p>
+<h1>InfluxDB, Debugging</h1>
+<p>In some cases the initial authentication flow doesn't execute and it can be manually triggered using the 'DOCKER_INFLUXDB_INIT_AUTH_ENABLED' flag.</p>
+<p>This issue will manifest by getting an authentication error when trying to login on InfluxDB UI with the provisioned user and pass. If everything seems correct on the config and data entry, try using the above flag to force the auth initialization flow.</p>
+
+                ]]>
+            </description>
+        </item><item>
             <title>Prometheus + Mimir</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2026-03-31-prometheus-mimir</link>
             <pubDate>Tue, 31 Mar 2026 00:00:00 +0100</pubDate>
@@ -49,9 +107,7 @@ prometheus.scrape "scraper" {
 <p>Very simple change to introduce Mimir as another target for the Prometheus scraper.</p>
 <p>The Mimir config itself.</p>
 <p>[mimir-config.yml]</p>
-<pre><code class="language-yml"># Do not use this configuration in production.
-# It is for demonstration purposes only.
-multitenancy_enabled: false
+<pre><code class="language-yml">multitenancy_enabled: false
 
 blocks_storage:
   backend: filesystem
