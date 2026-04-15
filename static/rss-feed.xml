@@ -5,8 +5,675 @@
                 <link>https://alanionita.github.io/portfolio--svelte</link>
                 <description>Latest blog posts</description>
                 <language>en-GB</language>
-                <lastBuildDate>Thu, 02 Apr 2026 11:35:00 GMT</lastBuildDate>
+                <lastBuildDate>Wed, 15 Apr 2026 20:49:39 GMT</lastBuildDate>
                 <item>
+            <title>Observability Stack, 2026</title>
+            <link>https://alanionita.github.io/portfolio--svelte/blog/2026-04-15-observability-stack</link>
+            <pubDate>Wed, 15 Apr 2026 00:00:00 +0100</pubDate>
+            <author>Alan Ionita</author>
+            <description>
+                <![CDATA[
+                    <h1>Observability Stack, 2026</h1>
+<p>Observability, also know as how we know that a system is performing as expected, is a lot easier in 2026.</p>
+<p>That being said the fragmentation of solutions, providers, ways of doing things, makes it hard to pick the right tools for job.</p>
+<p>For my use case, I wanted a simple and reliable container observability stack, but I also wanted to be able to extend that system for IoT (high cardinality).</p>
+<p>The Grafana stack was an obvious choice due popularity and and large pool of resources. The stack is showcased beautifully in this repo, and it comes with a great video explanation, <a href="https://github.com/JamesTurland/JimsGarage/tree/main/Grafana-Monitoring">Jim's Garage, Grafana Monitoring</a>.</p>
+<p>The trouble with good quality resources is that they are not always up to date. A side-effect of a fast moving sector, in a fast moving industry.</p>
+<p>Below is a fork of the stack, with some crucial updates for 2026. I'll continue to refer back to Jim's stack for comparison.</p>
+<p>For reference the forked repo is here, <a href="https://github.com/alanionita/observability-stack">Alan Ionita, Repo, Observability Stack</a>.</p>
+<h1>Monitoring, Jim's example</h1>
+<p>The core goal is to monitor the Docker containers on the host. understand performance, resource use, and be alerted of failure or health concerns.</p>
+<p>Jim uses Telegraf and InfluxDB for metrics collection and storage. Telegraf, acting as the middleware connector service that scrapes metrics and syncs the data with the time-series database InfluxDB.</p>
+<p>Visualizing the data is done with Grafana.</p>
+<p>Graphite is also included as an alternative time-series storage and graphing option (using the Cairo graphics library).</p>
+<p>Prometheus, is deployed here to scrape and display Crowdsec IP data. Not to monitor Docker containers.</p>
+<p>Grafana Promtail and Grafana Loki are used together for log files. Loki handles the scraping of log files. Promtail takes log files, parses them, and stores them in a database.</p>
+<h1>Grafana Promtail deprecated</h1>
+<p>Promtail has been deprecated in March 2026.</p>
+<p>The recommended migration path is to use Grafana Alloy, another collector from Grafana.</p>
+<h1>Grafana Alloy</h1>
+<p>Promtail had a symbiotic relationship with Loki, or log collector.</p>
+<p>Alloy is self-contained and acts like an orchestrator for tasks like scraping, logging, relabeling, and storing.</p>
+<p>We've gone from having:</p>
+<pre><code>----------------------------------------------------------
+
+Metrics:
+
+[ Telegraf ] -> [ InfluxDB ] &#x3C;-> [ Grafana ]
+
+----------------------------------------------------------
+
+Logs:
+
+[ Loki ] -> [ Promtail ] &#x3C;-> [ Grafana ]
+ 
+----------------------------------------------------------
+
+Alerts:
+
+[ Prometheus ]
+
+----------------------------------------------------------
+</code></pre>
+<p>To this:</p>
+<pre><code>----------------------------------------------------------
+
+Metrics:
+
+[ Alloy ] -> [ cAdvisor] -> [ Prometheus ] &#x3C;-> [ Grafana ]
+[ Alloy ] -> [ cAdvisor] -> [ Mimir ]      &#x3C;-> [ Grafana ]
+
+----------------------------------------------------------
+
+Logs:
+
+[Alloy ] -> [ Loki ] &#x3C;-> [ Grafana ]
+ 
+----------------------------------------------------------
+
+Alerts:
+
+[ Prometheus ]
+
+----------------------------------------------------------
+</code></pre>
+<p>Alloy is far more powerful than Promtail and runs at a system level. This runtime also impacts how we deal with environment variables for Alloy.</p>
+<p>In this modern stack Alloy is where we define our observability rules. Alloy instructs Loki to collect logs. Alloy instructs cAdvisor to collect Docker metrics and push them to Prometheus or Mimir.</p>
+<h1>Monitoring, Fork</h1>
+<h2>Alloy, Config</h2>
+<p>The 'config.alloy' file is the core of the new stack and where we find all of our business logic.</p>
+<p>The syntax for Alloy is an implementation of HCL syntax from Terraform, with each construct being a block - <a href="https://grafana.com/docs/alloy/latest/get-started/syntax/">Alloy, Syntax</a>.</p>
+<p>For each rule we can have:</p>
+<ul>
+<li>A collection block or 'scrape' / 'exporter' block</li>
+<li>A parsing / transforming / enriching block or 'relabel' block</li>
+<li>A storage block or 'write' block</li>
+</ul>
+<p>The structure is similar to functional programming:</p>
+<pre><code>Inputs -> Function -> Outputs
+
+Function
+- Inputs transformation or enrichment
+</code></pre>
+<p>The top of the 'config.alloy' contains all the write or output blocks, followed by the actual logic.</p>
+<p>Finally we define the scrape block which takes our raw / enriched data and sends it to the output destination.</p>
+<h2>Alloy, Metrics</h2>
+<p>In the fork we use Prometheus and Grafana Mimir for Docker container metrics collection and storage.</p>
+<p>The ease and Prometheus and PromQL, is why I replaced InfluxDB (and Telegraf) for container metrics.</p>
+<p>InfluxDB doesn't support or follow the implementation of the helpter utility functions found in PromQL, and this leads to scenarios where a Prometheus dashboard can drift away from an InfluxDB dashboard. Latency can be an issue in this design too, Prometheus itself being faster to ingest vs InfluxDB + Telegraf.</p>
+<p>Also from local results the InfluxDB and Telegraf services consumed more resources than Prometheus and Mimir combined.</p>
+<p>Prometheus is already in the stack for Crowdsec data and alerts, why not use it for short-term Docker container data collection and storage. Mimir serving as long-term storage for data audits of 30 days or more.</p>
+<p>In Alloy we first define the outputs, or write blocks:</p>
+<p>[config.alloy]</p>
+<pre><code>prometheus.remote_write "main" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+prometheus.remote_write "mimir" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+  }
+}
+</code></pre>
+<p>We will need a matching Docker container for these write block destinations, Prometheus and Mimir.</p>
+<p>Then we define the rules for collection or scrape blocks:</p>
+<pre><code>prometheus.exporter.cadvisor "main" {
+  docker_only = true
+  storage_duration = "10m"
+}
+
+discovery.relabel "cadvisor_rename" {
+    targets = prometheus.exporter.cadvisor.main.targets
+
+    rule {
+        target_label = "job"
+        replacement  = "integrations/docker"
+    }
+
+    rule {
+        target_label = "instance"
+        replacement  = constants.hostname
+    }
+}
+
+prometheus.scrape "scraper" {
+  targets    = discovery.relabel.cadvisor_rename.output
+  forward_to = [ prometheus.remote_write.main.receiver, prometheus.remote_write.mimir.receiver ]
+
+
+  scrape_interval = "15s"
+  scrape_timeout = "15s"
+}
+</code></pre>
+<p>Internally the Alloy 'prometheus.exporter.cadvisor' uses  cAdvisor, a popular Docker container monitoring tool -<a href="https://github.com/google/cadvisor">Google, cAdvisor, repo</a>.</p>
+<p>We won't need a container for cAdvisor in the stack, but Alloy runs cAdvisor at a system level on the host via the 'prometheus.exporter.cadvisor' block.</p>
+<p>The large collection of blocks built into Alloy and the low-level runtime, makes Alloy a powerful data collector and orchestrator.</p>
+<p>The cAdvisor config for 'storage_duration' is more than the default (2m) to guarantee that we have enough data stored in memory in case of downstream latency. Without it we might loose some metric batches.</p>
+<p>The 'discovery.relabel' is a basic example and should be greatly expanded for production use. The ability to relabel metrics, at the Alloy level, means that we can transform metrics before they are ingested by Prometheus.</p>
+<p>In the example we also define a Prometheus recording rule <code>configs/prometheus/rules/container_heartbeat.yml</code>, where we produce a computed metric from a raw metric, sampled at a rate of 1m.</p>
+<p>Don't confuse relabels with recording rules, since it's generally expected to relabel before Prometheus, and never using the recording rules. Recording rules are mainly used for data aggregation.</p>
+<p>The next Alloy block, the scraper block takes the relabeled metrics and pushes them to the outputs, Prometheus and Mimir.</p>
+<p>The structure simplified:</p>
+<ul>
+<li>targets: what data are we pushing, eg. 'discovery.relabel'</li>
+<li>forward_to: where are pushing the data to eg. 'prometheus.remote_write.main.receiver'</li>
+<li>scrape_interval: how often we retrieve a batch and push, here mapped to Prometheus default of 15s</li>
+<li>scrape_timeout: how often do we discard data in case of lag or errors; here mapped to 15s seconds so that we loose at most 1 batch, which shouldn't introduce data problems unless we get repeated discards over a prolonged period.</li>
+</ul>
+<p>Alloy is flexible and can forward data to multiple targets, and can also receive data from multiple sources.</p>
+<p>This ability can reduce lag when pushing metrics to Prometheus and more sources, Alloy doing this in parallel. Whilst with Telegraf and InfluxDB we would have to deal with a queue, adding lag to the process. When benchmarking Telegraf + InfluxDB as long-term storage for Prometheus we also noticed a large number of out of sync batches.</p>
+<p>Alloy contains 1 scraping interval rule for two targets, making it less likely to introduce data inconsistencies via independent service configs.</p>
+<p>All the "rules" of our observability system, are now in Alloy. With the storage services (Prometheus, Mimir, Loki) containing self-management, runtime, or networking rules.</p>
+<p>With Alloy there's less need to chain services, eg. Prometheus which pushes to Telegraf which pushes to InfluxDB all via independent service apis, prone for data format type errors.</p>
+<p>Next we need to configure the Alloy Docker container.</p>
+<h2>Alloy, Docker</h2>
+<p>Key goals for the Alloy container config:</p>
+<ul>
+<li>Bind mounts for service config, outgoing to container</li>
+<li>Bind mount for incoming Alloy data with local folder sync</li>
+<li>Bind mounts for accessing Docker metrics and system logs from host</li>
+<li>Port opening for '12345' and the CLI flag '--server.http.listen-addr=0.0.0.0:12345'; enables access for the Alloy Web UI</li>
+</ul>
+<pre><code class="language-yml">  alloy: 
+    container_name: alloy
+    image: grafana/alloy:latest
+    restart: unless-stopped
+    networks:
+      - grafana-monitoring
+    ports:
+      - "12345:12345"
+    volumes:
+      - ./configs/config.alloy:/etc/alloy/config.alloy:ro
+      - ./data/alloy:/var/lib/alloy/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    command: 
+      - run 
+      - --server.http.listen-addr=0.0.0.0:12345    # Required to access Alloy UI on http://localhost:12345/
+      - --storage.path=/var/lib/alloy/data 
+      - /etc/alloy/config.alloy
+</code></pre>
+<p>The image version should be pinned in production to avoid drift.</p>
+<h2>General, Configs</h2>
+<p>The fork project introduces a folder for configs with nested folders per service where multiple files are required. Alloy, Loki, and Mimir are single file configs, but Prometheus and Grafana are folders.</p>
+<p>Now that we have configured Alloy, lets configure the write blocks that Alloy will push data to: Prometheus and Mimir</p>
+<h2>Prometheus, Config</h2>
+<p>Simple Prometheus config without any business logic, apart from 'storage.tsdb.retention' set to 12h.</p>
+<pre><code class="language-yml">global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+  body_size_limit: 15MB
+  sample_limit: 1500
+  target_limit: 30
+  label_limit: 30
+  label_name_length_limit: 200
+  label_value_length_limit: 200
+storage:
+  tsdb:
+    retention: 
+      time: 12h
+rule_files:
+  - "rules/container_heartbeat.yml"
+</code></pre>
+<p>Once again that is the intent: all the business logic staying in the Alloy configuration.</p>
+<p>Prometheus data is to be held for a maximum of 12 hours. The data is NOT deleted automatically, but moved to a tombstone location after that time window.</p>
+<p>The script at 'test-scripts/prometheus-clear-tombstones.sh' allows you to clear the tombstones manually, but the Prometheus container must be running with the 'admin' API enabled via the CLI flag.</p>
+<p>The 'scrape_interval' dictates to Prometheus how often we collect metrics, and with 'evaluation_interval' we are waiting for two metric batches to evaluate the data.</p>
+<p>'body_size_limit' to 'label_value_length_limit' represent metrics performance optimizations, see <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/">Prometheus, Configuration</a>.</p>
+<p>The 'rule_files' configures both recording and alerting rules but here, only recording rules are shown.</p>
+<p>[rules/container_heartbeat.yml]</p>
+<pre><code class="language-yml">groups:
+  - name: container_heartbeat
+    interval: 1m
+    rules:
+      - record: container_heartbeat:bpm
+        expr: (changes(container_last_seen{name=~".+"}[1m])>0)
+</code></pre>
+<p>The rule checks the liveness of a container. 'container_last_seen' is a timestamp gauge produced by cAdvisor, <a href="https://github.com/google/cadvisor/blob/master/docs/storage/prometheus.md">Monitoring cAdvisor with Prometheus</a>. The timestamp should change 3 times per minute, matching the number of gaps between the 15 second Prometheus scrape intervals. The result of the aggregation becomes an indicator for perfect health with anything below highlighting health issues. The indicator can display minor 'flickers' in liveness, lasting between 15s-60s, as well as larger downtime events.</p>
+<p>The recording rule is then down-sampled to 5min intervals,</p>
+<p>We use the aggregate 'container_heartbeat:bpm' metric to visualize the container heartbeat using a heatmap chart.</p>
+<h2>Prometheus, Docker</h2>
+<p>Key goals for the Prometheus container config:</p>
+<ul>
+<li>Enabled remote write receiver CLI flag</li>
+<li>Bind mounts for config outgoing to container</li>
+<li>Bind mount for incoming data from Prometheus to filesystem</li>
+<li>Docker user permissions, needed for incoming data write</li>
+<li>Service healthcheck, required by Grafana container</li>
+</ul>
+<pre><code class="language-yml">  prometheus:
+    container_name: prometheus
+    user: ${GRAFANA_DOCKER_USER}
+    image: prom/prometheus
+    restart: unless-stopped
+    networks:
+      - grafana-monitoring
+    ports:
+      - 9090:9090
+    volumes:
+      - ./configs/prometheus/global.yml:/etc/prometheus/prometheus.yml:ro
+      - ./configs/prometheus/rules/:/etc/prometheus/rules/:ro
+      - ./data/prometheus:/prometheus/data
+    command:
+      - --web.enable-remote-write-receiver
+      - --config.file=/etc/prometheus/prometheus.yml
+      # - --web.enable-admin-api    # Required to clear tombstone files
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+</code></pre>
+<p>If we want Alloy to be succesful in pushing data to Prometheus, we need the 'web.enable-remote-write-receiver' CLI flag.</p>
+<p>Bind mounts are used here to sync the configs. Note that root config name 'global.yml' is not the same as the Prometheus default 'prometheus.yml'. The mount is rewriting from 'global' to 'prometheus' files.</p>
+<p>Data from the container is synced within the repo folder '/data/prometheus'. And because of this we need to ensure that the container makes use of a user with read/write access to the local files.</p>
+<p>Since the Prometheus storage is a dependency for visualization, we introduced a healthcheck which will produce the 'grafana' container dependency rule.</p>
+<p>The rest is a standard Prometheus config: port exposing to for the Prometheus UI host access, network config for inter-container requests, etc.</p>
+<h2>Mimir, Config</h2>
+<p>Key goals for the Mimir service config:</p>
+<ul>
+<li>Single node configuration</li>
+<li>Storage set to filesystem</li>
+<li>Data retention set to 60days</li>
+<li>Data discard rule for out of time data</li>
+</ul>
+<pre><code class="language-yml"># Do not use this configuration in production.
+# It is for demonstration purposes only.
+multitenancy_enabled: false
+
+blocks_storage:
+  backend: filesystem
+  bucket_store:
+    sync_dir: /data/tsdb-sync 
+  filesystem:
+    dir: /data/blocks
+  tsdb:
+    dir: /data/tsdb
+
+compactor:
+  data_dir: /data/compactor
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+limits:
+  # Delete from storage metrics data older than 2 months.
+  compactor_blocks_retention_period: 60d
+  # Process metric with timestamps of a wider time delay
+  out_of_order_time_window: 5m
+
+distributor:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+
+ingester:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+
+ruler_storage:
+  backend: filesystem
+  filesystem:
+    dir: /data/rules
+
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9080
+  log_level: error
+
+store_gateway:
+  sharding_ring:
+    replication_factor: 1
+</code></pre>
+<p>By design Mimir is a distributed system that uses cloud providers for storage. Here we bypass those recommendations, in favour of a single node runtime with local file-system storage. This config is achieved via "storage.gateway.sharding_ring.replication_factor", "multitenancy_enabled", and "blocks_storage.backend". It is recommended that in production you migrate from file-system and single-node, to a distributed setup with a cloud-provider for storage.</p>
+<p>Data retention is set to 60days, since Mimir is our Prometheus long-term storage. This grants us a data buffer when fulfilling the 30day data audit requirement. This config is achieved via "limits.compactor_blocks_retention_period".</p>
+<p>During development some "out of time" errors were discovered. An anomaly in this use case, because "Prometheus TSDB only accepts in-order samples that are less than one hour old, discarding everything else" - <a href="https://grafana.com/blog/new-in-grafana-mimir-introducing-out-of-order-sample-ingestion/">Mimir, Introducing out-of-order sample ingestion</a>.</p>
+<p>"out of time" errors might be a development-only error caused by frequent restarts interfering with metrics processing pipeline, creating a "write-ahead log" (WAL) backlog.</p>
+<p>Equally the processing of 'old metrics' at 1h intervals would introduce lag to the system if high cardinality is expected. The overall health and performance of the system is greater than the value of such a long metrics queue.</p>
+<p>To guarantee the system performance and to clearly specify expected expiry, we set the 'limits.out_of_order_time_window' to 5min. Wider time delay metrics will be discarded, saving on host resources with minimal data loss.</p>
+<p>The rest follows stock configuration for Mimir, <a href="https://grafana.com/docs/mimir/latest/configure/configuration-parameters/">Mimir, Configuration Parameters</a>.</p>
+<h2>Mimir, Docker</h2>
+<p>Key goals for the Mimir container config:</p>
+<ul>
+<li>Bind volume for service config outgoing to container</li>
+<li>Bind volume for incoming Mimir data writen to filesystem</li>
+<li>Healthcheck required for Grafana container</li>
+</ul>
+<pre><code class="language-yml">  mimir:
+    container_name: mimir
+    image: grafana/mimir-alpine
+    networks:
+      - grafana-monitoring
+    ports:
+      - "9009:9009"
+    volumes:
+      - ./configs/mimir-config.yml:/etc/mimir/mimir.yaml:ro
+      - ./data/mimir:/data:rw
+    command:
+      - "-config.file=/etc/mimir/mimir.yaml"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9009/ready"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+</code></pre>
+<h2>Monitoring, Conclusion</h2>
+<p>Three containers (Alloy, Prometheus, Mimir), collection logic stored in Alloy, orchestraction logic stored in Alloy, data stored in Prometheus and Mimir, and an abstracted implementation of 'cAdvisor' via Alloy components.</p>
+<p>We no longer need Telegraf and InfluxDB.</p>
+<p>We can also replace Promtail with Alloy, but it was never really used in the monitoring context. Promtail was used in the logging context, which we will cover next.</p>
+<h1>Logging, Fork</h1>
+<p>In the source, Promtail was quoted as a storage options for logs. The actual purpose for Promtail was to scraping and push log data into Loki. Loki handled the storage and indexing layer for logs.</p>
+<p>Now that Promtail is deprecated, in the fork we will replace it with Alloy.</p>
+<h2>Alloy, Logs</h2>
+<p>Similar to the metrics out config contains:</p>
+<ul>
+<li>A write definition, mapped to Loki contain push api</li>
+<li>A scraper definition, via the 'discovery.docker' component</li>
+<li>A simple relabeling rule</li>
+<li>A forwarding block from the scraper to the writer</li>
+</ul>
+<pre><code>// Targets
+// > Groups all of the *write components together
+
+loki.write "main" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+...
+
+
+// Logging
+
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_logs" {
+    targets = []
+
+    rule {
+        source_labels = ["__meta_docker_container_name"]
+        regex = "/(.*)"
+        target_label = "container_name"
+    }
+
+    rule {
+      target_label = "instance"
+      replacement  = constants.hostname
+    }
+  }
+
+loki.source.docker "main" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.linux.targets
+  relabel_rules = discovery.relabel.docker_logs.rules
+  forward_to = [loki.write.main.receiver]
+}
+</code></pre>
+<p>'discovery.docker' finds the containers and exposes them as targets, hence the 'docker.sock' host definition, <a href="https://grafana.com/docs/grafana-cloud/send-data/alloy/reference/components/discovery/discovery.docker/">Grafana, Alloy, Components, discover.docker</a>.</p>
+<p>Previous Promtail logs scraping, is now achieved in Alloy with this 'discovery.docker' component.</p>
+<p>Alloy has another component for the same purpose - 'loki.source.docker'. Currently unclear what are the differences between the two, <a href="https://grafana.com/docs/grafana-cloud/send-data/alloy/reference/components/loki/loki.source.docker/">Grafana Alloy, Components, loki.source.docker</a>. Perhaps 'discovery.docker' represents a more generalized implementation.</p>
+<p>Lets move on to define the Loki Docker container.</p>
+<h2>Loki, Config</h2>
+<p>Key goals for the Loki service config:</p>
+<ul>
+<li>Loki is a distributed system and once again we are configuring it as a singular node service via 'common.replication_factor'</li>
+<li>Specify data to be held for 24h via 'schema_config.configs' entry, set with 'index.period'</li>
+</ul>
+<pre><code class="language-yml"># DOCS: https://grafana.com/docs/loki/latest/configure/examples/configuration-examples/
+# This is a complete configuration to deploy Loki backed by the filesystem.
+# The index will be shipped to the storage via tsdb-shipper.
+
+auth_enabled: false
+
+limits_config:
+  allow_structured_metadata: true
+  volume_enabled: true
+
+distributor:
+  otlp_config:
+    # List of default otlp resource attributes to be picked as index labels
+    # CLI flag: -distributor.otlp.default_resource_attributes_as_index_labels
+    default_resource_attributes_as_index_labels: [service.name service.namespace service.instance.id deployment.environment deployment.environment.name cloud.region cloud.availability_zone k8s.cluster.name k8s.namespace.name k8s.container.name container.name k8s.replicaset.name k8s.deployment.name k8s.statefulset.name k8s.daemonset.name k8s.cronjob.name k8s.job.name]
+
+server:
+  http_listen_port: 3100
+
+common:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory
+  replication_factor: 1
+  path_prefix: /tmp/loki
+
+schema_config:
+  configs:
+  - from: 2020-05-15
+    store: tsdb
+    object_store: filesystem
+    schema: v13
+    index:
+      prefix: index_
+      period: 24h
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /tmp/loki/index
+    cache_location: /tmp/loki/index_cache
+
+pattern_ingester:
+  enabled: true
+</code></pre>
+<p>Rest is a stock Loki config, <a href="https://grafana.com/docs/loki/latest/configure/examples/configuration-examples/#9-s3-with-sse-kms-snippetyaml">Grafana Loki, Configure examples</a>.</p>
+<h2>Docker, Loki</h2>
+<p>Key goals for the Loki container config:</p>
+<ul>
+<li>Binding the config outgoing to the container</li>
+<li>Binding container data to local data folder</li>
+<li>Add user with correct read/write permissions for the incoming container data sync with file-system</li>
+</ul>
+<pre><code class="language-yml">loki:
+    container_name: loki
+    user: ${GRAFANA_DOCKER_USER}
+    image: grafana/loki:main
+    restart: unless-stopped
+    networks:
+      - grafana-monitoring
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./data/loki:/etc/loki
+      - ./configs/loki.yml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml
+</code></pre>
+<h1>Visuals</h1>
+<p>For visualization we leverage Grafana. In the source example the user, data source, and dashboard configs were done manually via the Grafana UI. This cause a big of friction, we needed an InfluxDB account, to create a token, to import InfluxDB as a data source, in order the create a dashboard that visualizes that data source.</p>
+<p>In the fork provisioning is used or infrastructure-as-code to configure the data sources and dashboards.</p>
+<p>Environment variables and container variables are also implemented. Some are used by Grafana as internal feature flags for the initial account creation, whilst others are used for variable expansion within provisioning rules.</p>
+<h2>Docker, Grafana</h2>
+<p>Key goals for the Grafana container config:</p>
+<ul>
+<li>Container depends on the data sources being alive, and healthy: Prometheus, Mimir; Loki should probably be added to the list</li>
+<li>Bind volume sync for provisioning; usually containing the 'datasources/' and 'dashboard/' configs; the 'dashboard' configs don't contain any actual dashboard panel logic, just linking to the ultimate dashboard json file</li>
+<li>Bind volume sync for provisioned dashboards: where we store the actual json config for the dashboards</li>
+<li>Environment config for admin user, password, provisioning wait timeout; acting as internal CLI flags for Grafana</li>
+<li>Extra environment variables used within provisioning configs</li>
+</ul>
+<pre><code class="language-yml">  grafana:
+    container_name: grafana
+    user: ${GRAFANA_DOCKER_USER}
+    depends_on: 
+      prometheus:
+        condition: service_healthy
+      mimir:
+        condition: service_healthy
+    image: grafana/grafana-oss:latest
+    restart: unless-stopped
+    networks:
+      - grafana-monitoring
+    ports:
+     - 3000:3000/tcp
+    volumes:
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./configs/grafana/dashboards-json:/var/lib/grafana/dashboards:ro
+      - ./data/grafana:/var/lib/grafana
+    environment: 
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS}
+      GF_PROVISIONING_WAIT_TIMEOUT: 60
+      LOKI_URL: ${LOKI_URL}
+</code></pre>
+<p>Environment:</p>
+<ul>
+<li>Everything with 'GF_*' an internal Grafana flag</li>
+<li>The presence of "GF_SECURITY_ADMING_USER" and "*_PASSWORD" automatically triggers the initial signup flow with the entries provided; manual login with default credentials to create an admin account is no longer required</li>
+<li>'PROVISIONING_WAIT_TIMEOUT' grants a time buffer to the initial sign-up flow</li>
+<li>'LOKI_URL' is a custom variable that is expanded within the 'config/grafana/provisioning/*' files</li>
+</ul>
+<p>Grafana will automatically configure the data sources and dashboards at startup if the 'provisioning/*' files are present.</p>
+<p>With this, our observability stack only requires 1 command to be fully operational: 'docker compose up' or the alias 'make up'.</p>
+<h2>Data source, Loki</h2>
+<p>Basic config for Loki data source with environment variable expansion for 'url:', and some minor optimisations under 'jsonData:'.</p>
+<p>[configs/provisioning/datasources/loki.yml]</p>
+<pre><code class="language-yml">apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    orgId: 1
+    url: ${LOKI_URL}
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: false
+    jsonData:
+      timeout: 60
+      maxLines: 1000
+</code></pre>
+<h2>Data source, Prometheus</h2>
+<p>Basic config for Prometheus with optimisations under 'jsonData'. We could also expand the 'url:' value from the environment.</p>
+<p>[configs/provisioning/datasources/prometheus.yml]</p>
+<pre><code class="language-yml">apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    orgId: 1
+    url: http://prometheus:9090
+    jsonData:
+      httpMethod: POST
+      prometheusType: Prometheus
+      prometheusVersion: 3.3.0
+      cacheLevel: 'High'
+      timeInterval: 15s  # Prometheus scrape interval
+      manageAlerts: true
+      disableRecordingRules: false
+      seriesEndpoint: false
+      incrementalQuery: true
+      incrementalQueryOverlapWindow: 10m
+</code></pre>
+<p>'jsonData' config details:</p>
+<ul>
+<li>'timeInterval': matched the scraping of Prometheus (15s); same as default value, but specified here for clarity.</li>
+<li>'manageAlerts': allows Grafana to view and show the Prometheus alerts and recording rules configured</li>
+<li>'prometheusType': Prometheus for native and Mimir or etc for derivatives</li>
+<li>'prometheusVersion': 3.3.0; based major.minor version</li>
+<li>'cacheLevel': high query caching in the Grafana UI, leads to faster loading dashboards and less strain on the data source</li>
+<li>'disableRecordingRules': used to disable recording rules, improving data source availability; here used to say that we are 'definitely are using recording rules', one recoding rule being the basis for a shared panel across two dashboards</li>
+<li>'seriesEndpoint': default, but defined as if to say 'not using the series endpoint'</li>
+<li>'incrementalQuery': by default Grafana will run the query each dashboard interval, putting strain on the data source; this flag allows for the fetching of new results, appending to the old data cache; beta feature</li>
+<li>'incrementalQueryOverlapWindow': set to the default of 10m, specified here for clarity; dependent on the above flag.</li>
+</ul>
+<h2>Data source, Mimir</h2>
+<p>Basic config for Mimir with optimisations under 'jsonData'. We could also expand the 'url:' value from the environment.</p>
+<p>[configs/provisioning/datasources/mimir.yml]</p>
+<pre><code class="language-yml">apiVersion: 1
+
+datasources:
+  - name: Mimir
+    type: prometheus
+    orgId: 1
+    url: http://mimir:9009/prometheus
+    jsonData:
+      httpMethod: POST
+      prometheusType: Mimir
+      cacheLevel: 'High'
+      timeInterval: 15s     # Prometheus scrape interval
+      manageAlerts: false
+      disableRecordingRules: false
+      seriesEndpoint: false
+      incrementalQuery: true
+      incrementalQueryOverlapWindow: 10m
+</code></pre>
+<p>Basic config for Mimir with optimisations under 'jsonData', similar to above Prometheus config. We could also expand the 'url:' value from the environment.</p>
+<p>Alerts usage is planned on the short-term storage (Prometheus), so Mimir has 'manageAlerts' disabled.</p>
+<p>An interesting config quirk to outline is that the top level 'type' is still 'prometheus', whilst 'jsonData.prometheusType' is 'Mimir'.</p>
+<h2>Dashboards, Provisioning</h2>
+<p>[configs/provisioning/dashboards/default.yml]</p>
+<pre><code class="language-yml">apiVersion: 1
+
+providers:
+  - name: dashboards
+    type: file
+    updateIntervalSeconds: 30
+    editable: true          # Allows UI edits
+    disableDeletion: false  # Blocks UI deletion
+    allowUiUpdates: false   # Blocks UI updates
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
+</code></pre>
+<p>Details of the config:</p>
+<ul>
+<li>'name' set to generic 'dashboards'.</li>
+<li>'folder': not specified here since we're using a parent folder with enabled file structure detection.</li>
+<li>'updateIntervalSeconds': dashboards refresh value.</li>
+<li>'editable', 'disableDeletion', and 'allowUiUpdates': allow edits to dashboards via the UI, but disable deletion and automating saving of UI changes; forces the dashboard updates to only happen via code, but allows UI use for edits; code changes to be implemented via JSON export from the UI.</li>
+<li>'options.path': where to find the dashboard JSON files; specifically where the files from 'configs/grafana/dashboards-json/' are synced with the container after the bind mount config</li>
+<li>'options.foldersFromFilesStructure': allows for folders within the core '../dashboards/'</li>
+</ul>
+<p>For our this system I wanted to nest dashboards under their datasource, eg. '../dashboards/prometheus/cAdvisor.json'.</p>
+<p>In general it provides a template for organizing the dashboards using nested folders, bypassing the need for further .yml rules when expansion is needed.</p>
+<h2>Dashboards, JSON</h2>
+<p>The dashboards themselves, the rows, the panels, the ranges, the visualizations, the queries are all configured via JSON.</p>
+<p>You can use local files or link to a public dashboard.</p>
+<p>Here, I chose to fork a public dashboard for Prometheus cAdvisor metrics and tweak it, <a href="https://grafana.com/grafana/dashboards/19908-docker-container-monitoring-with-prometheus-and-cadvisor/">Grafana Labs, Dashboards, cAdvisor Docker Insights</a>.</p>
+<p>The tweaks are mostly on the queries themselves, with the largest set of changes to the 'Container Restarts' panel query and visualization. I wrote in detail about the queries in this previous post, <a href="https://alanionita.github.io/blog/2026-03-31-prometheus-mimir/">Alan Ionita, Prometheus Long-term Storage</a>.</p>
+<h1>Conclusion</h1>
+<p>The replacement of Grafana Promtail with Grafana Alloy allowed us to simplify the stack by removing 3 containers: Grafana Promtail, Telegraf (InfluxData), InfluxDB. Overall CPU and RAM usage improvements were observed as a result.</p>
+<p>Core data storage for metrics is now done via Prometheus instead of InfluxDB.</p>
+<p>Grafana Mimir was added in order to provide long-term support for monitoring data at 60day intervals, supporting a 30day auditing goal.</p>
+<p>InfluxDB could have been used for long-term Prometheus storage, but visualizations were easier to implement with PromQL queries. The queries were tricky to implement in InfluxDB and produced mismatched trends and summaries.</p>
+<p>Grafana is pre-configured with an admin user and password, the 3 data sources (Loki, Prometheus, Mimir), and 2 dashboards (Prometheus, Mimir). Dashboards are forked from a public dashboard. Showcasing an example of infrastructure-as-code.</p>
+<p>The system rules are now contained in Alloy, making the rest of the service configs smaller and reducing hidden dependencies. For example, Prometheus, Mimir, Loki all contain minimal variations on default configs.</p>
+<p>I hope you enjoyed this explanation, feel free to see the repo for the code and further documentation, <a href="https://github.com/alanionita/observability-stack">Alan Ionita, Repo, Observability Stack</a>.</p>
+<h1>Open questions</h1>
+<p>List of unanswered questions:</p>
+<ul>
+<li>What about Traces, the final ingredient to an Observability stack?</li>
+<li>Where are the alerting examples? What is the best way to configure them?</li>
+<li>We are observing the containers, what about collecting metrics about the host?</li>
+<li>Example is tested in isolation, what happens if we have multiple stacks of containers on the same host?</li>
+</ul>
+<p>Feel free to use these as the basis for forks, updates, or derivative projects.</p>
+
+                ]]>
+            </description>
+        </item><item>
             <title>InfluxDB, infrastructure-as-code</title>
             <link>https://alanionita.github.io/portfolio--svelte/blog/2026-04-02-influxdb-iac</link>
             <pubDate>Thu, 02 Apr 2026 00:00:00 +0100</pubDate>
